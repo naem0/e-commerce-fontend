@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #1e3a8a;
+
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+}
+
+/* Apply CSS variables to Tailwind classes */
+.text-primary-custom {
+  color: var(--primary-color);
+}
+
+.bg-primary-custom {
+  background-color: var(--primary-color);
+}
+
+.text-secondary-custom {
+  color: var(--secondary-color);
+}
+
+.bg-secondary-custom {
+  background-color: var(--secondary-color);
+}
+
+.border-primary-custom {
+  border-color: var(--primary-color);
+}
+
+.border-secondary-custom {
+  border-color: var(--secondary-color);
+}
+
+/* Additional global styles */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom styles for components */
+.hero-1 {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-12 items-center;
+}
+
+.hero-2 {
+  @apply text-center;
+}
+
+.hero-3 {
+  @apply relative;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.featured-1 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+.featured-2 {
+  @apply flex flex-wrap justify-center gap-8;
+}
+
+.featured-3 {
+  @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4;
+}
+
+.categories-1 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+.categories-2 {
+  @apply flex flex-col space-y-4;
+}
+
+.categories-3 {
+  @apply flex flex-col space-y-8;
+}
+
+.footer-1 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8;
+}
+
+.footer-2 {
+  @apply flex flex-col md:flex-row justify-between items-start gap-8;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.btn-primary:hover {
+  filter: brightness(110%);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color) !important;
+  color: white !important;
+}
+
+.btn-secondary:hover {
+  filter: brightness(110%);
+}
