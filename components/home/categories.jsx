@@ -18,11 +18,7 @@ export function Categories() {
       try {
         setLoading(true)
         const response = await fetch("/api/categories")
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories")
-        }
-
+        
         const data = await response.json()
 
         if (data.success) {

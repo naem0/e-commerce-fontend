@@ -1,30 +1,7 @@
-import axios from "axios"
-import { getAuthHeader } from "./utils"
+import { createAPI, handleError } from "./api.utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
-
-// Create axios instance for cart
-const cartAPI = axios.create({
-  baseURL: `${API_URL}/cart`,
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
-
-// Add auth token to requests
-cartAPI.interceptors.request.use(
-  (config) => {
-    const authHeader = getAuthHeader()
-    if (authHeader) {
-      config.headers = {
-        ...config.headers,
-        ...authHeader,
-      }
-    }
-    return config
-  },
-  (error) => Promise.reject(error),
-)
+// Create cart API instance
+const cartAPI = createAPI("cart")
 
 // Get user's cart
 export const getCart = async () => {
@@ -36,20 +13,10 @@ export const getCart = async () => {
   }
 }
 
-// Update user's cart
-export const updateCart = async (items) => {
-  try {
-    const response = await cartAPI.put("/", { items })
-    return response.data
-  } catch (error) {
-    throw handleError(error)
-  }
-}
-
 // Add item to cart
-export const addToCart = async (productId, quantity = 1) => {
+export const addToCart = async (productId, quantity = 1, variation = null) => {
   try {
-    const response = await cartAPI.post("/items", { productId, quantity })
+    const response = await cartAPI.post("/items", { productId, quantity, variation })
     return response.data
   } catch (error) {
     throw handleError(error)
@@ -57,9 +24,9 @@ export const addToCart = async (productId, quantity = 1) => {
 }
 
 // Update cart item quantity
-export const updateCartItem = async (productId, quantity) => {
+export const updateCartItem = async (itemId, quantity) => {
   try {
-    const response = await cartAPI.put(`/items/${productId}`, { quantity })
+    const response = await cartAPI.put(`/items/${itemId}`, { quantity })
     return response.data
   } catch (error) {
     throw handleError(error)
@@ -67,9 +34,9 @@ export const updateCartItem = async (productId, quantity) => {
 }
 
 // Remove item from cart
-export const removeFromCart = async (productId) => {
+export const removeFromCart = async (itemId) => {
   try {
-    const response = await cartAPI.delete(`/items/${productId}`)
+    const response = await cartAPI.delete(`/items/${itemId}`)
     return response.data
   } catch (error) {
     throw handleError(error)
@@ -86,22 +53,22 @@ export const clearCart = async () => {
   }
 }
 
-// Helper function to handle errors
-function handleError(error) {
-  if (error.response) {
-    return {
-      status: error.response.status,
-      message: error.response.data.message || "An error occurred",
-    }
-  } else if (error.request) {
-    return {
-      status: 503,
-      message: "Server not responding. Please try again later.",
-    }
-  } else {
-    return {
-      status: 500,
-      message: error.message || "An unexpected error occurred",
-    }
+// Apply coupon to cart
+export const applyCoupon = async (couponCode) => {
+  try {
+    const response = await cartAPI.post("/coupon", { code: couponCode })
+    return response.data
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Remove coupon from cart
+export const removeCoupon = async () => {
+  try {
+    const response = await cartAPI.delete("/coupon")
+    return response.data
+  } catch (error) {
+    throw handleError(error)
   }
 }

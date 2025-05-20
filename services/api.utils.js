@@ -1,24 +1,35 @@
 import axios from "axios"
-import { getSession } from "next-auth/react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
-// Create a base axios instance
-export const createAPI = (baseEndpoint) => {
+// Helper function to get auth header
+export const getAuthHeader = () => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("token")
+    if (token) {
+      return { Authorization: `Bearer ${token}` }
+    }
+  }
+  return {}
+}
+
+// Create a base API instance
+export const createAPI = (endpoint) => {
   const api = axios.create({
-    baseURL: `${API_URL}/${baseEndpoint}`,
+    baseURL: `${API_URL}/${endpoint}`,
     headers: {
       "Content-Type": "application/json",
     },
   })
 
-  // Add request interceptor to include auth token
+  // Add auth token to requests
   api.interceptors.request.use(
-    async (config) => {
-      if (typeof window !== "undefined") {
-        const session = await getSession()
-        if (session?.user?.token) {
-          config.headers.Authorization = `Bearer ${session.user.token}`
+    (config) => {
+      const authHeader = getAuthHeader()
+      if (authHeader) {
+        config.headers = {
+          ...config.headers,
+          ...authHeader,
         }
       }
       return config
@@ -30,22 +41,18 @@ export const createAPI = (baseEndpoint) => {
 }
 
 // Helper function to handle errors
-export function handleError(error) {
+export const handleError = (error) => {
   if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
     return {
       status: error.response.status,
       message: error.response.data.message || "An error occurred",
     }
   } else if (error.request) {
-    // The request was made but no response was received
     return {
       status: 503,
       message: "Server not responding. Please try again later.",
     }
   } else {
-    // Something happened in setting up the request that triggered an Error
     return {
       status: 500,
       message: error.message || "An unexpected error occurred",

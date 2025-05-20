@@ -1,30 +1,7 @@
-import axios from "axios"
-import { getAuthHeader } from "./utils"
+import { createAPI, handleError } from "./api.utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
-
-// Create axios instance for products
-const productAPI = axios.create({
-  baseURL: `${API_URL}/products`,
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
-
-// Add auth token to requests
-productAPI.interceptors.request.use(
-  (config) => {
-    const authHeader = getAuthHeader()
-    if (authHeader) {
-      config.headers = {
-        ...config.headers,
-        ...authHeader,
-      }
-    }
-    return config
-  },
-  (error) => Promise.reject(error),
-)
+// Create product API instance
+const productAPI = createAPI("products")
 
 // Get all products with optional filters
 export const getProducts = async (params = {}) => {
@@ -46,86 +23,45 @@ export const getProductById = async (id) => {
   }
 }
 
-// Create a new product (admin only)
-export const createProduct = async (productData) => {
+// Get featured products
+export const getFeaturedProducts = async (limit = 8) => {
   try {
-    // Create FormData for file uploads
-    const formData = new FormData()
+    const response = await productAPI.get("/featured", { params: { limit } })
+    return response.data
+  } catch (error) {
+    throw handleError(error)
+  }
+}
 
-    // Append text fields
-    Object.keys(productData).forEach((key) => {
-      if (key !== "images") {
-        formData.append(key, productData[key])
-      }
-    })
+// Get products by category
+export const getProductsByCategory = async (categoryId, params = {}) => {
+  try {
+    const response = await productAPI.get(`/category/${categoryId}`, { params })
+    return response.data
+  } catch (error) {
+    throw handleError(error)
+  }
+}
 
-    // Append images
-    if (productData.images && productData.images.length) {
-      productData.images.forEach((image) => {
-        formData.append("images", image)
-      })
-    }
+// Get products by brand
+export const getProductsByBrand = async (brandId, params = {}) => {
+  try {
+    const response = await productAPI.get(`/brand/${brandId}`, { params })
+    return response.data
+  } catch (error) {
+    throw handleError(error)
+  }
+}
 
-    const response = await axios.post(`${API_URL}/products`, formData, {
-      headers: {
-        ...getAuthHeader(),
-        "Content-Type": "multipart/form-data",
+// Search products
+export const searchProducts = async (query, params = {}) => {
+  try {
+    const response = await productAPI.get("/search", {
+      params: {
+        query,
+        ...params,
       },
     })
-
-    return response.data
-  } catch (error) {
-    throw handleError(error)
-  }
-}
-
-// Update a product (admin only)
-export const updateProduct = async (id, productData) => {
-  try {
-    // Create FormData for file uploads
-    const formData = new FormData()
-
-    // Append text fields
-    Object.keys(productData).forEach((key) => {
-      if (key !== "images") {
-        formData.append(key, productData[key])
-      }
-    })
-
-    // Append images
-    if (productData.images && productData.images.length) {
-      productData.images.forEach((image) => {
-        formData.append("images", image)
-      })
-    }
-
-    const response = await axios.put(`${API_URL}/products/${id}`, formData, {
-      headers: {
-        ...getAuthHeader(),
-        "Content-Type": "multipart/form-data",
-      },
-    })
-
-    return response.data
-  } catch (error) {
-    throw handleError(error)
-  }
-}
-
-// Delete a product (admin only)
-export const deleteProduct = async (id) => {
-  try {
-    const response = await productAPI.delete(`/${id}`)
-    return response.data
-  } catch (error) {
-    throw handleError(error)
-  }
-}
-
-// Update product status (admin only)
-export const updateProductStatus = async (id, status) => {
-  try {
-    const response = await productAPI.patch(`/${id}/status`, { status })
     return response.data
   } catch (error) {
     throw handleError(error)
@@ -139,25 +75,5 @@ export const addProductReview = async (id, reviewData) => {
     return response.data
   } catch (error) {
     throw handleError(error)
-  }
-}
-
-// Helper function to handle errors
-function handleError(error) {
-  if (error.response) {
-    return {
-      status: error.response.status,
-      message: error.response.data.message || "An error occurred",
-    }
-  } else if (error.request) {
-    return {
-      status: 503,
-      message: "Server not responding. Please try again later.",
-    }
-  } else {
-    return {
-      status: 500,
-      message: error.message || "An unexpected error occurred",
-    }
   }
 }

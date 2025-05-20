@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useCart } from "@/components/cart-provider"
 import { useLanguage } from "@/components/language-provider"
 import { Skeleton } from "@/components/ui/skeleton"
+import { productService } from "@/services"
 
 export function FeaturedProducts() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -20,31 +21,20 @@ export function FeaturedProducts() {
 
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchFeaturedProducts = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`${apiUrl}/api/products?featured=true`)
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch products")
-        }
-
-        const data = await response.json()
-
-        if (data.success) {
-          setProducts(data.products)
-        } else {
-          throw new Error(data.message || "Failed to fetch products")
-        }
+        const data = await productService.getProducts(8)
+        setProducts(data.products || [])
       } catch (err) {
-        console.error("Error fetching products:", err)
-        setError(err.message)
+        console.error("Error fetching featured products:", err)
+        setError(err.message || "Failed to load featured products")
       } finally {
         setLoading(false)
       }
     }
 
-    fetchProducts()
+    fetchFeaturedProducts()
   }, [])
 
   const handleAddToCart = (product) => {

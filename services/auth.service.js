@@ -1,7 +1,5 @@
 import { createAPI, handleError } from "./api.utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
-
 // Create auth API instance
 const authAPI = createAPI("auth")
 
@@ -19,6 +17,13 @@ export const register = async (userData) => {
 export const login = async (credentials) => {
   try {
     const response = await authAPI.post("/login", credentials)
+
+    // Store token and user data in localStorage
+    if (typeof window !== "undefined" && response.data.token) {
+      localStorage.setItem("token", response.data.token)
+      localStorage.setItem("user", JSON.stringify(response.data.user))
+    }
+
     return response.data
   } catch (error) {
     throw handleError(error)
@@ -31,6 +36,8 @@ export const logout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
   }
+
+  return { success: true }
 }
 
 // Get current user
@@ -57,6 +64,26 @@ export const forgotPassword = async (email) => {
 export const resetPassword = async (token, password) => {
   try {
     const response = await authAPI.post(`/reset-password/${token}`, { password })
+    return response.data
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Verify email
+export const verifyEmail = async (token) => {
+  try {
+    const response = await authAPI.get(`/verify-email/${token}`)
+    return response.data
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Resend verification email
+export const resendVerificationEmail = async (email) => {
+  try {
+    const response = await authAPI.post("/resend-verification", { email })
     return response.data
   } catch (error) {
     throw handleError(error)
