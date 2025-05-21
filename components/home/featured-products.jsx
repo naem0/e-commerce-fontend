@@ -8,33 +8,35 @@ import { Button } from "@/components/ui/button"
 import { useCart } from "@/components/cart-provider"
 import { useLanguage } from "@/components/language-provider"
 import { Skeleton } from "@/components/ui/skeleton"
-import { productService } from "@/services"
+import { getProducts } from "@/services/product.service"
 
 export function FeaturedProducts() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
   const { t } = useLanguage()
   const { addToCart } = useCart()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-
-
   useEffect(() => {
-    const fetchFeaturedProducts = async () => {
+    const fetchProducts = async () => {
       try {
         setLoading(true)
-        const data = await productService.getProducts(8)
-        setProducts(data.products || [])
+        const result = await getProducts({ featured: true, limit: 8 })
+
+        if (result.success) {
+          setProducts(result.products)
+        } else {
+          throw new Error(result.message || "Failed to fetch products")
+        }
       } catch (err) {
-        console.error("Error fetching featured products:", err)
-        setError(err.message || "Failed to load featured products")
+        console.error("Error fetching products:", err)
+        setError(err.message)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchFeaturedProducts()
+    fetchProducts()
   }, [])
 
   const handleAddToCart = (product) => {

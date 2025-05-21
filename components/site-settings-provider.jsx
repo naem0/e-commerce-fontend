@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
+import { getSiteSettings, updateSiteSettings } from "@/services/settings.service"
 
 const SiteSettingsContext = createContext({
   settings: {},
@@ -15,16 +16,13 @@ export function SiteSettingsProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const { toast } = useToast()
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
   // Fetch site settings on mount
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`${apiUrl}/api/site-settings`)
-
-        const data = await response.json()
+        const data = await getSiteSettings()
 
         if (data.success) {
           setSettings(data.settings)
@@ -60,17 +58,7 @@ export function SiteSettingsProvider({ children }) {
   const updateSettings = async (newSettings) => {
     try {
       setLoading(true)
-      const response = await fetch(`${apiUrl}/api/site-settings`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newSettings),
-      })
-
-      console.log("Response from server:", response)
-
-      const data = await response.json()
+      const data = await updateSiteSettings(newSettings)
 
       if (data.success) {
         setSettings(data.settings)

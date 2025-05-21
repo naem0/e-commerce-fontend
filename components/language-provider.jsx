@@ -1,41 +1,50 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect } from "react"
-import translations from "../translations"
+import translations from "../translations" // Verify this path is correct
 
-// Create the language context
-const LanguageContext = createContext()
+const LanguageContext = createContext(undefined)
 
-// Create the language provider component
 export function LanguageProvider({ children }) {
-  const [language, setLanguage] = useState("en")
+  const [language, setLanguageState] = useState("en")
+  const [isLoaded, setIsLoaded] = useState(false)
 
-  // Function to change the language
-  const changeLanguage = (lang) => {
-    if (translations[lang]) {
-      setLanguage(lang)
-      localStorage.setItem("language", lang)
-    }
-  }
-
-  // Function to get a translation
-  const t = (key) => {
-    if (!translations[language]) return key
-    return translations[language][key] || key
-  }
-
-  // Load saved language preference on component mount
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language")
-    if (savedLanguage && translations[savedLanguage]) {
-      setLanguage(savedLanguage)
+    if (typeof window !== "undefined") {
+      const savedLanguage = localStorage.getItem("language")
+      if (savedLanguage && translations[savedLanguage]) {
+        setLanguageState(savedLanguage)
+      }
+      setIsLoaded(true)
     }
   }, [])
 
-  return <LanguageContext.Provider value={{ language, changeLanguage, t }}>{children}</LanguageContext.Provider>
+  const setLanguage = (newLanguage) => {
+    if (translations[newLanguage]) {
+      setLanguageState(newLanguage)
+      if (typeof window !== "undefined") {
+        localStorage.setItem("language", newLanguage)
+      }
+    }
+  }
+
+  const t = (key) => {
+    if (!isLoaded) return key // Return key while loading
+    const translation = translations[language]?.[key]
+    if (!translation) {
+      console.warn(`Translation missing for key "${key}" in language "${language}"`)
+      return key
+    }
+    return translation
+  }
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  )
 }
 
-// Custom hook to use the language context
 export function useLanguage() {
   const context = useContext(LanguageContext)
   if (context === undefined) {
@@ -44,7 +53,6 @@ export function useLanguage() {
   return context
 }
 
-// Export useTranslation as an alias for useLanguage to maintain compatibility
 export function useTranslation() {
   return useLanguage()
 }

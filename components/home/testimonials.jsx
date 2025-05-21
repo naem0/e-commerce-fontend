@@ -5,6 +5,21 @@ import Image from "next/image"
 import { useLanguage } from "@/components/language-provider"
 import { Card, CardContent } from "@/components/ui/card"
 import { Star } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+
+// Create testimonial service
+const testimonialService = {
+  getTestimonials: async () => {
+    try {
+      const response = await fetch("/api/testimonials")
+      const data = await response.json()
+      return { success: true, testimonials: data }
+    } catch (error) {
+      console.error("Error fetching testimonials:", error)
+      return { success: false, message: "Failed to fetch testimonials" }
+    }
+  },
+}
 
 // Testimonials section designs that admin can choose from
 const testimonialDesigns = [
@@ -29,7 +44,7 @@ const testimonialDesigns = [
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="relative h-10 w-10 rounded-full overflow-hidden">
                       <Image
-                        src={testimonial.avatar || "/placeholder.svg"}
+                        src={testimonial.avatar || "/placeholder.svg?height=40&width=40"}
                         alt={testimonial.name}
                         fill
                         className="object-cover"
@@ -82,7 +97,7 @@ const testimonialDesigns = [
                       <div className="flex items-center gap-4">
                         <div className="relative h-12 w-12 rounded-full overflow-hidden">
                           <Image
-                            src={testimonial.avatar || "/placeholder.svg"}
+                            src={testimonial.avatar || "/placeholder.svg?height=48&width=48"}
                             alt={testimonial.name}
                             fill
                             className="object-cover"
@@ -118,6 +133,7 @@ export function Testimonials() {
   const { t } = useLanguage()
   const [testimonials, setTestimonials] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [activeDesign, setActiveDesign] = useState("testimonials-1")
 
   useEffect(() => {
@@ -125,16 +141,18 @@ export function Testimonials() {
     const fetchTestimonials = async () => {
       try {
         setLoading(true)
-        const response = await fetch("/api/testimonials")
+        const response = await testimonialService.getTestimonials()
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch testimonials")
+        if (response.success) {
+          setTestimonials(response.testimonials)
+        } else {
+          setError(response.message || "Failed to fetch testimonials")
+          // Fallback to empty array if fetch fails
+          setTestimonials([])
         }
-
-        const data = await response.json()
-        setTestimonials(data)
       } catch (error) {
         console.error("Error fetching testimonials:", error)
+        setError("An error occurred while fetching testimonials")
         // Fallback to empty array if fetch fails
         setTestimonials([])
       } finally {
@@ -144,13 +162,18 @@ export function Testimonials() {
 
     // Fetch active design from site settings (in a real app)
     const fetchDesign = async () => {
-      // This would be an API call in a real application
-      // const response = await fetch('/api/site-settings');
-      // const data = await response.json();
-      // setActiveDesign(data.testimonialsDesign);
+      try {
+        // This would be an API call in a real application
+        // const response = await settingsService.getSiteSettings()
+        // setActiveDesign(response.settings.testimonialsDesign || "testimonials-1")
 
-      // For demo purposes, we'll just use a default
-      setActiveDesign("testimonials-1")
+        // For demo purposes, we'll just use a default
+        setActiveDesign("testimonials-1")
+      } catch (error) {
+        console.error("Error fetching design:", error)
+        // Default to first design if fetch fails
+        setActiveDesign("testimonials-1")
+      }
     }
 
     fetchTestimonials()
@@ -162,36 +185,47 @@ export function Testimonials() {
       <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-              {t("testimonials.title") || "What Our Customers Say"}
-            </h2>
+            <Skeleton className="h-10 w-64 mb-4" />
+            <Skeleton className="h-6 w-96 mb-8" />
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-8">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="animate-pulse bg-background p-6 rounded-lg">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="bg-gray-200 h-10 w-10 rounded-full"></div>
-                    <div>
-                      <div className="h-4 bg-gray-200 rounded w-24"></div>
-                      <div className="mt-1 h-3 bg-gray-200 rounded w-16"></div>
+                <Card key={i} className="overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4 mb-4">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div>
+                        <Skeleton className="h-4 w-24 mb-2" />
+                        <Skeleton className="h-3 w-16" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex mb-2 space-x-1">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div key={i} className="h-4 w-4 bg-gray-200 rounded"></div>
-                    ))}
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gray-200 rounded"></div>
-                    <div className="h-3 bg-gray-200 rounded"></div>
-                    <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                  </div>
-                </div>
+                    <div className="flex mb-2 space-x-1">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Skeleton key={i} className="h-4 w-4 rounded-full" />
+                      ))}
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-3/4" />
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         </div>
       </section>
     )
+  }
+
+  if (error && testimonials.length === 0) {
+    // If there's an error and no testimonials, don't show the section
+    return null
+  }
+
+  // If there are no testimonials but no error, don't show the section
+  if (testimonials.length === 0) {
+    return null
   }
 
   const ActiveTestimonialsComponent =

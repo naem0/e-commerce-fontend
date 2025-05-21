@@ -12,8 +12,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react"
-import { getCart, updateCartItem, removeFromCart } from "@/services/cart.service"
-import { formatPrice, getErrorMessage } from "@/services/utils"
+import { cartService } from "@/services/api"
+import { getCart } from "@/services/cart.service"
 
 export default function CartPage() {
   const { data: session, status } = useSession()
@@ -33,11 +33,15 @@ export default function CartPage() {
         // If user is logged in, fetch cart from API
         if (status === "authenticated") {
           const response = await getCart()
-          setCart(response.cart)
+          if (response.success) {
+            setCart(response.cart)
+          } else {
+            setError(response.message || "Failed to fetch cart")
+          }
         }
       } catch (err) {
         console.error("Error fetching cart:", err)
-        setError(getErrorMessage(err))
+        setError("An error occurred while fetching your cart")
       } finally {
         setLoading(false)
       }
@@ -56,7 +60,10 @@ export default function CartPage() {
 
       // Update cart item in API
       if (status === "authenticated") {
-        await updateCartItem(productId, newQuantity)
+        const response = await cartService.updateCartItem(productId, newQuantity)
+        if (!response.success) {
+          throw new Error(response.message || "Failed to update cart")
+        }
       }
 
       // Update local cart state
@@ -81,7 +88,7 @@ export default function CartPage() {
     } catch (err) {
       toast({
         title: t("cart.updateError") || "Error",
-        description: getErrorMessage(err),
+        description: err.message || "Failed to update cart",
         variant: "destructive",
       })
     } finally {
@@ -95,7 +102,10 @@ export default function CartPage() {
 
       // Remove item from API
       if (status === "authenticated") {
-        await removeFromCart(productId)
+        const response = await cartService.removeFromCart(productId)
+        if (!response.success) {
+          throw new Error(response.message || "Failed to remove item from cart")
+        }
       }
 
       // Update local cart state
@@ -115,7 +125,7 @@ export default function CartPage() {
     } catch (err) {
       toast({
         title: t("cart.removeError") || "Error",
-        description: getErrorMessage(err),
+        description: err.message || "Failed to remove item from cart",
         variant: "destructive",
       })
     } finally {
@@ -130,6 +140,10 @@ export default function CartPage() {
         return total + price * item.quantity
       }, 0) || 0
     )
+  }
+
+  const formatPrice = (price) => {
+    return `$${price.toFixed(2)}`
   }
 
   const handleCheckout = () => {

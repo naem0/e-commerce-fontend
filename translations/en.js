@@ -1,909 +1,385 @@
 const en = {
-  // Common
-  home: "Home",
-  products: "Products",
-  categories: "Categories",
-  brands: "Brands",
-  cart: "Cart",
-  orders: "Orders",
-  account: "Account",
-  login: "Login",
-  register: "Register",
-  logout: "Logout",
-  search: "Search",
-  profile: "Profile",
-  dashboard: "Dashboard",
-  settings: "Settings",
-  admin: "Admin",
-
-  // Product related
-  addToCart: "Add to Cart",
-  buyNow: "Buy Now",
-  outOfStock: "Out of Stock",
-  price: "Price",
-  discount: "Discount",
-  quantity: "Quantity",
-  description: "Description",
-  reviews: "Reviews",
-  relatedProducts: "Related Products",
-  productDetails: "Product Details",
-
-  // Cart related
-  yourCart: "Your Cart",
-  emptyCart: "Your cart is empty",
-  continueShopping: "Continue Shopping",
-  checkout: "Checkout",
-  removeItem: "Remove Item",
-  subtotal: "Subtotal",
-  total: "Total",
-
-  // Order related
-  orderHistory: "Order History",
-  orderDetails: "Order Details",
-  orderDate: "Order Date",
-  orderStatus: "Order Status",
-  paymentMethod: "Payment Method",
-  shippingAddress: "Shipping Address",
-  billingAddress: "Billing Address",
-  trackOrder: "Track Order",
-
-  // Auth related
-  email: "Email",
-  password: "Password",
-  confirmPassword: "Confirm Password",
-  forgotPassword: "Forgot Password?",
-  rememberMe: "Remember Me",
-  dontHaveAccount: "Don't have an account?",
-  alreadyHaveAccount: "Already have an account?",
-  resetPassword: "Reset Password",
-
-  // User profile
-  personalInfo: "Personal Information",
-  name: "Name",
-  phone: "Phone",
-  address: "Address",
-  city: "City",
-  state: "State",
-  country: "Country",
-  zipCode: "Zip Code",
-  updateProfile: "Update Profile",
-
-  // Admin dashboard
-  overview: "Overview",
-  salesOverview: "Sales Overview",
-  recentOrders: "Recent Orders",
-  topProducts: "Top Products",
-  customerOverview: "Customer Overview",
-
-  // Admin management
-  productManagement: "Product Management",
-  categoryManagement: "Category Management",
-  brandManagement: "Brand Management",
-  orderManagement: "Order Management",
-  userManagement: "User Management",
-  siteSettings: "Site Settings",
-
-  // CRUD operations
-  create: "Create",
-  view: "View",
-  edit: "Edit",
-  delete: "Delete",
-  save: "Save",
-  cancel: "Cancel",
-  update: "Update",
-
-  // Form validations
-  required: "This field is required",
-  invalidEmail: "Invalid email address",
-  passwordMismatch: "Passwords do not match",
-  minLength: "Must be at least {0} characters",
-
-  // Notifications
-  success: "Success",
-  error: "Error",
-  warning: "Warning",
-  info: "Information",
-
-  // Site settings
-  generalSettings: "General Settings",
-  siteTitle: "Site Title",
-  siteDescription: "Site Description",
-  logo: "Logo",
-  favicon: "Favicon",
-  themeColor: "Theme Color",
-  currency: "Currency",
-  language: "Language",
-
-  // Misc
-  loading: "Loading...",
-  noResults: "No results found",
-  showMore: "Show More",
-  showLess: "Show Less",
-  contactUs: "Contact Us",
-  aboutUs: "About Us",
-  termsConditions: "Terms & Conditions",
-  privacyPolicy: "Privacy Policy",
-  faq: "FAQ",
-  newsletter: "Newsletter",
-  subscribe: "Subscribe",
-  unsubscribe: "Unsubscribe",
-
-  // Product attributes
-  color: "Color",
-  size: "Size",
-  weight: "Weight",
-  material: "Material",
-  brand: "Brand",
-  category: "Category",
-  inStock: "In Stock",
-  sku: "SKU",
-
-  // Order statuses
-  pending: "Pending",
-  processing: "Processing",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-
-  // Payment methods
-  creditCard: "Credit Card",
-  debitCard: "Debit Card",
-  paypal: "PayPal",
-  bankTransfer: "Bank Transfer",
-  cashOnDelivery: "Cash on Delivery",
-
-  // Time related
-  today: "Today",
-  yesterday: "Yesterday",
-  thisWeek: "This Week",
-  thisMonth: "This Month",
-  thisYear: "This Year",
-
-  // Chart labels
-  sales: "Sales",
-  revenue: "Revenue",
-  customers: "Customers",
-
-  // Variations
-  variations: "Variations",
-  addVariation: "Add Variation",
-  removeVariation: "Remove Variation",
-
-  // Filters
-  filters: "Filters",
-  priceRange: "Price Range",
-  clearFilters: "Clear Filters",
-  sortBy: "Sort By",
-  featured: "Featured",
-  newest: "Newest",
-  priceLowToHigh: "Price: Low to High",
-  priceHighToLow: "Price: High to Low",
-
-  // Reviews
-  writeReview: "Write a Review",
-  rating: "Rating",
-  comment: "Comment",
-  submitReview: "Submit Review",
-
-  // Pagination
-  previous: "Previous",
-  next: "Next",
-  page: "Page",
-  of: "of",
-
-  // Wishlist
-  wishlist: "Wishlist",
-  addToWishlist: "Add to Wishlist",
-  removeFromWishlist: "Remove from Wishlist",
-
-  // Compare
-  compare: "Compare",
-  addToCompare: "Add to Compare",
-  removeFromCompare: "Remove from Compare",
-
-  // Stock
-  lowStock: "Low Stock",
-  stockQuantity: "Stock Quantity",
-
-  // Discounts
-  specialOffer: "Special Offer",
-  limitedTime: "Limited Time",
-
-  // Shipping
-  shipping: "Shipping",
-  freeShipping: "Free Shipping",
-  shippingCost: "Shipping Cost",
-  estimatedDelivery: "Estimated Delivery",
-
-  // Taxes
-  tax: "Tax",
-  includingTax: "Including Tax",
-  excludingTax: "Excluding Tax",
-
-  // Returns
-  returns: "Returns",
-  returnPolicy: "Return Policy",
-
-  // Gift
-  gift: "Gift",
-  giftWrapping: "Gift Wrapping",
-
-  // Social
-  shareProduct: "Share Product",
-  followUs: "Follow Us",
-
-  // Errors
-  pageNotFound: "Page Not Found",
-  serverError: "Server Error",
-  goBackHome: "Go Back Home",
-
-  // Coupons
-  coupon: "Coupon",
-  applyCoupon: "Apply Coupon",
-  couponCode: "Coupon Code",
-  couponApplied: "Coupon Applied",
-  invalidCoupon: "Invalid Coupon",
-
-  // Checkout
-  checkoutProcess: "Checkout Process",
-  shippingInformation: "Shipping Information",
-  paymentInformation: "Payment Information",
-  orderSummary: "Order Summary",
-  placeOrder: "Place Order",
-
-  // User roles
-  admin: "Admin",
-  customer: "Customer",
-  guest: "Guest",
-
-  // Inventory
-  inventory: "Inventory",
-  manageInventory: "Manage Inventory",
-
-  // Reports
-  reports: "Reports",
-  salesReport: "Sales Report",
-  inventoryReport: "Inventory Report",
-  customerReport: "Customer Report",
-
-  // Import/Export
-  import: "Import",
-  export: "Export",
-
-  // Bulk actions
-  bulkActions: "Bulk Actions",
-  selectAll: "Select All",
-  deselectAll: "Deselect All",
-
-  // Status
-  status: "Status",
-  active: "Active",
-  inactive: "Inactive",
-  draft: "Draft",
-  published: "Published",
-
-  // SEO
-  seo: "SEO",
-  metaTitle: "Meta Title",
-  metaDescription: "Meta Description",
-  metaKeywords: "Meta Keywords",
-
-  // Media
-  media: "Media",
-  uploadImage: "Upload Image",
-  gallery: "Gallery",
-
-  // Comments
-  comments: "Comments",
-  leaveComment: "Leave a Comment",
-
-  // Tags
-  tags: "Tags",
-  addTag: "Add Tag",
-
-  // Attributes
-  attributes: "Attributes",
-  addAttribute: "Add Attribute",
-
-  // Featured
-  featured: "Featured",
-  markAsFeatured: "Mark as Featured",
-
-  // Dates
-  date: "Date",
-  startDate: "Start Date",
-  endDate: "End Date",
-
-  // Analytics
-  analytics: "Analytics",
-  visitors: "Visitors",
-  pageViews: "Page Views",
-
-  // Notifications
-  notifications: "Notifications",
-  markAsRead: "Mark as Read",
-  markAllAsRead: "Mark All as Read",
-
-  // Messages
-  messages: "Messages",
-  inbox: "Inbox",
-  sent: "Sent",
-  compose: "Compose",
-
-  // Help
-  help: "Help",
-  support: "Support",
-  documentation: "Documentation",
-
-  // Updates
-  updates: "Updates",
-  newVersion: "New Version",
-
-  // Backup
-  backup: "Backup",
-  restore: "Restore",
-
-  // Logs
-  logs: "Logs",
-  systemLogs: "System Logs",
-
-  // Maintenance
-  maintenance: "Maintenance",
-  maintenanceMode: "Maintenance Mode",
-
-  // Performance
-  performance: "Performance",
-  optimization: "Optimization",
-
-  // Security
-  security: "Security",
-  twoFactorAuth: "Two-Factor Authentication",
-
-  // Integrations
-  integrations: "Integrations",
-  connectWith: "Connect with",
-
-  // Widgets
-  widgets: "Widgets",
-  addWidget: "Add Widget",
-
-  // Themes
-  themes: "Themes",
-  currentTheme: "Current Theme",
-
-  // Plugins
-  plugins: "Plugins",
-  installPlugin: "Install Plugin",
-
-  // System
-  system: "System",
-  systemInfo: "System Information",
-
-  // Customization
-  customization: "Customization",
-  customize: "Customize",
-
-  // Localization
-  localization: "Localization",
-  timezone: "Timezone",
-
-  // Permissions
-  permissions: "Permissions",
-  roles: "Roles",
-
-  // Activities
-  activities: "Activities",
-  recentActivities: "Recent Activities",
-
-  // Feedback
-  feedback: "Feedback",
-  sendFeedback: "Send Feedback",
-
-  // Rating
-  rating: "Rating",
-  averageRating: "Average Rating",
-
-  // Verification
-  verification: "Verification",
-  verify: "Verify",
-
-  // Subscription
-  subscription: "Subscription",
-  plan: "Plan",
-
-  // Downloads
-  downloads: "Downloads",
-  download: "Download",
-
-  // Uploads
-  uploads: "Uploads",
-  upload: "Upload",
-
-  // Files
-  files: "Files",
-  fileManager: "File Manager",
-
-  // Calendar
-  calendar: "Calendar",
-  event: "Event",
-
-  // Tasks
-  tasks: "Tasks",
-  addTask: "Add Task",
-
-  // Notes
-  notes: "Notes",
-  addNote: "Add Note",
-
-  // Reminders
-  reminders: "Reminders",
-  setReminder: "Set Reminder",
-
-  // Bookmarks
-  bookmarks: "Bookmarks",
-  addBookmark: "Add Bookmark",
-
-  // History
-  history: "History",
-  clearHistory: "Clear History",
-
-  // Preferences
-  preferences: "Preferences",
-  savePreferences: "Save Preferences",
-
-  // Accessibility
-  accessibility: "Accessibility",
-
-  // Legal
-  legal: "Legal",
-
-  // Compliance
-  compliance: "Compliance",
-
-  // Agreements
-  agreements: "Agreements",
-
-  // Policies
-  policies: "Policies",
-
-  // Regulations
-  regulations: "Regulations",
-
-  // Standards
-  standards: "Standards",
-
-  // Guidelines
-  guidelines: "Guidelines",
-
-  // Rules
-  rules: "Rules",
-
-  // Terms
-  terms: "Terms",
-
-  // Conditions
-  conditions: "Conditions",
-
-  // Disclaimers
-  disclaimers: "Disclaimers",
-
-  // Notices
-  notices: "Notices",
-
-  // Warnings
-  warnings: "Warnings",
-
-  // Alerts
-  alerts: "Alerts",
-
-  // Announcements
-  announcements: "Announcements",
-
-  // Broadcasts
-  broadcasts: "Broadcasts",
-
-  // Publications
-  publications: "Publications",
-
-  // Releases
-  releases: "Releases",
-
-  // Versions
-  versions: "Versions",
-
-  // Builds
-  builds: "Builds",
-
-  // Deployments
-  deployments: "Deployments",
-
-  // Installations
-  installations: "Installations",
-
-  // Configurations
-  configurations: "Configurations",
-
-  // Parameters
-  parameters: "Parameters",
-
-  // Variables
-  variables: "Variables",
-
-  // Constants
-  constants: "Constants",
-
-  // Functions
-  functions: "Functions",
-
-  // Methods
-  methods: "Methods",
-
-  // Properties
-  properties: "Properties",
-
-  // Attributes
-  attributes: "Attributes",
-
-  // Elements
-  elements: "Elements",
-
-  // Components
-  components: "Components",
-
-  // Modules
-  modules: "Modules",
-
-  // Packages
-  packages: "Packages",
-
-  // Libraries
-  libraries: "Libraries",
-
-  // Frameworks
-  frameworks: "Frameworks",
-
-  // Platforms
-  platforms: "Platforms",
-
-  // Services
-  services: "Services",
-
-  // APIs
-  apis: "APIs",
-
-  // Endpoints
-  endpoints: "Endpoints",
-
-  // Routes
-  routes: "Routes",
-
-  // Paths
-  paths: "Paths",
-
-  // URLs
-  urls: "URLs",
-
-  // Links
-  links: "Links",
-
-  // Connections
-  connections: "Connections",
-
-  // Networks
-  networks: "Networks",
-
-  // Servers
-  servers: "Servers",
-
-  // Clients
-  clients: "Clients",
-
-  // Hosts
-  hosts: "Hosts",
-
-  // Domains
-  domains: "Domains",
-
-  // Subdomains
-  subdomains: "Subdomains",
-
-  // IP Addresses
-  ipAddresses: "IP Addresses",
-
-  // Ports
-  ports: "Ports",
-
-  // Protocols
-  protocols: "Protocols",
-
-  // Standards
-  standards: "Standards",
-
-  // Specifications
-  specifications: "Specifications",
-
-  // Requirements
-  requirements: "Requirements",
-
-  // Dependencies
-  dependencies: "Dependencies",
-
-  // Constraints
-  constraints: "Constraints",
-
-  // Limitations
-  limitations: "Limitations",
-
-  // Restrictions
-  restrictions: "Restrictions",
-
-  // Permissions
-  permissions: "Permissions",
-
-  // Access
-  access: "Access",
-
-  // Control
-  control: "Control",
-
-  // Management
-  management: "Management",
-
-  // Administration
-  administration: "Administration",
-
-  // Supervision
-  supervision: "Supervision",
-
-  // Monitoring
-  monitoring: "Monitoring",
-
-  // Tracking
-  tracking: "Tracking",
-
-  // Logging
-  logging: "Logging",
-
-  // Debugging
-  debugging: "Debugging",
-
-  // Testing
-  testing: "Testing",
-
-  // Validation
-  validation: "Validation",
-
-  // Verification
-  verification: "Verification",
-
-  // Certification
-  certification: "Certification",
-
-  // Authentication
-  authentication: "Authentication",
-
-  // Authorization
-  authorization: "Authorization",
-
-  // Encryption
-  encryption: "Encryption",
-
-  // Decryption
-  decryption: "Decryption",
-
-  // Hashing
-  hashing: "Hashing",
-
-  // Signing
-  signing: "Signing",
-
-  // Verification
-  verification: "Verification",
-
-  // Validation
-  validation: "Validation",
-
-  // Processing
-  processing: "Processing",
-
-  // Computation
-  computation: "Computation",
-
-  // Calculation
-  calculation: "Calculation",
-
-  // Evaluation
-  evaluation: "Evaluation",
-
-  // Analysis
-  analysis: "Analysis",
-
-  // Synthesis
-  synthesis: "Synthesis",
-
-  // Generation
-  generation: "Generation",
-
-  // Creation
-  creation: "Creation",
-
-  // Production
-  production: "Production",
-
-  // Development
-  development: "Development",
-
-  // Implementation
-  implementation: "Implementation",
-
-  // Deployment
-  deployment: "Deployment",
-
-  // Maintenance
-  maintenance: "Maintenance",
-
-  // Support
-  support: "Support",
-
-  // Assistance
-  assistance: "Assistance",
-
-  // Help
-  help: "Help",
-
-  // Guidance
-  guidance: "Guidance",
-
-  // Instructions
-  instructions: "Instructions",
-
-  // Directions
-  directions: "Directions",
-
-  // Navigation
-  navigation: "Navigation",
-
-  // Orientation
-  orientation: "Orientation",
-
-  // Location
-  location: "Location",
-
-  // Position
-  position: "Position",
-
-  // Coordinates
-  coordinates: "Coordinates",
-
-  // Dimensions
-  dimensions: "Dimensions",
-
-  // Measurements
-  measurements: "Measurements",
-
-  // Units
-  units: "Units",
-
-  // Quantities
-  quantities: "Quantities",
-
-  // Values
-  values: "Values",
-
-  // Data
-  data: "Data",
-
-  // Information
-  information: "Information",
-
-  // Knowledge
-  knowledge: "Knowledge",
-
-  // Wisdom
-  wisdom: "Wisdom",
-
-  // Intelligence
-  intelligence: "Intelligence",
-
-  // Learning
-  learning: "Learning",
-
-  // Education
-  education: "Education",
-
-  // Training
-  training: "Training",
-
-  // Skills
-  skills: "Skills",
-
-  // Abilities
-  abilities: "Abilities",
-
-  // Capabilities
-  capabilities: "Capabilities",
-
-  // Competencies
-  competencies: "Competencies",
-
-  // Qualifications
-  qualifications: "Qualifications",
-
-  // Certifications
-  certifications: "Certifications",
-
-  // Credentials
-  credentials: "Credentials",
-
-  // Identities
-  identities: "Identities",
-
-  // Profiles
-  profiles: "Profiles",
-
-  // Accounts
-  accounts: "Accounts",
-
-  // Users
-  users: "Users",
-
-  // Members
-  members: "Members",
-
-  // Subscribers
-  subscribers: "Subscribers",
-
-  // Customers
-  customers: "Customers",
-
-  // Clients
-  clients: "Clients",
-
-  // Partners
-  partners: "Partners",
-
-  // Vendors
-  vendors: "Vendors",
-
-  // Suppliers
-  suppliers: "Suppliers",
-
-  // Manufacturers
-  manufacturers: "Manufacturers",
-
-  // Distributors
-  distributors: "Distributors",
-
-  // Retailers
-  retailers: "Retailers",
-
-  // Wholesalers
-  wholesalers: "Wholesalers",
-
-  // Merchants
-  merchants: "Merchants",
-
-  // Sellers
-  sellers: "Sellers",
-
-  // Buyers
-  buyers: "Buyers",
-
-  // Shoppers
-  shoppers: "Shoppers",
-
-  // Consumers
-  consumers: "Consumers",
-
-  // End Users
-  endUsers: "End Users",
-
-  // Welcome
-  welcome: "Welcome",
-
-  // Description
-  description: "Description",
+  "nav.home": "Home",
+  "nav.products": "Products",
+  "nav.categories": "Categories",
+  "nav.brands": "Brands",
+  "nav.cart": "Cart",
+  "nav.orders": "Orders",
+  "nav.account": "Account",
+  "nav.login": "Login",
+  "nav.register": "Register",
+  "nav.logout": "Logout",
+  "nav.search": "Search",
+  "nav.profile": "Profile",
+  "nav.dashboard": "Dashboard",
+  "nav.settings": "Settings",
+  "nav.admin": "Admin",
+
+  "products.featured": "Featured Products",
+  "products.addToCart": "Add to Cart",
+  "products.buyNow": "Buy Now",
+  "products.outOfStock": "Out of Stock",
+  "products.price": "Price",
+  "products.discount": "Discount",
+  "products.quantity": "Quantity",
+  "products.description": "Description",
+  "products.reviews": "Reviews",
+  "products.relatedProducts": "Related Products",
+  "products.productDetails": "Product Details",
+  "products.viewAll": "View All Products",
+
+  "categories.title": "Shop by Category",
+  "categories.products": "products",
+  "categories.all": "All Categories",
+
+  "brands.title": "Shop by Brand",
+  "brands.all": "All Brands",
+
+  "cart.yourCart": "Your Cart",
+  "cart.emptyCart": "Your cart is empty",
+  "cart.continueShopping": "Continue Shopping",
+  "cart.checkout": "Checkout",
+  "cart.removeItem": "Remove Item",
+  "cart.subtotal": "Subtotal",
+  "cart.total": "Total",
+
+  "orders.orderHistory": "Order History",
+  "orders.orderDetails": "Order Details",
+  "orders.orderDate": "Order Date",
+  "orders.orderStatus": "Order Status",
+  "orders.paymentMethod": "Payment Method",
+  "orders.shippingAddress": "Shipping Address",
+  "orders.billingAddress": "Billing Address",
+  "orders.trackOrder": "Track Order",
+
+  "auth.email": "Email",
+  "auth.password": "Password",
+  "auth.confirmPassword": "Confirm Password",
+  "auth.forgotPassword": "Forgot Password?",
+  "auth.rememberMe": "Remember Me",
+  "auth.dontHaveAccount": "Don't have an account?",
+  "auth.alreadyHaveAccount": "Already have an account?",
+  "auth.resetPassword": "Reset Password",
+  "auth.login": "Login",
+  "auth.register": "Register",
+  "auth.logout": "Logout",
+
+  "profile.personalInfo": "Personal Information",
+  "profile.name": "Name",
+  "profile.phone": "Phone",
+  "profile.address": "Address",
+  "profile.city": "City",
+  "profile.state": "State",
+  "profile.country": "Country",
+  "profile.zipCode": "Zip Code",
+  "profile.updateProfile": "Update Profile",
+
+  "admin.overview": "Overview",
+  "admin.salesOverview": "Sales Overview",
+  "admin.recentOrders": "Recent Orders",
+  "admin.topProducts": "Top Products",
+  "admin.customerOverview": "Customer Overview",
+  "admin.productManagement": "Product Management",
+  "admin.categoryManagement": "Category Management",
+  "admin.brandManagement": "Brand Management",
+  "admin.orderManagement": "Order Management",
+  "admin.userManagement": "User Management",
+  "admin.siteSettings": "Site Settings",
+
+  "crud.create": "Create",
+  "crud.view": "View",
+  "crud.edit": "Edit",
+  "crud.delete": "Delete",
+  "crud.save": "Save",
+  "crud.cancel": "Cancel",
+  "crud.update": "Update",
+
+  "validation.required": "This field is required",
+  "validation.invalidEmail": "Invalid email address",
+  "validation.passwordMismatch": "Passwords do not match",
+  "validation.minLength": "Must be at least {0} characters",
+
+  "notifications.success": "Success",
+  "notifications.error": "Error",
+  "notifications.warning": "Warning",
+  "notifications.info": "Information",
+
+  "settings.generalSettings": "General Settings",
+  "settings.siteTitle": "Site Title",
+  "settings.siteDescription": "Site Description",
+  "settings.logo": "Logo",
+  "settings.favicon": "Favicon",
+  "settings.themeColor": "Theme Color",
+  "settings.currency": "Currency",
+  "settings.language": "Language",
+
+  "common.loading": "Loading...",
+  "common.noResults": "No results found",
+  "common.showMore": "Show More",
+  "common.showLess": "Show Less",
+  "common.contactUs": "Contact Us",
+  "common.aboutUs": "About Us",
+  "common.termsConditions": "Terms & Conditions",
+  "common.privacyPolicy": "Privacy Policy",
+  "common.faq": "FAQ",
+  "common.newsletter": "Newsletter",
+  "common.subscribe": "Subscribe",
+  "common.unsubscribe": "Unsubscribe",
+
+  "attributes.color": "Color",
+  "attributes.size": "Size",
+  "attributes.weight": "Weight",
+  "attributes.material": "Material",
+  "attributes.brand": "Brand",
+  "attributes.category": "Category",
+  "attributes.inStock": "In Stock",
+  "attributes.sku": "SKU",
+
+  "orderStatus.pending": "Pending",
+  "orderStatus.processing": "Processing",
+  "orderStatus.shipped": "Shipped",
+  "orderStatus.delivered": "Delivered",
+  "orderStatus.cancelled": "Cancelled",
+  "orderStatus.refunded": "Refunded",
+
+  "payment.creditCard": "Credit Card",
+  "payment.debitCard": "Debit Card",
+  "payment.paypal": "PayPal",
+  "payment.bankTransfer": "Bank Transfer",
+  "payment.cashOnDelivery": "Cash on Delivery",
+
+  "time.today": "Today",
+  "time.yesterday": "Yesterday",
+  "time.thisWeek": "This Week",
+  "time.thisMonth": "This Month",
+  "time.thisYear": "This Year",
+
+  "charts.sales": "Sales",
+  "charts.revenue": "Revenue",
+  "charts.customers": "Customers",
+
+  "variations.title": "Variations",
+  "variations.addVariation": "Add Variation",
+  "variations.removeVariation": "Remove Variation",
+
+  "filters.title": "Filters",
+  "filters.priceRange": "Price Range",
+  "filters.clearFilters": "Clear Filters",
+  "filters.sortBy": "Sort By",
+  "filters.featured": "Featured",
+  "filters.newest": "Newest",
+  "filters.priceLowToHigh": "Price: Low to High",
+  "filters.priceHighToLow": "Price: High to Low",
+
+  "reviews.title": "Reviews",
+  "reviews.writeReview": "Write a Review",
+  "reviews.rating": "Rating",
+  "reviews.comment": "Comment",
+  "reviews.submitReview": "Submit Review",
+
+  "pagination.previous": "Previous",
+  "pagination.next": "Next",
+  "pagination.page": "Page",
+  "pagination.of": "of",
+
+  "wishlist.title": "Wishlist",
+  "wishlist.addToWishlist": "Add to Wishlist",
+  "wishlist.removeFromWishlist": "Remove from Wishlist",
+
+  "compare.title": "Compare",
+  "compare.addToCompare": "Add to Compare",
+  "compare.removeFromCompare": "Remove from Compare",
+
+  "stock.lowStock": "Low Stock",
+  "stock.stockQuantity": "Stock Quantity",
+
+  "discounts.specialOffer": "Special Offer",
+  "discounts.limitedTime": "Limited Time",
+
+  "shipping.title": "Shipping",
+  "shipping.freeShipping": "Free Shipping",
+  "shipping.shippingCost": "Shipping Cost",
+  "shipping.estimatedDelivery": "Estimated Delivery",
+
+  "taxes.tax": "Tax",
+  "taxes.includingTax": "Including Tax",
+  "taxes.excludingTax": "Excluding Tax",
+
+  "returns.title": "Returns",
+  "returns.returnPolicy": "Return Policy",
+
+  "gift.title": "Gift",
+  "gift.giftWrapping": "Gift Wrapping",
+
+  "social.shareProduct": "Share Product",
+  "social.followUs": "Follow Us",
+
+  "errors.pageNotFound": "Page Not Found",
+  "errors.serverError": "Server Error",
+  "errors.goBackHome": "Go Back Home",
+
+  "coupons.title": "Coupon",
+  "coupons.applyCoupon": "Apply Coupon",
+  "coupons.couponCode": "Coupon Code",
+  "coupons.couponApplied": "Coupon Applied",
+  "coupons.invalidCoupon": "Invalid Coupon",
+
+  "checkout.title": "Checkout Process",
+  "checkout.shippingInformation": "Shipping Information",
+  "checkout.paymentInformation": "Payment Information",
+  "checkout.orderSummary": "Order Summary",
+  "checkout.placeOrder": "Place Order",
+
+  "roles.admin": "Admin",
+  "roles.customer": "Customer",
+  "roles.guest": "Guest",
+
+  "inventory.title": "Inventory",
+  "inventory.manageInventory": "Manage Inventory",
+
+  "reports.title": "Reports",
+  "reports.salesReport": "Sales Report",
+  "reports.inventoryReport": "Inventory Report",
+  "reports.customerReport": "Customer Report",
+
+  "importExport.import": "Import",
+  "importExport.export": "Export",
+
+  "bulkActions.title": "Bulk Actions",
+  "bulkActions.selectAll": "Select All",
+  "bulkActions.deselectAll": "Deselect All",
+
+  "status.title": "Status",
+  "status.active": "Active",
+  "status.inactive": "Inactive",
+  "status.draft": "Draft",
+  "status.published": "Published",
+
+  "seo.title": "SEO",
+  "seo.metaTitle": "Meta Title",
+  "seo.metaDescription": "Meta Description",
+  "seo.metaKeywords": "Meta Keywords",
+
+  "media.title": "Media",
+  "media.uploadImage": "Upload Image",
+  "media.gallery": "Gallery",
+
+  "comments.title": "Comments",
+  "comments.leaveComment": "Leave a Comment",
+
+  "tags.title": "Tags",
+  "tags.addTag": "Add Tag",
+
+  "featured.title": "Featured",
+  "featured.markAsFeatured": "Mark as Featured",
+
+  "dates.date": "Date",
+  "dates.startDate": "Start Date",
+  "dates.endDate": "End Date",
+
+  "analytics.title": "Analytics",
+  "analytics.visitors": "Visitors",
+  "analytics.pageViews": "Page Views",
+
+  "notifications.title": "Notifications",
+  "notifications.markAsRead": "Mark as Read",
+  "notifications.markAllAsRead": "Mark All as Read",
+
+  "messages.title": "Messages",
+  "messages.inbox": "Inbox",
+  "messages.sent": "Sent",
+  "messages.compose": "Compose",
+
+  "help.title": "Help",
+  "help.support": "Support",
+  "help.documentation": "Documentation",
+
+  "updates.title": "Updates",
+  "updates.newVersion": "New Version",
+
+  "backup.title": "Backup",
+  "backup.restore": "Restore",
+
+  "logs.title": "Logs",
+  "logs.systemLogs": "System Logs",
+
+  "maintenance.title": "Maintenance",
+  "maintenance.maintenanceMode": "Maintenance Mode",
+
+  "performance.title": "Performance",
+  "performance.optimization": "Optimization",
+
+  "security.title": "Security",
+  "security.twoFactorAuth": "Two-Factor Authentication",
+
+  "integrations.title": "Integrations",
+  "integrations.connectWith": "Connect with",
+
+  "widgets.title": "Widgets",
+  "widgets.addWidget": "Add Widget",
+
+  "themes.title": "Themes",
+  "themes.currentTheme": "Current Theme",
+
+  "plugins.title": "Plugins",
+  "plugins.installPlugin": "Install Plugin",
+
+  "system.title": "System",
+  "system.systemInfo": "System Information",
+
+  "customization.title": "Customization",
+  "customization.customize": "Customize",
+
+  "localization.title": "Localization",
+  "localization.timezone": "Timezone",
+
+  "permissions.title": "Permissions",
+  "permissions.roles": "Roles",
+
+  "activities.title": "Activities",
+  "activities.recentActivities": "Recent Activities",
+
+  "feedback.title": "Feedback",
+  "feedback.sendFeedback": "Send Feedback",
+
+  "rating.title": "Rating",
+  "rating.averageRating": "Average Rating",
+
+  "verification.title": "Verification",
+  "verification.verify": "Verify",
+
+  "subscription.title": "Subscription",
+  "subscription.plan": "Plan",
+
+  "downloads.title": "Downloads",
+  "downloads.download": "Download",
+
+  "uploads.title": "Uploads",
+  "uploads.upload": "Upload",
+
+  "files.title": "Files",
+  "files.fileManager": "File Manager",
+
+  "calendar.title": "Calendar",
+  "calendar.event": "Event",
+
+  "tasks.title": "Tasks",
+  "tasks.addTask": "Add Task",
+
+  "notes.title": "Notes",
+  "notes.addNote": "Add Note",
+
+  "reminders.title": "Reminders",
+  "reminders.setReminder": "Set Reminder",
+
+  "bookmarks.title": "Bookmarks",
+  "bookmarks.addBookmark": "Add Bookmark",
+
+  "history.title": "History",
+  "history.clearHistory": "Clear History",
+
+  "preferences.title": "Preferences",
+  "preferences.savePreferences": "Save Preferences",
 }
 
 export default en

@@ -1,22 +1,25 @@
-import { createAPI, handleError } from "./api.utils"
+import axios from "axios"
 
-// Create auth API instance
-const authAPI = createAPI("auth")
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
 // Register a new user
 export const register = async (userData) => {
   try {
-    const response = await authAPI.post("/register", userData)
+    const response = await axios.post(`${API_URL}/auth/register`, userData)
     return response.data
   } catch (error) {
-    throw handleError(error)
+    console.error("Registration error:", error)
+    throw {
+      success: false,
+      message: error.response?.data?.message || "Registration failed",
+    }
   }
 }
 
 // Login user
 export const login = async (credentials) => {
   try {
-    const response = await authAPI.post("/login", credentials)
+    const response = await axios.post(`${API_URL}/auth/login`, credentials)
 
     // Store token and user data in localStorage
     if (typeof window !== "undefined" && response.data.token) {
@@ -26,7 +29,11 @@ export const login = async (credentials) => {
 
     return response.data
   } catch (error) {
-    throw handleError(error)
+    console.error("Login error:", error)
+    throw {
+      success: false,
+      message: error.response?.data?.message || "Login failed",
+    }
   }
 }
 
@@ -43,49 +50,83 @@ export const logout = () => {
 // Get current user
 export const getCurrentUser = async () => {
   try {
-    const response = await authAPI.get("/me")
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+
+    if (!token) {
+      throw {
+        success: false,
+        message: "No token found",
+      }
+    }
+
+    const response = await axios.get(`${API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
     return response.data
   } catch (error) {
-    throw handleError(error)
+    console.error("Get current user error:", error)
+    throw {
+      success: false,
+      message: error.response?.data?.message || "Failed to get user data",
+    }
   }
 }
 
 // Forgot password
 export const forgotPassword = async (email) => {
   try {
-    const response = await authAPI.post("/forgot-password", { email })
+    const response = await axios.post(`${API_URL}/auth/forgot-password`, { email })
     return response.data
   } catch (error) {
-    throw handleError(error)
+    console.error("Forgot password error:", error)
+    throw {
+      success: false,
+      message: error.response?.data?.message || "Failed to process forgot password request",
+    }
   }
 }
 
 // Reset password
 export const resetPassword = async (token, password) => {
   try {
-    const response = await authAPI.post(`/reset-password/${token}`, { password })
+    const response = await axios.post(`${API_URL}/auth/reset-password/${token}`, { password })
     return response.data
   } catch (error) {
-    throw handleError(error)
+    console.error("Reset password error:", error)
+    throw {
+      success: false,
+      message: error.response?.data?.message || "Failed to reset password",
+    }
   }
 }
 
 // Verify email
 export const verifyEmail = async (token) => {
   try {
-    const response = await authAPI.get(`/verify-email/${token}`)
+    const response = await axios.get(`${API_URL}/auth/verify-email/${token}`)
     return response.data
   } catch (error) {
-    throw handleError(error)
+    console.error("Verify email error:", error)
+    throw {
+      success: false,
+      message: error.response?.data?.message || "Failed to verify email",
+    }
   }
 }
 
 // Resend verification email
 export const resendVerificationEmail = async (email) => {
   try {
-    const response = await authAPI.post("/resend-verification", { email })
+    const response = await axios.post(`${API_URL}/auth/resend-verification`, { email })
     return response.data
   } catch (error) {
-    throw handleError(error)
+    console.error("Resend verification email error:", error)
+    throw {
+      success: false,
+      message: error.response?.data?.message || "Failed to resend verification email",
+    }
   }
 }

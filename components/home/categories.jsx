@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { useLanguage } from "@/components/language-provider"
 import { Skeleton } from "@/components/ui/skeleton"
+import { getCategories } from "@/services/category.service"
 
 export function Categories() {
   const { t } = useLanguage()
@@ -17,14 +18,12 @@ export function Categories() {
     const fetchCategories = async () => {
       try {
         setLoading(true)
-        const response = await fetch("/api/categories")
-        
-        const data = await response.json()
+        const result = await getCategories({ limit: 8 })
 
-        if (data.success) {
-          setCategories(data.categories)
+        if (result.success) {
+          setCategories(result.categories)
         } else {
-          throw new Error(data.message || "Failed to fetch categories")
+          throw new Error(result.message || "Failed to fetch categories")
         }
       } catch (err) {
         console.error("Error fetching categories:", err)
