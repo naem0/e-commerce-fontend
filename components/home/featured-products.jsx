@@ -9,6 +9,9 @@ import { useCart } from "@/components/cart-provider"
 import { useLanguage } from "@/components/language-provider"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getProducts } from "@/services/product.service"
+import ProductCard1 from "@/components/home/product-card-1"
+import ProductCard2 from "@/components/home/product-card-2"
+import ProductCard3 from "@/components/home/product-card-3"
 
 export function FeaturedProducts() {
   const { t } = useLanguage()
@@ -73,29 +76,25 @@ export function FeaturedProducts() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {products.map((product) => (
-              <Card key={product._id} className="overflow-hidden">
-                <Link href={`/products/${product._id}`}>
-                  <div className="relative h-48 w-full">
-                    <Image
-                      src={product.images?.[0] || "/placeholder.svg?height=192&width=256"}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </Link>
-                <CardContent className="p-4">
-                  <Link href={`/products/${product._id}`}>
-                    <h3 className="font-semibold text-lg mb-1 hover:text-primary transition-colors">{product.name}</h3>
-                  </Link>
-                  <p className="text-lg font-bold mb-2">${product.price.toFixed(2)}</p>
-                  <Button onClick={() => handleAddToCart(product)} className="w-full">
-                    {t("products.addToCart") || "Add to Cart"}
-                  </Button>
-                </CardContent>
-              </Card>
+              <ProductCard1 
+               product={product} 
+               key={product._id} 
+               handleAddToCart={handleAddToCart} 
+              />
+
+              // <ProductCard2
+              //   key={product._id}
+              //   product={product}
+              //   handleAddToCart={handleAddToCart}
+              // />
+
+              // <ProductCard3
+              //   key={product._id}
+              //   product={product}
+              //   handleAddToCart={handleAddToCart}
+              // />
             ))}
           </div>
         )}

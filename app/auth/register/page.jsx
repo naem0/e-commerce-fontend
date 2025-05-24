@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2, AlertCircle } from "lucide-react"
 import { register } from "@/services/auth.service"
 import { signIn } from "next-auth/react"
 
@@ -18,6 +19,7 @@ export default function RegisterPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -33,6 +35,9 @@ export default function RegisterPage() {
     // Clear error when user types
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
+    }
+    if (error) {
+      setError("")
     }
   }
 
@@ -71,6 +76,7 @@ export default function RegisterPage() {
     }
 
     setIsLoading(true)
+    setError("")
 
     try {
       // Register the user
@@ -80,24 +86,30 @@ export default function RegisterPage() {
         password: formData.password,
       })
 
-      toast({
-        title: t("auth.registerSuccess") || "Registration Successful",
-        description: t("auth.accountCreated") || "Your account has been created successfully.",
-      })
+      if (result.success) {
+        toast({
+          title: t("auth.registerSuccess") || "Registration Successful",
+          description: t("auth.accountCreated") || "Your account has been created successfully.",
+        })
 
-      // Auto login after successful registration
-      await signIn("credentials", {
-        redirect: false,
-        email: formData.email,
-        password: formData.password,
-      })
+        // Auto login after successful registration
+        await signIn("credentials", {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+        })
 
-      // Redirect to home page or dashboard
-      router.push("/")
+        // Redirect to home page or dashboard
+        router.push("/")
+      } else {
+        setError(result.message || "Registration failed")
+      }
     } catch (error) {
+      const errorMessage = error.message || t("auth.errorOccurred") || "An error occurred during registration."
+      setError(errorMessage)
       toast({
         title: t("auth.registerFailed") || "Registration Failed",
-        description: error.message || t("auth.errorOccurred") || "An error occurred during registration.",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -114,6 +126,12 @@ export default function RegisterPage() {
             <CardDescription>{t("auth.registerDescription") || "Create an account to start shopping"}</CardDescription>
           </CardHeader>
           <CardContent>
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">{t("auth.name") || "Name"}</Label>

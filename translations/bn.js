@@ -17,6 +17,7 @@ const bn = {
 
   "products.featured": "ফিচার্ড পণ্যসমূহ",
   "products.addToCart": "কার্টে যোগ করুন",
+  "products.add": "কার্ট",
   "products.buyNow": "এখনই কিনুন",
   "products.outOfStock": "স্টক শেষ",
   "products.price": "মূল্য",

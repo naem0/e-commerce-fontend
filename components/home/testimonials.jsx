@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 const testimonialService = {
   getTestimonials: async () => {
     try {
-      const response = await fetch("/api/testimonials")
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/testimonials`)
       const data = await response.json()
       return { success: true, testimonials: data }
     } catch (error) {

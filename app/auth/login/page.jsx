@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2, AlertCircle } from "lucide-react"
 
 export default function LoginPage() {
   const { t } = useLanguage()
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const callbackUrl = searchParams.get("callbackUrl") || "/"
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -50,6 +52,9 @@ export default function LoginPage() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
     }
+    if (error) {
+      setError("")
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -60,9 +65,10 @@ export default function LoginPage() {
     }
 
     setIsLoading(true)
+    setError("")
 
     try {
-      // First, try to login with NextAuth
+      // Try to login with NextAuth
       const result = await signIn("credentials", {
         redirect: false,
         email: formData.email,
@@ -70,14 +76,15 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        // If NextAuth login fails, show error
+        // Show specific error message
+        setError("Invalid email or password. Please try again.")
         toast({
           title: t("auth.loginFailed") || "Login Failed",
           description: "Invalid email or password. Please try again.",
           variant: "destructive",
         })
       } else {
-        // If NextAuth login succeeds, show success message and redirect
+        // Success
         toast({
           title: t("auth.loginSuccess") || "Login Successful",
           description: t("auth.welcomeBack") || "Welcome back!",
@@ -85,9 +92,11 @@ export default function LoginPage() {
         router.push(callbackUrl)
       }
     } catch (error) {
+      const errorMessage = error.message || t("auth.errorOccurred") || "An error occurred during login."
+      setError(errorMessage)
       toast({
         title: t("auth.loginFailed") || "Login Failed",
-        description: error.message || t("auth.errorOccurred") || "An error occurred during login.",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -106,6 +115,12 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">{t("auth.email") || "Email"}</Label>

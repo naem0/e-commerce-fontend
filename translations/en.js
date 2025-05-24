@@ -17,6 +17,7 @@ const en = {
 
   "products.featured": "Featured Products",
   "products.addToCart": "Add to Cart",
+  "products.add": "Add",
   "products.buyNow": "Buy Now",
   "products.outOfStock": "Out of Stock",
   "products.price": "Price",

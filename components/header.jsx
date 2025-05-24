@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import { useLanguage } from "@/components/language-provider"
 import { useSiteSettings } from "@/components/site-settings-provider"
@@ -119,7 +119,13 @@ export function Header() {
               <span className="sr-only">{t("nav.cart")}</span>
             </Button>
           </Link>
-
+              <button
+              onClick={() => signOut()}
+              className="ml-2 text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+              style={{ color: settings?.primaryColor }}
+            >
+              {t("auth.logout")}
+            </button> 
           {/* User Account */}
           {session ? (
             <Link href="/account">
