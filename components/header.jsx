@@ -3,15 +3,24 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { signOut, useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "next-themes"
 import { useLanguage } from "@/components/language-provider"
 import { useSiteSettings } from "@/components/site-settings-provider"
 import { useCart } from "@/components/cart-provider"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ShoppingCart, User, Sun, Moon, Globe } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ShoppingCart, User, Sun, Moon, Globe, Search } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
 
 export function Header() {
   const pathname = usePathname()
@@ -20,11 +29,21 @@ export function Header() {
   const { language, setLanguage, t } = useLanguage()
   const { settings } = useSiteSettings()
   const { getCartItemCount } = useCart()
+  const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
 
   const cartItemCount = getCartItemCount()
 
   const isActive = (path) => {
     return pathname === path
+  }
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`)
+      setSearchQuery("")
+    }
   }
 
   return (
@@ -71,6 +90,20 @@ export function Header() {
             >
               {t("nav.categories")}
             </Link>
+            <div className="hidden md:flex items-center ml-6">
+              <form onSubmit={handleSearch} className="relative">
+                <Input
+                  type="text"
+                  placeholder={t("nav.searchPlaceholder") || "Search products..."}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-64 pr-10"
+                />
+                <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </form>
+            </div>
           </nav>
         </div>
         <div className="flex items-center gap-2">
@@ -119,21 +152,24 @@ export function Header() {
               <span className="sr-only">{t("nav.cart")}</span>
             </Button>
           </Link>
-              <button
-              onClick={() => signOut()}
-              className="ml-2 text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-              style={{ color: settings?.primaryColor }}
-            >
-              {t("auth.logout")}
-            </button> 
+
           {/* User Account */}
           {session ? (
-            <Link href="/account">
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-                <span className="sr-only">{t("nav.account")}</span>
-              </Button>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">{t("nav.account")}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Link href="/account">{t("nav.profile")}</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout")}</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link href="/auth/login">
               <Button variant="outline">{t("auth.login")}</Button>

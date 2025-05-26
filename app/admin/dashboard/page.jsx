@@ -78,7 +78,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
 
       {loading ? (
@@ -148,7 +148,7 @@ export default function AdminDashboard() {
             <CardTitle>Revenue Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <Overview chartType="revenue" />
+            <Overview chartType="revenue" className="w-100"/>
           </CardContent>
         </Card>
 
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
             <CardTitle>Orders Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <Overview chartType="orders" />
+            <Overview chartType="orders" className="w-100" />
           </CardContent>
         </Card>
       </div>

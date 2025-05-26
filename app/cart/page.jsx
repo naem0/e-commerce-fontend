@@ -24,12 +24,13 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState(null)
+  console.log("CartPage session:", session)
+  console.log("CartPage status:", status)
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
         setLoading(true)
-
         // If user is logged in, fetch cart from API
         if (status === "authenticated") {
           const response = await getCart()

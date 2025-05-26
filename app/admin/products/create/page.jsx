@@ -394,8 +394,7 @@ export default function CreateProductPage() {
   }
 
   return (
-    <AdminLayout>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto">
         <div className="flex items-center mb-6">
           <Button variant="ghost" onClick={() => router.back()} className="mr-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -1174,6 +1173,5 @@ export default function CreateProductPage() {
           </form>
         </div>
       </div>
-    </AdminLayout>
   )
 }
