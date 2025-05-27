@@ -5,6 +5,7 @@ import { BannerSection } from "@/components/home/banner-section"
 import { FeaturedProducts } from "@/components/home/featured-products"
 import { Categories } from "@/components/home/categories"
 import { CategoryProducts } from "@/components/home/category-products"
+import { CustomSection } from "@/components/home/custom-section"
 import { Testimonials } from "@/components/home/testimonials"
 import { Newsletter } from "@/components/home/newsletter"
 import { getSiteSettings } from "@/services/settings.service"
@@ -14,7 +15,6 @@ export default function Home() {
   const [settings, setSettings] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -114,6 +114,18 @@ export default function Home() {
             />
           ),
           order: categorySection.order || 4 + index,
+        })
+      }
+    })
+  }
+
+  // Add custom sections
+  if (homePageSections.customSections && Array.isArray(homePageSections.customSections)) {
+    homePageSections.customSections.forEach((customSection, index) => {
+      if (customSection.enabled) {
+        sections.push({
+          component: <CustomSection key={`custom-${customSection.id || index}`} section={customSection} />,
+          order: customSection.order || 10 + index,
         })
       }
     })

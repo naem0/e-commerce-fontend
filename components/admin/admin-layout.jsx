@@ -60,6 +60,12 @@ export function AdminLayout({ children }) {
       current: isActive("/admin/analytics"),
     },
     {
+      name: "Home Settings",
+      href: "/admin/home-settings",
+      icon: Settings,
+      current: isActive("/admin/home-settings"),
+    },
+    {
       name: "Settings",
       href: "/admin/settings",
       icon: Settings,
@@ -138,7 +144,7 @@ export function AdminLayout({ children }) {
             <h1 className="text-xl font-semibold">E-Commerce Admin</h1>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4">{children}</main>
       </div>
     </div>
   )

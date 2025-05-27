@@ -38,7 +38,7 @@ const testimonialDesigns = [
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-8">
-            {testimonials.map((testimonial) => (
+            {testimonials?.map((testimonial) => (
               <Card key={testimonial.id} className="overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4 mb-4">
