@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 export function BannerSection() {
   const { t } = useLanguage()
   const { settings } = useSiteSettings()
-  const [bannerDesign, setBannerDesign] = useState("banner-1")
+  const [bannerDesign, setBannerDesign] = useState("banner-2")
   const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {

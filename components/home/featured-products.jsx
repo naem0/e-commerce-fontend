@@ -78,11 +78,11 @@ export function FeaturedProducts() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {products.map((product) => (
-              <ProductCard1 
-               product={product} 
-               key={product._id} 
-               handleAddToCart={handleAddToCart} 
-              />
+              // <ProductCard1 
+              //  product={product} 
+              //  key={product._id} 
+              //  handleAddToCart={handleAddToCart} 
+              // />
 
               // <ProductCard2
               //   key={product._id}
@@ -90,11 +90,11 @@ export function FeaturedProducts() {
               //   handleAddToCart={handleAddToCart}
               // />
 
-              // <ProductCard3
-              //   key={product._id}
-              //   product={product}
-              //   handleAddToCart={handleAddToCart}
-              // />
+              <ProductCard3
+                key={product._id}
+                product={product}
+                handleAddToCart={handleAddToCart}
+              />
             ))}
           </div>
         )}

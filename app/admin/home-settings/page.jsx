@@ -11,7 +11,8 @@ import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Trash2, Plus, GripVertical, Settings, Star, Flame, Clock, TrendingUp } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Trash2, Plus, GripVertical, Settings, Star, Flame, Clock, TrendingUp, AlertCircle } from "lucide-react"
 import { getSiteSettings, updateSiteSettings } from "@/services/settings.service"
 import { getCategories } from "@/services/category.service"
 import { getProducts } from "@/services/product.service"
@@ -35,6 +36,7 @@ export default function HomeSettingsPage() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -48,6 +50,9 @@ export default function HomeSettingsPage() {
     const fetchData = async () => {
       try {
         setLoading(true)
+        setError(null)
+
+        console.log("Fetching data for admin:", session?.user?.email)
 
         const [settingsResult, categoriesResult, productsResult] = await Promise.all([
           getSiteSettings(),
@@ -87,6 +92,7 @@ export default function HomeSettingsPage() {
         }
       } catch (error) {
         console.error("Error fetching data:", error)
+        setError("Failed to load settings. Please try again.")
         toast({
           title: "Error",
           description: "Failed to load settings",
@@ -178,7 +184,10 @@ export default function HomeSettingsPage() {
   const handleSave = async () => {
     try {
       setSaving(true)
+      setError(null)
+
       console.log("Saving settings:", settings)
+      console.log("Session:", session)
 
       const result = await updateSiteSettings(settings)
       console.log("Save result:", result)
@@ -186,13 +195,14 @@ export default function HomeSettingsPage() {
       if (result.success) {
         toast({
           title: "Success",
-          description: "Home page settings updated successfully",
+          description: result.message || "Home page settings updated successfully",
         })
       } else {
         throw new Error(result.message || "Failed to update settings")
       }
     } catch (error) {
       console.error("Error saving settings:", error)
+      setError(error.message)
       toast({
         title: "Error",
         description: error.message,
@@ -231,11 +241,23 @@ export default function HomeSettingsPage() {
             Home Page Settings
           </h1>
           <p className="text-muted-foreground">Configure your home page sections and layout</p>
+          {session?.user && (
+            <p className="text-sm text-gray-500">
+              Logged in as: {session.user.email} ({session.user.role})
+            </p>
+          )}
         </div>
         <Button onClick={handleSave} disabled={saving} size="lg">
           {saving ? "Saving..." : "Save Changes"}
         </Button>
       </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
       <Tabs defaultValue="sections" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">
