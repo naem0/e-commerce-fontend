@@ -10,7 +10,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, ShoppingCart, Eye } from "lucide-react"
 
-export default function ProductCard({ product }) {
+export function ProductCard({ product, onAddToCart, showDiscount = false, discountPercentage = 0 }) {
   const { t } = useLanguage()
   const { addToCart } = useCart()
   const [isLoading, setIsLoading] = useState(false)
@@ -21,7 +21,11 @@ export default function ProductCard({ product }) {
 
     try {
       setIsLoading(true)
-      await addToCart(product._id, 1)
+      if (onAddToCart) {
+        await onAddToCart(product)
+      } else {
+        await addToCart(product._id, 1)
+      }
     } catch (error) {
       console.error("Error adding to cart:", error)
     } finally {
@@ -30,9 +34,12 @@ export default function ProductCard({ product }) {
   }
 
   // Calculate discount percentage
-  const discountPercentage = product.salePrice
+  const calculatedDiscountPercentage = product.salePrice
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
-    : 0
+    : discountPercentage
+
+  const finalPrice = product.salePrice || product.price
+  const originalPrice = product.price
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -44,8 +51,10 @@ export default function ProductCard({ product }) {
             fill
             className="object-cover transition-transform duration-300 hover:scale-105"
           />
-          {discountPercentage > 0 && (
-            <Badge className="absolute top-2 right-2 bg-red-500 hover:bg-red-600">-{discountPercentage}%</Badge>
+          {calculatedDiscountPercentage > 0 && (
+            <Badge className="absolute top-2 right-2 bg-red-500 hover:bg-red-600">
+              -{calculatedDiscountPercentage}%
+            </Badge>
           )}
           {product.stock <= 0 && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/60">
@@ -54,6 +63,9 @@ export default function ProductCard({ product }) {
               </Badge>
             </div>
           )}
+          {showDiscount && discountPercentage > 0 && (
+            <Badge className="absolute top-2 left-2 bg-orange-500 hover:bg-orange-600">Flash Sale</Badge>
+          )}
         </div>
         <CardContent className="p-4">
           <h3 className="font-medium line-clamp-2 min-h-[3rem]">{product.name}</h3>
@@ -61,11 +73,11 @@ export default function ProductCard({ product }) {
             <div className="flex items-center gap-2">
               {product.salePrice ? (
                 <>
-                  <span className="font-bold">${product.salePrice.toFixed(2)}</span>
-                  <span className="text-sm text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+                  <span className="font-bold">${finalPrice.toFixed(2)}</span>
+                  <span className="text-sm text-muted-foreground line-through">${originalPrice.toFixed(2)}</span>
                 </>
               ) : (
-                <span className="font-bold">${product.price.toFixed(2)}</span>
+                <span className="font-bold">${finalPrice.toFixed(2)}</span>
               )}
             </div>
             {product.rating && (
@@ -92,3 +104,6 @@ export default function ProductCard({ product }) {
     </Card>
   )
 }
+
+// Default export
+export default ProductCard
