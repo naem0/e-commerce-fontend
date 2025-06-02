@@ -10,28 +10,11 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, ShoppingCart, Eye } from "lucide-react"
 
-export function ProductCard({ product, onAddToCart, showDiscount = false, discountPercentage = 0 }) {
+export function ProductCard({ product, handleAddToCart, showDiscount = false, discountPercentage = 0 }) {
   const { t } = useLanguage()
   const { addToCart } = useCart()
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleAddToCart = async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    try {
-      setIsLoading(true)
-      if (onAddToCart) {
-        await onAddToCart(product)
-      } else {
-        await addToCart(product._id, 1)
-      }
-    } catch (error) {
-      console.error("Error adding to cart:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   // Calculate discount percentage
   const calculatedDiscountPercentage = product.salePrice
@@ -96,7 +79,13 @@ export function ProductCard({ product, onAddToCart, showDiscount = false, discou
             {t("product.view") || "View"}
           </Link>
         </Button>
-        <Button size="sm" className="flex-1" onClick={handleAddToCart} disabled={isLoading || product.stock <= 0}>
+        <Button
+          size="sm"
+          className="flex-1"
+          onClick={(e) => { e.preventDefault(); handleAddToCart(product) }}
+          disabled={isLoading || product.stock <= 0}
+          data-testid="add-to-cart-button"
+        >
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
           {t("product.addToCart") || "Add to Cart"}
         </Button>

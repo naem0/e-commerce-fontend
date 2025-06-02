@@ -53,7 +53,7 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
   }, [categoryId, limit])
 
   const handleAddToCart = (product) => {
-    addToCart(product, 1)
+    addToCart(product?._id, 1)
   }
 
   if (!categoryId || error) {
@@ -92,7 +92,7 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.map((product) => (
-                <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
+                <ProductCard key={product._id} product={product} handleAddToCart={handleAddToCart} />
               ))}
             </div>
           )}
@@ -128,7 +128,7 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {products.map((product) => (
-              <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
+              <ProductCard key={product._id} product={product} handleAddToCart={handleAddToCart} />
             ))}
           </div>
         )}

@@ -42,8 +42,19 @@ export function FeaturedProducts() {
     fetchProducts()
   }, [])
 
-  const handleAddToCart = (product) => {
-    addToCart(product, 1)
+  const handleAddToCart = async (product) => {
+    if (!product || !product._id) {
+      console.error("Invalid product data:", product)
+      return
+    }
+    try {
+      setLoading(true)
+      await addToCart(product._id, 1)
+    } catch (error) {
+      console.error("Error adding to cart:", error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (error) {

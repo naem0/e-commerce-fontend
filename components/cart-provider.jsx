@@ -38,7 +38,7 @@ export function CartProvider({ children }) {
 
               // Sync local cart with server if local cart exists
               const localCart = getLocalCart()
-              if (localCart?.items?.length > 0) {
+              if (localCart.items.length > 0) {
                 await cartService.syncCart(localCart)
                 // Clear local cart after sync
                 localStorage.removeItem("cart")
@@ -140,7 +140,9 @@ export function CartProvider({ children }) {
         setCart((prevCart) => {
           // Check if product already exists in cart
           const existingItemIndex = prevCart.items.findIndex(
-            (item) => item.product._id === productId && JSON.stringify(item.variation) === JSON.stringify(variation),
+            (item) =>
+              (item.product._id === productId || item.product === productId) &&
+              JSON.stringify(item.variation) === JSON.stringify(variation),
           )
 
           if (existingItemIndex !== -1) {
@@ -364,6 +366,7 @@ export function CartProvider({ children }) {
         getCartTotal,
         getCartItemCount,
         isLoading,
+        setCart,
       }}
     >
       {children}

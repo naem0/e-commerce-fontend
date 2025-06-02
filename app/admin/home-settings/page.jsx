@@ -141,12 +141,12 @@ export default function HomeSettingsPage() {
       type: "best-sellers",
       enabled: true,
       design: "custom-1",
-      order: (settings.homePageSections.customSections?.length || 0) + 10,
+      order: (settings.homePageSections?.customSections?.length || 0) + 10,
       settings: {
         limit: 8,
         showTimer: false,
-        backgroundColor: "#ffffff",
-        textColor: "#000000",
+        backgroundColor: "",
+        textColor: "",
       },
     }
 

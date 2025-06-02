@@ -112,8 +112,15 @@ export function CustomSection({ section }) {
     }
   }, [section])
 
-  const handleAddToCart = (product) => {
-    addToCart(product, 1)
+  const handleAddToCart = async (product) => {
+    try {
+      // setIsLoading(true)
+      await addToCart(product._id, 1)
+    } catch (error) {
+      console.error("Error adding to cart:", error)
+    } finally {
+      // setIsLoading(false)
+    }
   }
 
   const getSectionIcon = () => {
@@ -218,7 +225,7 @@ export function CustomSection({ section }) {
               <ProductCard
                 key={product._id}
                 product={product}
-                onAddToCart={handleAddToCart}
+                handleAddToCart={handleAddToCart}
                 showDiscount={section.type === "flash-sale"}
                 discountPercentage={section.settings.discountPercentage}
               />

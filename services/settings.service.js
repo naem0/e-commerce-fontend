@@ -7,21 +7,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 const getAuthHeaders = async () => {
   try {
     console.log("Getting session...")
-    const session = await getSession()
-    console.log("Session retrieved:", session ? "Found" : "Not found")
 
-    if (session) {
-      console.log("Session details:", {
-        email: session.user?.email,
-        role: session.user?.role,
-        hasAccessToken: !!session.accessToken,
-      })
+    // Try to get client-side session first
+    const clientSession = await getSession()
 
-      if (session.accessToken) {
-        console.log("Using accessToken from session")
-        return {
-          Authorization: `Bearer ${session.accessToken}`,
-        }
+    if (clientSession?.accessToken) {
+      console.log("Using client-side session token")
+      return {
+        Authorization: `Bearer ${clientSession.accessToken}`,
       }
     }
 
@@ -32,6 +25,22 @@ const getAuthHeaders = async () => {
         console.log("Using token from localStorage")
         return {
           Authorization: `Bearer ${storedToken}`,
+        }
+      }
+
+      // Try to get token from user object in localStorage
+      const userStr = localStorage.getItem("user")
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr)
+          if (user?.token) {
+            console.log("Using token from localStorage user object")
+            return {
+              Authorization: `Bearer ${user.token}`,
+            }
+          }
+        } catch (e) {
+          console.error("Error parsing user from localStorage:", e)
         }
       }
     }
@@ -67,6 +76,13 @@ export const updateSiteSettings = async (settings) => {
     console.log("=== UPDATE SITE SETTINGS ===")
     const authHeaders = await getAuthHeaders()
     console.log("Auth headers:", authHeaders)
+
+    // Manual token handling for testing
+    const token = localStorage.getItem("authToken") || localStorage.getItem("token")
+    if (token && !authHeaders.Authorization) {
+      console.log("Using manually stored token")
+      authHeaders.Authorization = `Bearer ${token}`
+    }
 
     if (!authHeaders.Authorization) {
       throw new Error("No authentication token available. Please login again.")

@@ -9,7 +9,6 @@ import { Badge } from "@/app/components/ui/badge"
 
 const ProductCard1 = ({ product, handleAddToCart }) => {
     const { t } = useLanguage()
-    console.log("ProductCard1 rendered for product:", product)
     return (
         <Card key={product.id} className="overflow-hidden group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
             <Link href={`/product/${product._id}`}>
@@ -43,7 +42,7 @@ const ProductCard1 = ({ product, handleAddToCart }) => {
                 </div>
                 
                 <Button 
-                    onClick={() => handleAddToCart(product)}
+                    onClick={(e) => { e.preventDefault(); handleAddToCart(product) }}
                     size="sm" 
                     className="mt-3 w-full "
                 >
