@@ -133,11 +133,11 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
           </div>
         )}
 
-        <div className="text-center mt-8">
+        {/* <div className="text-center mt-8">
           <Link href={`/categories/${category?.slug || categoryId}`}>
             <Button variant="outline">{t("products.viewAll") || "View All Products"}</Button>
           </Link>
-        </div>
+        </div> */}
       </div>
     </section>
   )

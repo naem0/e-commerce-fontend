@@ -29,7 +29,11 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
       <Link href={`/products/${product._id}`} className="block">
         <div className="relative aspect-square overflow-hidden">
           <Image
-            src={product.images?.[0] || "/placeholder.svg?height=300&width=300"}
+            src={
+              // product.images?.[0] ||
+              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D" ||
+              "/placeholder.svg?height=300&width=300"
+            }
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 hover:scale-105"

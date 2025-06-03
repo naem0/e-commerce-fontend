@@ -12,7 +12,11 @@ const ProductCard2 = ({ product, handleAddToCart }) => {
       <Link href={`/products/${product._id}`}>
         <div className="relative h-48 w-full">
           <Image
-            src={product.images?.[0] || "/placeholder.svg?height=192&width=256"}
+            src={
+              // product.images?.[0] ||
+              "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D" ||
+              "/placeholder.svg?height=192&width=256"
+            }
             alt={product.name}
             fill
             className="object-cover"

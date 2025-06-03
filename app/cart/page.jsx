@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -12,81 +12,34 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react"
-import { cartService } from "@/services/api"
-import { getCart } from "@/services/cart.service"
 
 export default function CartPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { t } = useLanguage()
-  const { cart, setCart } = useCart()
+  const { cart, removeFromCart, updateCartItemQuantity } = useCart()
   const { toast } = useToast()
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState(null)
-  console.log("CartPage session:", session)
-  console.log("CartPage status:", status)
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        setLoading(true)
-        // If user is logged in, fetch cart from API
-        if (status === "authenticated") {
-          const response = await getCart()
-          if (response.success) {
-            setCart(response.cart)
-          } else {
-            setError(response.message || "Failed to fetch cart")
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching cart:", err)
-        setError("An error occurred while fetching your cart")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCart()
-  }, [status, setCart])
-
-  const handleQuantityChange = async (productId, currentQuantity, change) => {
-    const newQuantity = currentQuantity + change
-
+  const handleQuantityChange = async (item, newQuantity) => {
     if (newQuantity < 1) return
 
     try {
       setUpdating(true)
+      console.log("Updating quantity:", { item, newQuantity })
 
-      // Update cart item in API
-      if (status === "authenticated") {
-        const response = await cartService.updateCartItem(productId, newQuantity)
-        if (!response.success) {
-          throw new Error(response.message || "Failed to update cart")
-        }
-      }
-
-      // Update local cart state
-      setCart((prevCart) => {
-        const updatedItems = prevCart.items.map((item) => {
-          if (item.product._id === productId) {
-            return { ...item, quantity: newQuantity }
-          }
-          return item
-        })
-
-        return {
-          ...prevCart,
-          items: updatedItems,
-        }
-      })
+      // Use the correct item identifier
+      const itemId = item._id || item.product._id
+      await updateCartItemQuantity(itemId, newQuantity, item.variation)
 
       toast({
         title: t("cart.updated") || "Cart Updated",
         description: t("cart.quantityUpdated") || "Item quantity has been updated",
       })
     } catch (err) {
+      console.error("Error updating quantity:", err)
       toast({
         title: t("cart.updateError") || "Error",
         description: err.message || "Failed to update cart",
@@ -97,33 +50,21 @@ export default function CartPage() {
     }
   }
 
-  const handleRemoveItem = async (productId) => {
+  const handleRemoveItem = async (item) => {
     try {
       setUpdating(true)
+      console.log("Removing item:", item)
 
-      // Remove item from API
-      if (status === "authenticated") {
-        const response = await cartService.removeFromCart(productId)
-        if (!response.success) {
-          throw new Error(response.message || "Failed to remove item from cart")
-        }
-      }
-
-      // Update local cart state
-      setCart((prevCart) => {
-        const updatedItems = prevCart.items.filter((item) => item.product._id !== productId)
-
-        return {
-          ...prevCart,
-          items: updatedItems,
-        }
-      })
+      // Use the correct item identifier
+      const itemId = item._id || item.product._id
+      await removeFromCart(itemId, item.variation)
 
       toast({
         title: t("cart.removed") || "Item Removed",
         description: t("cart.itemRemoved") || "Item has been removed from your cart",
       })
     } catch (err) {
+      console.error("Error removing item:", err)
       toast({
         title: t("cart.removeError") || "Error",
         description: err.message || "Failed to remove item from cart",
@@ -206,8 +147,8 @@ export default function CartPage() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
-                {cart.items.map((item) => (
-                  <div key={item.product._id} className="flex py-4 px-6">
+                {cart.items.map((item, index) => (
+                  <div key={`${item.product._id}-${index}`} className="flex py-4 px-6">
                     <div className="relative h-24 w-24 rounded-md overflow-hidden">
                       <Image
                         src={item.product.images?.[0] || "/placeholder.svg?height=96&width=96"}
@@ -229,12 +170,19 @@ export default function CartPage() {
                               ? `${formatPrice(item.product.salePrice)} (${formatPrice(item.product.price)})`
                               : formatPrice(item.product.price)}
                           </p>
+                          {item.variation && (
+                            <p className="text-xs text-muted-foreground">
+                              {Object.entries(item.variation)
+                                .map(([key, value]) => `${key}: ${value}`)
+                                .join(", ")}
+                            </p>
+                          )}
                         </div>
                         <Button
                           variant="ghost"
                           size="icon"
                           className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleRemoveItem(item.product._id)}
+                          onClick={() => handleRemoveItem(item)}
                           disabled={updating}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -246,17 +194,19 @@ export default function CartPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleQuantityChange(item.product._id, item.quantity, -1)}
+                            onClick={() => handleQuantityChange(item, item.quantity - 1)}
                             disabled={item.quantity <= 1 || updating}
+                            className="h-8 w-8"
                           >
                             <Minus className="h-4 w-4" />
                           </Button>
-                          <span className="w-12 text-center">{item.quantity}</span>
+                          <span className="w-12 text-center font-medium">{item.quantity}</span>
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleQuantityChange(item.product._id, item.quantity, 1)}
+                            onClick={() => handleQuantityChange(item, item.quantity + 1)}
                             disabled={item.quantity >= (item.product.stock || 10) || updating}
+                            className="h-8 w-8"
                           >
                             <Plus className="h-4 w-4" />
                           </Button>

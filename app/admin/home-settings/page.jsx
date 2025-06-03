@@ -12,7 +12,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Trash2, Plus, GripVertical, Settings, Star, Flame, Clock, TrendingUp, AlertCircle } from "lucide-react"
+import {
+  Trash2,
+  Plus,
+  GripVertical,
+  Settings,
+  Star,
+  Flame,
+  Clock,
+  TrendingUp,
+  AlertCircle,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react"
 import { getSiteSettings, updateSiteSettings } from "@/services/settings.service"
 import { getCategories } from "@/services/category.service"
 import { getProducts } from "@/services/product.service"
@@ -179,6 +191,105 @@ export default function HomeSettingsPage() {
         ),
       },
     }))
+  }
+
+  const moveCustomSection = (index, direction) => {
+    setSettings((prev) => {
+      const sections = [...prev.homePageSections.customSections]
+      const newIndex = direction === "up" ? index - 1 : index + 1
+
+      if (newIndex < 0 || newIndex >= sections.length)
+        return (prev[
+          // Swap sections
+          (sections[index], sections[newIndex])
+        ] = [sections[newIndex], sections[index]])
+
+      // Update order values
+      sections.forEach((section, i) => {
+        section.order = i + 10
+      })
+
+      return {
+        ...prev,
+        homePageSections: {
+          ...prev.homePageSections,
+          customSections: sections,
+        },
+      }
+    })
+  }
+
+  const addCategorySection = () => {
+    const newSection = {
+      id: `category-${Date.now()}`,
+      categoryId: "",
+      title: "Category Products",
+      enabled: true,
+      design: "category-1",
+      order: (settings.homePageSections?.categoryProducts?.length || 0) + 20,
+      settings: {
+        limit: 8,
+        showViewAll: true,
+        backgroundColor: "",
+        textColor: "",
+      },
+    }
+
+    setSettings((prev) => ({
+      ...prev,
+      homePageSections: {
+        ...prev.homePageSections,
+        categoryProducts: [...(prev.homePageSections.categoryProducts || []), newSection],
+      },
+    }))
+  }
+
+  const removeCategorySection = (index) => {
+    setSettings((prev) => ({
+      ...prev,
+      homePageSections: {
+        ...prev.homePageSections,
+        categoryProducts: prev.homePageSections.categoryProducts.filter((_, i) => i !== index),
+      },
+    }))
+  }
+
+  const updateCategorySection = (index, updates) => {
+    setSettings((prev) => ({
+      ...prev,
+      homePageSections: {
+        ...prev.homePageSections,
+        categoryProducts: prev.homePageSections.categoryProducts.map((section, i) =>
+          i === index ? { ...section, ...updates } : section,
+        ),
+      },
+    }))
+  }
+
+  const moveCategorySection = (index, direction) => {
+    setSettings((prev) => {
+      const sections = [...prev.homePageSections.categoryProducts]
+      const newIndex = direction === "up" ? index - 1 : index + 1
+
+      if (newIndex < 0 || newIndex >= sections.length)
+        return (prev[
+          // Swap sections
+          (sections[index], sections[newIndex])
+        ] = [sections[newIndex], sections[index]])
+
+      // Update order values
+      sections.forEach((section, i) => {
+        section.order = i + 20
+      })
+
+      return {
+        ...prev,
+        homePageSections: {
+          ...prev.homePageSections,
+          categoryProducts: sections,
+        },
+      }
+    })
   }
 
   const handleSave = async () => {
@@ -476,6 +587,22 @@ export default function HomeSettingsPage() {
                       </Badge>
                     </CardTitle>
                     <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => moveCustomSection(index, "up")}
+                        disabled={index === 0}
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => moveCustomSection(index, "down")}
+                        disabled={index === (settings?.homePageSections?.customSections?.length || 0) - 1}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
                       <Switch
                         checked={section.enabled}
                         onCheckedChange={(enabled) => updateCustomSection(index, { enabled })}
@@ -541,7 +668,7 @@ export default function HomeSettingsPage() {
                       />
                     </div>
                     <div>
-                      <Label>Background Color</Label>
+                      <Label>Background Color (Optional)</Label>
                       <Input
                         type="color"
                         value={section.settings?.backgroundColor || "#ffffff"}
@@ -695,7 +822,157 @@ export default function HomeSettingsPage() {
         </TabsContent>
 
         <TabsContent value="category-sections" className="space-y-6">
-          {/* Category sections content here - keeping existing implementation */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-xl font-semibold">Category Sections</h2>
+              <p className="text-muted-foreground">Display products from specific categories on your home page.</p>
+            </div>
+            <Button onClick={addCategorySection}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Category Section
+            </Button>
+          </div>
+
+          {settings?.homePageSections?.categoryProducts?.map((section, index) => (
+            <Card key={section.id || index}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <GripVertical className="w-4 h-4" />
+                    {section.title}
+                    <Badge variant="outline">Category Section</Badge>
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => moveCategorySection(index, "up")}
+                      disabled={index === 0}
+                    >
+                      <ChevronUp className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => moveCategorySection(index, "down")}
+                      disabled={index === (settings?.homePageSections?.categoryProducts?.length || 0) - 1}
+                    >
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                    <Switch
+                      checked={section.enabled}
+                      onCheckedChange={(enabled) => updateCategorySection(index, { enabled })}
+                    />
+                    <Button variant="ghost" size="icon" onClick={() => removeCategorySection(index)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Section Title</Label>
+                    <Input
+                      value={section.title || ""}
+                      onChange={(e) => updateCategorySection(index, { title: e.target.value })}
+                      placeholder="Category Products"
+                    />
+                  </div>
+                  <div>
+                    <Label>Select Category</Label>
+                    <Select
+                      value={section.categoryId || ""}
+                      onValueChange={(value) => {
+                        const category = categories.find((c) => c._id === value)
+                        updateCategorySection(index, {
+                          categoryId: value,
+                          title: category ? `${category.name} Products` : section.title,
+                        })
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category._id} value={category._id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label>Products Limit</Label>
+                    <Input
+                      type="number"
+                      value={section.settings?.limit || 8}
+                      onChange={(e) =>
+                        updateCategorySection(index, {
+                          settings: { ...section.settings, limit: Number.parseInt(e.target.value) },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label>Display Order</Label>
+                    <Input
+                      type="number"
+                      value={section.order || 20}
+                      onChange={(e) => updateCategorySection(index, { order: Number.parseInt(e.target.value) })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Background Color (Optional)</Label>
+                    <Input
+                      type="color"
+                      value={section.settings?.backgroundColor || "#ffffff"}
+                      onChange={(e) =>
+                        updateCategorySection(index, {
+                          settings: { ...section.settings, backgroundColor: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Show "View All" Button</Label>
+                  <Switch
+                    checked={section.settings?.showViewAll || false}
+                    onCheckedChange={(checked) =>
+                      updateCategorySection(index, {
+                        settings: { ...section.settings, showViewAll: checked },
+                      })
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {(!settings?.homePageSections?.categoryProducts ||
+            settings.homePageSections.categoryProducts.length === 0) && (
+            <Card>
+              <CardContent className="text-center py-12">
+                <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <Plus className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">No category sections yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Add sections to display products from specific categories on your home page.
+                </p>
+                <Button onClick={addCategorySection}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Your First Category Section
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>

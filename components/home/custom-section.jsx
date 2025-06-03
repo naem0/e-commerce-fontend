@@ -114,12 +114,9 @@ export function CustomSection({ section }) {
 
   const handleAddToCart = async (product) => {
     try {
-      // setIsLoading(true)
       await addToCart(product._id, 1)
     } catch (error) {
       console.error("Error adding to cart:", error)
-    } finally {
-      // setIsLoading(false)
     }
   }
 
@@ -157,9 +154,17 @@ export function CustomSection({ section }) {
     return null
   }
 
+  // Default background color if not set or empty
+  const backgroundColor =
+    section.settings?.backgroundColor && section.settings.backgroundColor !== "#ffffff"
+      ? section.settings.backgroundColor
+      : "transparent"
+
+  const textColor = section.settings?.textColor || "inherit"
+
   const sectionStyle = {
-    backgroundColor: section.settings.backgroundColor || "#ffffff",
-    color: section.settings.textColor || "#000000",
+    backgroundColor,
+    color: textColor,
   }
 
   return (
