@@ -27,6 +27,7 @@ const bn = {
   "products.reviews": "রিভিউ",
   "products.relatedProducts": "সম্পর্কিত পণ্য",
   "products.productDetails": "পণ্যের বিবরণ",
+  "product.view": "বিবরণ",
   "products.viewAll": "সব পণ্য দেখুন",
 
   "categories.title": "ক্যাটাগরি অনুযায়ী শপিং করুন",

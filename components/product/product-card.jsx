@@ -91,7 +91,7 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
           data-testid="add-to-cart-button"
         >
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
-          {t("product.addToCart") || "Add to Cart"}
+          {t("products.add") || "Add"}
         </Button>
       </CardFooter>
     </Card>

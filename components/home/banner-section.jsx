@@ -44,28 +44,6 @@ export function BannerSection() {
               backgroundColor: "#f8fafc",
               textColor: "#1e293b",
             },
-            {
-              _id: "default-2",
-              title: t("banner.title2") || "New Collection",
-              subtitle: t("banner.subtitle2") || "Fresh styles for the season",
-              description: t("banner.description2") || "Discover our latest arrivals and trending products",
-              image: "/placeholder.svg?height=600&width=1200",
-              buttonText: t("banner.exploreNow") || "Explore Now",
-              buttonLink: "/categories",
-              backgroundColor: "#1e293b",
-              textColor: "#ffffff",
-            },
-            {
-              _id: "default-3",
-              title: t("banner.title3") || "Free Shipping",
-              subtitle: t("banner.subtitle3") || "On orders over $100",
-              description: t("banner.description3") || "Fast and reliable delivery to your doorstep",
-              image: "/placeholder.svg?height=600&width=1200",
-              buttonText: t("banner.orderNow") || "Order Now",
-              buttonLink: "/products",
-              backgroundColor: "#10b981",
-              textColor: "#ffffff",
-            },
           ])
         }
       } catch (error) {

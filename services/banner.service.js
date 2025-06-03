@@ -1,13 +1,13 @@
 import { apiRequest } from "./api.utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
 export const bannerService = {
   // Get all banners
   getBanners: async (params = {}) => {
     try {
       const queryString = new URLSearchParams(params).toString()
-      const url = `${API_URL}/api/banners${queryString ? `?${queryString}` : ""}`
+      const url = `${API_URL}/banners${queryString ? `?${queryString}` : ""}`
 
       const response = await fetch(url, {
         method: "GET",
@@ -32,7 +32,7 @@ export const bannerService = {
   // Get single banner
   getBanner: async (id) => {
     try {
-      const response = await fetch(`${API_URL}/api/banners/${id}`, {
+      const response = await fetch(`${API_URL}/banners/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export const bannerService = {
 
   // Create banner (Admin only)
   createBanner: async (bannerData) => {
-    return apiRequest(`${API_URL}/api/banners`, {
+    return apiRequest(`${API_URL}/banners`, {
       method: "POST",
       body: bannerData,
     })
@@ -62,7 +62,7 @@ export const bannerService = {
 
   // Update banner (Admin only)
   updateBanner: async (id, bannerData) => {
-    return apiRequest(`${API_URL}/api/banners/${id}`, {
+    return apiRequest(`${API_URL}/banners/${id}`, {
       method: "PUT",
       body: bannerData,
     })
@@ -70,7 +70,7 @@ export const bannerService = {
 
   // Delete banner (Admin only)
   deleteBanner: async (id) => {
-    return apiRequest(`${API_URL}/api/banners/${id}`, {
+    return apiRequest(`${API_URL}/banners/${id}`, {
       method: "DELETE",
     })
   },
