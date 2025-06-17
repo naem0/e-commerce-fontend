@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { AdminLayout } from "@/components/admin/admin-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -40,7 +39,9 @@ import {
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react'
 import Image from "next/image"
 import Link from "next/link"
-import { productService, categoryService } from "@/services/api"
+// import { productService, categoryService } from "@/services/api"
+import { getProducts, updateProduct, deleteProduct } from "@/services/product.service"
+import { getCategories } from "@/services/category.service"
 
 export default function ProductsPage() {
   const router = useRouter()
@@ -79,7 +80,7 @@ export default function ProductsPage() {
         }
       })
 
-      const response = await productService.getProducts(params)
+      const response = await getProducts(params)
       setProducts(response.products)
       setPagination({
         ...pagination,
@@ -101,7 +102,7 @@ export default function ProductsPage() {
   // Fetch categories for filter
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.getCategories()
+      const response = await getCategories()
       setCategories(response.categories)
     } catch (error) {
       console.error("Error fetching categories:", error)
@@ -155,7 +156,7 @@ export default function ProductsPage() {
   // Handle status change
   const handleStatusChange = async (productId, newStatus) => {
     try {
-      await productService.updateProductStatus(productId, newStatus)
+      await updateProduct(productId, newStatus)
 
       // Update product in state
       setProducts((prevProducts) =>
@@ -186,7 +187,7 @@ export default function ProductsPage() {
     if (!productToDelete) return
 
     try {
-      await productService.deleteProduct(productToDelete._id)
+      await deleteProduct(productToDelete._id)
 
       // Remove product from state
       setProducts((prevProducts) => prevProducts.filter((product) => product._id !== productToDelete._id))

@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { productService, categoryService, brandService } from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowLeft, Loader2, X } from "lucide-react"
+import { getProductById, updateProduct } from "@/services/product.service"
+import { getCategories } from "@/services/category.service"
+import { getBrands } from "@/services/brand.service"
 
 export default function EditProductPage({ params }) {
   const router = useRouter()
@@ -43,7 +45,7 @@ export default function EditProductPage({ params }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await productService.getProduct(id)
+        const response = await getProductById(id)
         const product = response.product
 
         setFormData({
@@ -82,7 +84,7 @@ export default function EditProductPage({ params }) {
 
     const fetchCategories = async () => {
       try {
-        const response = await categoryService.getCategories()
+        const response = await getCategories()
         setCategories(response.categories)
       } catch (error) {
         console.error("Error fetching categories:", error)
@@ -91,7 +93,7 @@ export default function EditProductPage({ params }) {
 
     const fetchBrands = async () => {
       try {
-        const response = await brandService.getBrands()
+        const response = await getBrands()
         setBrands(response.brands)
       } catch (error) {
         console.error("Error fetching brands:", error)
@@ -164,7 +166,7 @@ export default function EditProductPage({ params }) {
         productData.images = [...(productData.images || []), ...newImages]
       }
 
-      await productService.updateProduct(id, productData)
+      await updateProduct(id, productData)
       router.push("/admin/products")
     } catch (error) {
       console.error("Error updating product:", error)
@@ -193,7 +195,7 @@ export default function EditProductPage({ params }) {
         <h1 className="text-2xl font-bold">Edit Product</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4 flex items-center">
             <AlertCircle className="h-4 w-4 mr-2" />
