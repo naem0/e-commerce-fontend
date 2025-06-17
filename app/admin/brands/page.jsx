@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
+import { getBrands, updateBrand, deleteBrand } from "@/services/brand.service"
 import {
   Pagination,
   PaginationContent,
@@ -29,7 +30,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { AdminLayout } from "@/components/admin/admin-layout"
 
 export default function BrandsPage() {
   const router = useRouter()
@@ -51,7 +51,7 @@ export default function BrandsPage() {
         limit: 10,
         status: statusFilter,
       }
-      const response = await brandService.getBrands(params)
+      const response = await getBrands(params)
       setBrands(response.brands)
       setTotalPages(Math.ceil(response.count / 10))
       setLoading(false)
@@ -74,7 +74,7 @@ export default function BrandsPage() {
   const handleStatusChange = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === "active" ? "inactive" : "active"
-      await brandService.updateBrand(id, { status: newStatus })
+      await updateBrand(id, { status: newStatus })
       setBrands(brands.map((brand) => (brand._id === id ? { ...brand, status: newStatus } : brand)))
     } catch (error) {
       console.error("Error updating brand status:", error)
@@ -91,7 +91,7 @@ export default function BrandsPage() {
     if (!brandToDelete) return
 
     try {
-      await brandService.deleteBrand(brandToDelete._id)
+      await deleteBrand(brandToDelete._id)
       setBrands(brands.filter((b) => b._id !== brandToDelete._id))
       setDeleteDialogOpen(false)
       setBrandToDelete(null)
@@ -139,7 +139,7 @@ export default function BrandsPage() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-card rounded-lg shadow-md p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1">
             <form onSubmit={handleSearch} className="flex gap-2">

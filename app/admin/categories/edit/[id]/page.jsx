@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { categoryService } from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
+import { getCategories, updateCategory, getCategory } from "@/services/category.service"
 
 export default function EditCategoryPage({ params }) {
   const router = useRouter()
@@ -28,7 +28,7 @@ export default function EditCategoryPage({ params }) {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await categoryService.getCategory(id)
+        const response = await getCategory(id)
         const category = response.category
         setFormData({
           name: category.name,
@@ -49,7 +49,7 @@ export default function EditCategoryPage({ params }) {
 
     const fetchParentCategories = async () => {
       try {
-        const response = await categoryService.getCategories({ parent: "null" })
+        const response = await getCategories({ parent: "null" })
         // Filter out the current category to prevent circular reference
         setParentCategories(response.categories.filter((category) => category._id !== id))
       } catch (error) {
@@ -89,7 +89,7 @@ export default function EditCategoryPage({ params }) {
         categoryData.image = image
       }
 
-      await categoryService.updateCategory(id, categoryData)
+      await updateCategory(id, categoryData)
       router.push("/admin/categories")
     } catch (error) {
       console.error("Error updating category:", error)
@@ -118,7 +118,7 @@ export default function EditCategoryPage({ params }) {
         <h1 className="text-2xl font-bold">Edit Category</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4 flex items-center">
             <AlertCircle className="h-4 w-4 mr-2" />

@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import axios from "axios"
 
 const handler = NextAuth({
   providers: [
@@ -12,29 +11,51 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-            email: credentials.email,
-            password: credentials.password,
+          if (!credentials?.email || !credentials?.password) {
+            console.log("Missing credentials")
+            return null
+          }
+
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+          console.log("Calling backend API:", `${API_URL}/auth/login`)
+
+          const response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
           })
 
-          if (response.data.success) {
-            const user = response.data.user
-            const token = response.data.token
+          console.log("Backend response status:", response.status)
 
-            console.log("NextAuth authorize - User:", user.email, "Role:", user.role)
-            console.log("NextAuth authorize - Token:", token ? "Present" : "Missing")
+          if (!response.ok) {
+            const errorText = await response.text()
+            console.log("Backend error:", errorText)
+            return null
+          }
 
-            return {
-              id: user._id,
-              email: user.email,
-              name: user.name,
-              role: user.role,
-              accessToken: token,
+          const data = await response.json()
+          console.log("Backend response data:", data)
+
+          if (data.success && data.user && data.token) {
+            const user = {
+              id: data.user._id,
+              email: data.user.email,
+              name: data.user.name,
+              role: data.user.role,
+              accessToken: data.token,
             }
+
+            console.log("NextAuth user object:", user)
+            return user
           }
           return null
         } catch (error) {
-          console.error("NextAuth authorize error:", error.response?.data || error.message)
+          console.error("NextAuth authorize error:", error)
           return null
         }
       },
@@ -42,29 +63,30 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // Initial sign in
       if (user) {
-        console.log("NextAuth JWT callback - User login:", user.email)
+        console.log("JWT callback - storing user data:", {
+          email: user.email,
+          role: user.role,
+          hasToken: !!user.accessToken,
+        })
         token.accessToken = user.accessToken
         token.role = user.role
         token.id = user.id
       }
-
-      console.log("NextAuth JWT callback - Token:", {
+      return token
+    },
+    async session({ session, token }) {
+      console.log("Session callback - token data:", {
         email: token.email,
         role: token.role,
         hasAccessToken: !!token.accessToken,
       })
 
-      return token
-    },
-    async session({ session, token }) {
-      // Send properties to the client
       session.accessToken = token.accessToken
       session.user.role = token.role
       session.user.id = token.id
 
-      console.log("NextAuth session callback - Session:", {
+      console.log("Final session:", {
         email: session.user.email,
         role: session.user.role,
         hasAccessToken: !!session.accessToken,
@@ -75,14 +97,13 @@ const handler = NextAuth({
   },
   pages: {
     signIn: "/auth/login",
-    signUp: "/auth/register",
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-key",
+  debug: true,
 })
 
 export { handler as GET, handler as POST }

@@ -4,12 +4,12 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { PlusCircle, Edit, Trash2, Search, X, AlertTriangle } from 'lucide-react'
-import { categoryService } from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
+import { getCategories, updateCategory, deleteCategory } from "@/services/category.service"
 import {
   Pagination,
   PaginationContent,
@@ -29,7 +29,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { AdminLayout } from "@/components/admin/admin-layout"
 
 export default function CategoriesPage() {
   const router = useRouter()
@@ -54,7 +53,7 @@ export default function CategoriesPage() {
         status: statusFilter,
         parent: parentFilter,
       }
-      const response = await categoryService.getCategories(params)
+      const response = await getCategories(params)
       setCategories(response.categories)
       setTotalPages(Math.ceil(response.count / 10))
       setLoading(false)
@@ -67,7 +66,7 @@ export default function CategoriesPage() {
 
   const fetchParentCategories = async () => {
     try {
-      const response = await categoryService.getCategories({ parent: "null" })
+      const response = await getCategories({ parent: "null" })
       setParentCategories(response.categories)
     } catch (error) {
       console.error("Error fetching parent categories:", error)
@@ -87,7 +86,7 @@ export default function CategoriesPage() {
   const handleStatusChange = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === "active" ? "inactive" : "active"
-      await categoryService.updateCategory(id, { status: newStatus })
+      await updateCategory(id, { status: newStatus })
       setCategories(categories.map((category) => (category._id === id ? { ...category, status: newStatus } : category)))
     } catch (error) {
       console.error("Error updating category status:", error)
@@ -104,7 +103,7 @@ export default function CategoriesPage() {
     if (!categoryToDelete) return
 
     try {
-      await categoryService.deleteCategory(categoryToDelete._id)
+      await deleteCategory(categoryToDelete._id)
       setCategories(categories.filter((c) => c._id !== categoryToDelete._id))
       setDeleteDialogOpen(false)
       setCategoryToDelete(null)
@@ -153,7 +152,7 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-card rounded-lg shadow-md p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1">
             <form onSubmit={handleSearch} className="flex gap-2">

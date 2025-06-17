@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { brandService } from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
 import { useTranslation } from "@/components/language-provider"
+import { createBrand } from "@/services/brand.service"
 
 export default function CreateBrandPage() {
   const router = useRouter()
@@ -52,7 +52,7 @@ export default function CreateBrandPage() {
         brandData.logo = logo
       }
 
-      await brandService.createBrand(brandData)
+      await createBrand(brandData)
       router.push("/admin/brands")
     } catch (error) {
       console.error("Error creating brand:", error)

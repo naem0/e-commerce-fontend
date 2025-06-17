@@ -39,6 +39,40 @@ const SECTION_TYPES = [
   { value: "custom-products", label: "Custom Products", icon: Settings },
 ]
 
+const DESIGN_OPTIONS = {
+  banner: [
+    { value: "banner-1", label: "Simple Slider" },
+    { value: "banner-2", label: "Full Width Overlay" },
+    { value: "banner-3", label: "Split Layout" },
+    { value: "banner-4", label: "Side Category + Banner" },
+  ],
+  featuredProducts: [
+    { value: "featured-1", label: "Grid Layout" },
+    { value: "featured-2", label: "Carousel" },
+    { value: "featured-3", label: "Card Style" },
+  ],
+  categories: [
+    { value: "categories-1", label: "Grid Cards" },
+    { value: "categories-2", label: "Icon Style" },
+    { value: "categories-3", label: "Image Overlay" },
+  ],
+  testimonials: [
+    { value: "testimonials-1", label: "Card Layout" },
+    { value: "testimonials-2", label: "Slider" },
+    { value: "testimonials-3", label: "Minimal" },
+  ],
+  newsletter: [
+    { value: "newsletter-1", label: "Simple Form" },
+    { value: "newsletter-2", label: "Background Image" },
+    { value: "newsletter-3", label: "Split Layout" },
+  ],
+  custom: [
+    { value: "custom-1", label: "Grid Layout" },
+    { value: "custom-2", label: "List Layout" },
+    { value: "custom-3", label: "Card Style" },
+  ],
+}
+
 export default function HomeSettingsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -63,8 +97,6 @@ export default function HomeSettingsPage() {
       try {
         setLoading(true)
         setError(null)
-
-        console.log("Fetching data for admin:", session?.user?.email)
 
         const [settingsResult, categoriesResult, productsResult] = await Promise.all([
           getSiteSettings(),
@@ -199,10 +231,10 @@ export default function HomeSettingsPage() {
       const newIndex = direction === "up" ? index - 1 : index + 1
 
       if (newIndex < 0 || newIndex >= sections.length)
-        return (prev[
-          // Swap sections
-          (sections[index], sections[newIndex])
-        ] = [sections[newIndex], sections[index]])
+        return prev
+
+        // Swap sections
+      ;[sections[index], sections[newIndex]] = [sections[newIndex], sections[index]]
 
       // Update order values
       sections.forEach((section, i) => {
@@ -272,10 +304,10 @@ export default function HomeSettingsPage() {
       const newIndex = direction === "up" ? index - 1 : index + 1
 
       if (newIndex < 0 || newIndex >= sections.length)
-        return (prev[
-          // Swap sections
-          (sections[index], sections[newIndex])
-        ] = [sections[newIndex], sections[index]])
+        return prev
+
+        // Swap sections
+      ;[sections[index], sections[newIndex]] = [sections[newIndex], sections[index]]
 
       // Update order values
       sections.forEach((section, i) => {
@@ -297,11 +329,7 @@ export default function HomeSettingsPage() {
       setSaving(true)
       setError(null)
 
-      console.log("Saving settings:", settings)
-      console.log("Session:", session)
-
       const result = await updateSiteSettings(settings)
-      console.log("Save result:", result)
 
       if (result.success) {
         toast({
@@ -327,7 +355,7 @@ export default function HomeSettingsPage() {
   if (status === "loading" || loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     )
   }
@@ -358,7 +386,7 @@ export default function HomeSettingsPage() {
             </p>
           )}
         </div>
-        <Button onClick={handleSave} disabled={saving} size="lg">
+        <Button onClick={handleSave} disabled={saving} size="lg" className="bg-primary hover:bg-primary/90">
           {saving ? "Saving..." : "Save Changes"}
         </Button>
       </div>
@@ -404,9 +432,11 @@ export default function HomeSettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="banner-1">Simple Slider</SelectItem>
-                      <SelectItem value="banner-2">Full Width Overlay</SelectItem>
-                      <SelectItem value="banner-3">Split Layout</SelectItem>
+                      {DESIGN_OPTIONS.banner.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -437,7 +467,7 @@ export default function HomeSettingsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label>Section Title</Label>
                   <Input
@@ -447,15 +477,41 @@ export default function HomeSettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label>Products Limit</Label>
+                  <Label>Design Style</Label>
+                  <Select
+                    value={settings?.homePageSections?.featuredProducts?.design || "featured-1"}
+                    onValueChange={(value) => handleSectionUpdate("featuredProducts", { design: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DESIGN_OPTIONS.featuredProducts.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Display Order</Label>
                   <Input
                     type="number"
-                    value={settings?.homePageSections?.featuredProducts?.limit || 8}
+                    value={settings?.homePageSections?.featuredProducts?.order || 2}
                     onChange={(e) =>
-                      handleSectionUpdate("featuredProducts", { limit: Number.parseInt(e.target.value) })
+                      handleSectionUpdate("featuredProducts", { order: Number.parseInt(e.target.value) })
                     }
                   />
                 </div>
+              </div>
+              <div>
+                <Label>Products Limit</Label>
+                <Input
+                  type="number"
+                  value={settings?.homePageSections?.featuredProducts?.limit || 8}
+                  onChange={(e) => handleSectionUpdate("featuredProducts", { limit: Number.parseInt(e.target.value) })}
+                />
               </div>
             </CardContent>
           </Card>
@@ -475,7 +531,7 @@ export default function HomeSettingsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label>Section Title</Label>
                   <Input
@@ -485,13 +541,39 @@ export default function HomeSettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label>Categories Limit</Label>
+                  <Label>Design Style</Label>
+                  <Select
+                    value={settings?.homePageSections?.categories?.design || "categories-1"}
+                    onValueChange={(value) => handleSectionUpdate("categories", { design: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DESIGN_OPTIONS.categories.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Display Order</Label>
                   <Input
                     type="number"
-                    value={settings?.homePageSections?.categories?.limit || 8}
-                    onChange={(e) => handleSectionUpdate("categories", { limit: Number.parseInt(e.target.value) })}
+                    value={settings?.homePageSections?.categories?.order || 3}
+                    onChange={(e) => handleSectionUpdate("categories", { order: Number.parseInt(e.target.value) })}
                   />
                 </div>
+              </div>
+              <div>
+                <Label>Categories Limit</Label>
+                <Input
+                  type="number"
+                  value={settings?.homePageSections?.categories?.limit || 8}
+                  onChange={(e) => handleSectionUpdate("categories", { limit: Number.parseInt(e.target.value) })}
+                />
               </div>
             </CardContent>
           </Card>
@@ -511,7 +593,7 @@ export default function HomeSettingsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label>Section Title</Label>
                   <Input
@@ -521,13 +603,39 @@ export default function HomeSettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label>Testimonials Limit</Label>
+                  <Label>Design Style</Label>
+                  <Select
+                    value={settings?.homePageSections?.testimonials?.design || "testimonials-1"}
+                    onValueChange={(value) => handleSectionUpdate("testimonials", { design: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DESIGN_OPTIONS.testimonials.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Display Order</Label>
                   <Input
                     type="number"
-                    value={settings?.homePageSections?.testimonials?.limit || 6}
-                    onChange={(e) => handleSectionUpdate("testimonials", { limit: Number.parseInt(e.target.value) })}
+                    value={settings?.homePageSections?.testimonials?.order || 4}
+                    onChange={(e) => handleSectionUpdate("testimonials", { order: Number.parseInt(e.target.value) })}
                   />
                 </div>
+              </div>
+              <div>
+                <Label>Testimonials Limit</Label>
+                <Input
+                  type="number"
+                  value={settings?.homePageSections?.testimonials?.limit || 6}
+                  onChange={(e) => handleSectionUpdate("testimonials", { limit: Number.parseInt(e.target.value) })}
+                />
               </div>
             </CardContent>
           </Card>
@@ -547,13 +655,41 @@ export default function HomeSettingsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label>Section Title</Label>
-                <Input
-                  value={settings?.homePageSections?.newsletter?.title || ""}
-                  onChange={(e) => handleSectionUpdate("newsletter", { title: e.target.value })}
-                  placeholder="Subscribe to Our Newsletter"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label>Section Title</Label>
+                  <Input
+                    value={settings?.homePageSections?.newsletter?.title || ""}
+                    onChange={(e) => handleSectionUpdate("newsletter", { title: e.target.value })}
+                    placeholder="Subscribe to Our Newsletter"
+                  />
+                </div>
+                <div>
+                  <Label>Design Style</Label>
+                  <Select
+                    value={settings?.homePageSections?.newsletter?.design || "newsletter-1"}
+                    onValueChange={(value) => handleSectionUpdate("newsletter", { design: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DESIGN_OPTIONS.newsletter.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Display Order</Label>
+                  <Input
+                    type="number"
+                    value={settings?.homePageSections?.newsletter?.order || 5}
+                    onChange={(e) => handleSectionUpdate("newsletter", { order: Number.parseInt(e.target.value) })}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -565,7 +701,7 @@ export default function HomeSettingsPage() {
               <h2 className="text-xl font-semibold">Custom Sections</h2>
               <p className="text-muted-foreground">Create custom sections like Best Sellers, Flash Sale, etc.</p>
             </div>
-            <Button onClick={addCustomSection}>
+            <Button onClick={addCustomSection} className="bg-primary hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Custom Section
             </Button>
@@ -646,7 +782,25 @@ export default function HomeSettingsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <Label>Design Style</Label>
+                      <Select
+                        value={section.design || "custom-1"}
+                        onValueChange={(value) => updateCustomSection(index, { design: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DESIGN_OPTIONS.custom.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <div>
                       <Label>Products Limit</Label>
                       <Input
@@ -812,7 +966,7 @@ export default function HomeSettingsPage() {
                 <p className="text-muted-foreground mb-4">
                   Create custom sections like Best Sellers, Flash Sale, New Arrivals, etc.
                 </p>
-                <Button onClick={addCustomSection}>
+                <Button onClick={addCustomSection} className="bg-primary hover:bg-primary/90">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Custom Section
                 </Button>
@@ -827,7 +981,7 @@ export default function HomeSettingsPage() {
               <h2 className="text-xl font-semibold">Category Sections</h2>
               <p className="text-muted-foreground">Display products from specific categories on your home page.</p>
             </div>
-            <Button onClick={addCategorySection}>
+            <Button onClick={addCategorySection} className="bg-primary hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Category Section
             </Button>
@@ -905,7 +1059,23 @@ export default function HomeSettingsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <Label>Design Style</Label>
+                    <Select
+                      value={section.design || "category-1"}
+                      onValueChange={(value) => updateCategorySection(index, { design: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="category-1">Grid Layout</SelectItem>
+                        <SelectItem value="category-2">List Layout</SelectItem>
+                        <SelectItem value="category-3">Card Style</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div>
                     <Label>Products Limit</Label>
                     <Input
@@ -966,7 +1136,7 @@ export default function HomeSettingsPage() {
                 <p className="text-muted-foreground mb-4">
                   Add sections to display products from specific categories on your home page.
                 </p>
-                <Button onClick={addCategorySection}>
+                <Button onClick={addCategorySection} className="bg-primary hover:bg-primary/90">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Category Section
                 </Button>

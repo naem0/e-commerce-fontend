@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { categoryService } from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
 import { useTranslation } from "@/components/language-provider"
+import { getCategories, createCategory } from "@/services/category.service"
 
 export default function CreateCategoryPage() {
   const router = useRouter()
@@ -28,7 +28,7 @@ export default function CreateCategoryPage() {
   useEffect(() => {
     const fetchParentCategories = async () => {
       try {
-        const response = await categoryService.getCategories({ parent: "null" })
+        const response = await getCategories({ parent: "null" })
         setParentCategories(response.categories)
       } catch (error) {
         console.error("Error fetching parent categories:", error)
@@ -67,7 +67,7 @@ export default function CreateCategoryPage() {
         categoryData.image = image
       }
 
-      await categoryService.createCategory(categoryData)
+      await createCategory(categoryData)
       router.push("/admin/categories")
     } catch (error) {
       console.error("Error creating category:", error)
