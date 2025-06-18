@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { AdminLayout } from "@/components/admin/admin-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -28,7 +27,7 @@ import {
 } from "@/components/ui/pagination"
 import { useToast } from "@/components/ui/use-toast"
 import { Search, MoreHorizontal, Eye, FileText, Truck, CreditCard } from 'lucide-react'
-import { orderService } from "@/services/api"
+import { getOrders, updateOrderStatus, updatePaymentStatus } from "@/services/order.service"
 import { format } from "date-fns"
 
 export default function OrdersPage() {
@@ -65,7 +64,7 @@ export default function OrdersPage() {
         }
       })
 
-      const response = await orderService.getOrders(params)
+      const response = await  getOrders(params)
       setOrders(response.orders)
       setPagination({
         ...pagination,
@@ -130,7 +129,7 @@ export default function OrdersPage() {
   // Handle order status change
   const handleOrderStatusChange = async (orderId, newStatus) => {
     try {
-      await orderService.updateOrderStatus(orderId, newStatus)
+      await updateOrderStatus(orderId, newStatus)
 
       // Update order in state
       setOrders((prevOrders) =>
@@ -154,7 +153,7 @@ export default function OrdersPage() {
   // Handle payment status change
   const handlePaymentStatusChange = async (orderId, newStatus) => {
     try {
-      await orderService.updatePaymentStatus(orderId, { status: newStatus })
+      await updatePaymentStatus(orderId, { status: newStatus })
 
       // Update order in state
       setOrders((prevOrders) =>
