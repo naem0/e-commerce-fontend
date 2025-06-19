@@ -41,14 +41,10 @@ export const getBrands = async (params = {}) => {
     const queryString = new URLSearchParams(params).toString()
     const url = `${API_URL}/brands${queryString ? `?${queryString}` : ""}`
 
-    console.log("Fetching brands from:", url)
-
     const response = await fetch(url, {
       method: "GET",
       headers,
     })
-
-    console.log("Brands API response status:", response.status)
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -57,7 +53,6 @@ export const getBrands = async (params = {}) => {
     }
 
     const data = await response.json()
-    console.log("Brands fetched successfully:", data.brands?.length || 0, "items")
     return data
   } catch (error) {
     console.error("Get brands error:", error)
@@ -75,14 +70,10 @@ export const getBrandById = async (id) => {
     const headers = await getAuthHeaders()
     const url = `${API_URL}/brands/${id}`
 
-    console.log("Fetching brand from:", url)
-
     const response = await fetch(url, {
       method: "GET",
       headers,
     })
-
-    console.log("Brand API response status:", response.status)
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -91,7 +82,6 @@ export const getBrandById = async (id) => {
     }
 
     const data = await response.json()
-    console.log("Brand fetched successfully:", data.brand?.name)
     return data
   } catch (error) {
     console.error("Get brand error:", error)
@@ -107,7 +97,6 @@ export const createBrand = async (brandData) => {
   try {
     const headers = await getAuthHeaders()
     const url = `${API_URL}/brands`
-
 
     const response = await fetch(url, {
       method: "POST",
@@ -134,22 +123,14 @@ export const createBrand = async (brandData) => {
 // Update brand (Admin only)
 export const updateBrand = async (id, brandData) => {
   try {
-    console.log("=== Updating Brand ===")
-    console.log("Brand ID:", id)
-    console.log("Brand data:", brandData)
-
     const headers = await getAuthHeaders()
     const url = `${API_URL}/brands/${id}`
-
-    console.log("Updating brand at:", url)
 
     const response = await fetch(url, {
       method: "PUT",
       headers,
       body: JSON.stringify(brandData),
     })
-
-    console.log("Update brand response status:", response.status)
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -158,7 +139,6 @@ export const updateBrand = async (id, brandData) => {
     }
 
     const data = await response.json()
-    console.log("Brand updated successfully:", data)
     return data
   } catch (error) {
     console.error("Update brand error:", error)
@@ -209,8 +189,6 @@ export const getBrandWithProducts = async (id, params = {}) => {
     const queryString = new URLSearchParams(params).toString()
     const url = `${API_URL}/brands/${id}/products${queryString ? `?${queryString}` : ""}`
 
-    console.log("Fetching brand with products from:", url)
-
     const response = await fetch(url, {
       method: "GET",
       headers,
@@ -223,7 +201,6 @@ export const getBrandWithProducts = async (id, params = {}) => {
     }
 
     const data = await response.json()
-    console.log("Brand with products fetched successfully")
     return data
   } catch (error) {
     console.error("Get brand with products error:", error)

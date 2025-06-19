@@ -32,7 +32,7 @@ const userAPI = createAPI("users")
 export const getUsers = async (params = {}) => {
   try {
     const response = await userAPI.get("/", { params })
-    return response.data
+    return response
   } catch (error) {
     throw handleError(error)
   }

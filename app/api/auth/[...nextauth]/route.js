@@ -12,12 +12,10 @@ const handler = NextAuth({
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
-            console.log("Missing credentials")
             return null
           }
 
           const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
-          console.log("Calling backend API:", `${API_URL}/auth/login`)
 
           const response = await fetch(`${API_URL}/auth/login`, {
             method: "POST",
@@ -30,16 +28,12 @@ const handler = NextAuth({
             }),
           })
 
-          console.log("Backend response status:", response.status)
-
           if (!response.ok) {
             const errorText = await response.text()
-            console.log("Backend error:", errorText)
             return null
           }
 
           const data = await response.json()
-          console.log("Backend response data:", data)
 
           if (data.success && data.user && data.token) {
             const user = {
@@ -50,7 +44,6 @@ const handler = NextAuth({
               accessToken: data.token,
             }
 
-            console.log("NextAuth user object:", user)
             return user
           }
           return null
@@ -64,11 +57,6 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log("JWT callback - storing user data:", {
-          email: user.email,
-          role: user.role,
-          hasToken: !!user.accessToken,
-        })
         token.accessToken = user.accessToken
         token.role = user.role
         token.id = user.id
@@ -76,22 +64,9 @@ const handler = NextAuth({
       return token
     },
     async session({ session, token }) {
-      console.log("Session callback - token data:", {
-        email: token.email,
-        role: token.role,
-        hasAccessToken: !!token.accessToken,
-      })
-
       session.accessToken = token.accessToken
       session.user.role = token.role
       session.user.id = token.id
-
-      console.log("Final session:", {
-        email: session.user.email,
-        role: session.user.role,
-        hasAccessToken: !!session.accessToken,
-      })
-
       return session
     },
   },
