@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PackageOpen, ShoppingBag } from "lucide-react"
+import { getOrders } from "@/services/order.service"
 
 export default function OrdersPage() {
   const { data: session, status } = useSession()
@@ -32,16 +33,10 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       setLoading(true)
-      const response = await fetch("/api/orders")
+      const response = await getOrders()
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch orders")
-      }
-
-      const data = await response.json()
-
-      if (data.success) {
-        setOrders(data.orders)
+      if (response.success) {
+        setOrders(response.orders)
       } else {
         throw new Error(data.message || "Failed to fetch orders")
       }
