@@ -7,12 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
-import { useTranslation } from "@/components/language-provider"
 import { getCategories, createCategory } from "@/services/category.service"
 
 export default function CreateCategoryPage() {
   const router = useRouter()
-  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -81,9 +79,9 @@ export default function CreateCategoryPage() {
       <div className="flex items-center mb-6">
         <Button variant="ghost" onClick={() => router.back()} className="mr-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          {t("common.back")}
+          Back
         </Button>
-        <h1 className="text-2xl font-bold">{t("admin.createCategory")}</h1>
+        <h1 className="text-2xl font-bold">Create Category</h1>
       </div>
 
       <div className="bg-card rounded-lg shadow-md p-6">
@@ -98,21 +96,21 @@ export default function CreateCategoryPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">{t("admin.categoryName")}</Label>
+                <Label htmlFor="name">Category Name</Label>
                 <Input
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  placeholder={t("admin.enterCategoryName")}
+                  placeholder="Enter category name"
                   className="bg-background"
                 />
               </div>
 
               <div>
                 <Label htmlFor="parent">
-                  {t("admin.parentCategory")} ({t("common.optional")})
+                  Parent Category (optional)
                 </Label>
                 <select
                   id="parent"
@@ -121,7 +119,7 @@ export default function CreateCategoryPage() {
                   onChange={handleChange}
                   className="w-full border rounded-md px-3 py-2 bg-background text-foreground"
                 >
-                  <option value="">{t("admin.noneTopLevel")}</option>
+                  <option value="">None (Top Level)</option>
                   {parentCategories.map((category) => (
                     <option key={category._id} value={category._id}>
                       {category.name}
@@ -131,7 +129,7 @@ export default function CreateCategoryPage() {
               </div>
 
               <div>
-                <Label htmlFor="status">{t("common.status")}</Label>
+                <Label htmlFor="status">Status</Label>
                 <select
                   id="status"
                   name="status"
@@ -139,21 +137,21 @@ export default function CreateCategoryPage() {
                   onChange={handleChange}
                   className="w-full border rounded-md px-3 py-2 bg-background text-foreground"
                 >
-                  <option value="active">{t("common.active")}</option>
-                  <option value="inactive">{t("common.inactive")}</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
 
               <div>
                 <Label htmlFor="description">
-                  {t("common.description")} ({t("common.optional")})
+                  Description (optional)
                 </Label>
                 <Textarea
                   id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder={t("admin.enterCategoryDescription")}
+                  placeholder="Enter category description"
                   rows={4}
                   className="bg-background"
                 />
@@ -163,7 +161,7 @@ export default function CreateCategoryPage() {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="image">
-                  {t("admin.categoryImage")} ({t("common.optional")})
+                  Category Image (optional)
                 </Label>
                 <Input
                   id="image"
@@ -174,7 +172,7 @@ export default function CreateCategoryPage() {
                 />
                 {imagePreview && (
                   <div className="mt-2">
-                    <p className="text-sm text-muted-foreground mb-1">{t("common.preview")}:</p>
+                    <p className="text-sm text-muted-foreground mb-1">Preview:</p>
                     <img
                       src={imagePreview || "/placeholder.svg"}
                       alt="Category preview"
@@ -188,11 +186,11 @@ export default function CreateCategoryPage() {
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => router.push("/admin/categories")}>
-              {t("common.cancel")}
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t("common.create")}
+              Create
             </Button>
           </div>
         </form>

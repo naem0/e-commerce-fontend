@@ -66,9 +66,9 @@ export default function CreateBrandPage() {
       <div className="flex items-center mb-6">
         <Button variant="ghost" onClick={() => router.back()} className="mr-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          {t("common.back")}
+          Back
         </Button>
-        <h1 className="text-2xl font-bold">{t("admin.createBrand")}</h1>
+        <h1 className="text-2xl font-bold">Create Brand</h1>
       </div>
 
       <div className="bg-card rounded-lg shadow-md p-6">
@@ -83,21 +83,21 @@ export default function CreateBrandPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">{t("common.name")}</Label>
+                <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  placeholder={t("admin.enterBrandName")}
+                  placeholder="Enter brand name"
                   className="bg-background"
                 />
               </div>
 
               <div>
                 <Label htmlFor="website">
-                  {t("admin.website")} ({t("common.optional")})
+                  Website (optional)
                 </Label>
                 <Input
                   id="website"
@@ -111,7 +111,7 @@ export default function CreateBrandPage() {
               </div>
 
               <div>
-                <Label htmlFor="status">{t("common.status")}</Label>
+                <Label htmlFor="status">Status</Label>
                 <select
                   id="status"
                   name="status"
@@ -119,21 +119,21 @@ export default function CreateBrandPage() {
                   onChange={handleChange}
                   className="w-full border rounded-md px-3 py-2 bg-background text-foreground"
                 >
-                  <option value="active">{t("common.active")}</option>
-                  <option value="inactive">{t("common.inactive")}</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
 
               <div>
                 <Label htmlFor="description">
-                  {t("common.description")} ({t("common.optional")})
+                  Discription (optional)
                 </Label>
                 <Textarea
                   id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder={t("admin.enterBrandDescription")}
+                  placeholder="Enter brand description"
                   rows={4}
                   className="bg-background"
                 />
@@ -143,7 +143,7 @@ export default function CreateBrandPage() {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="logo">
-                  {t("admin.brandLogo")} ({t("common.optional")})
+                  Logo (optional)
                 </Label>
                 <Input
                   id="logo"
@@ -154,7 +154,7 @@ export default function CreateBrandPage() {
                 />
                 {logoPreview && (
                   <div className="mt-2">
-                    <p className="text-sm text-muted-foreground mb-1">{t("common.preview")}:</p>
+                    <p className="text-sm text-muted-foreground mb-1">Preview:</p>
                     <img
                       src={logoPreview || "/placeholder.svg"}
                       alt="Brand logo preview"
@@ -168,11 +168,11 @@ export default function CreateBrandPage() {
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => router.push("/admin/brands")}>
-              {t("common.cancel")}
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t("common.create")}
+              Create
             </Button>
           </div>
         </form>
