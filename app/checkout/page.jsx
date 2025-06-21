@@ -96,9 +96,9 @@ export default function CheckoutPage() {
 
       const orderData = {
         items: cart.items.map((item) => ({
-          product: item.productId,
-          name: item.name,
-          price: item.price,
+          product: item.product._id,
+          name: item.product.name,
+          price: item.product.price,
           quantity: item.quantity,
         })),
         shippingAddress: {
