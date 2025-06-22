@@ -65,10 +65,10 @@ export function Header() {
               </span>
             )}
           </Link>
-          <nav className="hidden md:flex gap-6">
+          <nav className="hidden md:flex gap-6 align-center">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-sm font-medium transition-colors hover:text-primary my-auto ${
                 isActive("/") ? "text-foreground" : "text-muted-foreground"
               }`}
             >
@@ -76,7 +76,7 @@ export function Header() {
             </Link>
             <Link
               href="/products"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-sm font-medium transition-colors hover:text-primary my-auto ${
                 isActive("/products") ? "text-foreground" : "text-muted-foreground"
               }`}
             >
@@ -84,7 +84,7 @@ export function Header() {
             </Link>
             <Link
               href="/categories"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-sm font-medium transition-colors hover:text-primary my-auto ${
                 isActive("/categories") ? "text-foreground" : "text-muted-foreground"
               }`}
             >
@@ -108,7 +108,7 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2">
           {/* Language Toggle */}
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Globe className="h-5 w-5" />
@@ -119,10 +119,10 @@ export function Header() {
               <DropdownMenuItem onClick={() => setLanguage("en")}>English</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setLanguage("bn")}>বাংলা</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
 
           {/* Theme Toggle */}
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -135,7 +135,7 @@ export function Header() {
               <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
 
           {/* Cart */}
           <Link href="/cart">

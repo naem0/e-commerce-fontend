@@ -59,6 +59,31 @@ export const getOrders = async (params = {}) => {
   }
 }
 
+// Get all orders (admin)
+export const getAllOrders = async (params = {}) => {
+  try {
+    const headers = await getAuthHeaders()
+    const queryString = new URLSearchParams(params).toString()
+    const url = `${API_URL}/orders${queryString ? `?${queryString}` : ""}`
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+      orders: [],
+    }
+  }
+}
+
 // Get single order
 export const getOrderById = async (id) => {
   try {
@@ -121,6 +146,33 @@ export const updatePaymentStatus = async (orderId, paymentData) => {
       method: "PATCH",
       headers,
       body: JSON.stringify(paymentData),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Update order status
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/orders/${orderId}/status`
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ status }),
     })
 
     if (!response.ok) {

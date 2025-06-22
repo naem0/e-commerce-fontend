@@ -38,11 +38,6 @@ export default function OrderDetailsPage() {
   const [selectedProduct, setSelectedProduct] = useState(null)
 
   useEffect(() => {
-    if (!session) {
-      router.push("/auth/login")
-      return
-    }
-
     fetchOrder()
   }, [session, id])
 

@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/pagination"
 import { useToast } from "@/components/ui/use-toast"
 import { Search, MoreHorizontal, Eye, FileText, Truck, CreditCard } from 'lucide-react'
-import { getOrders, updateOrderStatus, updatePaymentStatus } from "@/services/order.service"
+import { getAllOrders, updateOrderStatus, updatePaymentStatus } from "@/services/order.service"
 import { format } from "date-fns"
 
 export default function OrdersPage() {
@@ -64,7 +64,7 @@ export default function OrdersPage() {
         }
       })
 
-      const response = await  getOrders(params)
+      const response = await  getAllOrders(params)
       setOrders(response.orders)
       setPagination({
         ...pagination,
@@ -308,7 +308,7 @@ export default function OrdersPage() {
                       <TableCell className="font-medium">#{order.orderNumber || order._id.slice(-6)}</TableCell>
                       <TableCell>{order.user?.name || "Guest"}</TableCell>
                       <TableCell>{format(new Date(order.createdAt), "MMM d, yyyy")}</TableCell>
-                      <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
+                      <TableCell>${order.total.toFixed(2)}</TableCell>
                       <TableCell>{getOrderStatusBadge(order.status)}</TableCell>
                       <TableCell>{getPaymentStatusBadge(order.paymentStatus)}</TableCell>
                       <TableCell className="text-right">
