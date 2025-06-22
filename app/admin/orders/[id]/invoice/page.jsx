@@ -56,8 +56,7 @@ export default function AdminInvoicePage() {
   }
 
   const handlePrint = () => {
-    const invoiceContent = invoiceRef.current.innerHTML
-    invoiceContent.print()
+    window.print()
   }
 
   const handleDownload = async () => {
