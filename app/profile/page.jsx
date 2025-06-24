@@ -15,8 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Loader2, User, MapPin, Package, Settings, Plus, Edit, Trash2, Eye, Download } from "lucide-react"
 import { formatPrice, formatDate } from "@/services/utils"
-import { getUserProfile, updateUserProfile } from "@/services/user.service"
-import { getUserOrders } from "@/services/order.service"
+import { getProfile, updateProfile } from "@/services/user.service"
+import { getOrders } from "@/services/order.service"
 
 export default function ProfilePage() {
   const { data: session } = useSession()
@@ -52,14 +52,36 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchUserData()
+    fatchOrders()
   }, [session])
+
+  const fatchOrders = async () => {
+    try {
+      setLoading(true)
+      const response = await getOrders()
+      if (response.success) {
+        setOrders(response.orders || [])
+      } else {
+        throw new Error(response.message || "Failed to fetch orders")
+      }
+    } catch (error) {
+      console.error("Fetch orders error:", error)
+      toast({
+        title: t("profile.error") || "Error",
+        description: error.message || "Failed to load orders",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const fetchUserData = async () => {
     try {
       setLoading(true)
 
       // Fetch user profile
-      const profileResponse = await getUserProfile()
+      const profileResponse = await getProfile()
       if (profileResponse.success) {
         setUser(profileResponse.user)
         setProfileForm({
@@ -72,7 +94,7 @@ export default function ProfilePage() {
       }
 
       // Fetch user orders
-      const ordersResponse = await getUserOrders()
+      const ordersResponse = await getOrders()
       if (ordersResponse.success) {
         setOrders(ordersResponse.orders || [])
       }
@@ -93,7 +115,7 @@ export default function ProfilePage() {
     try {
       setUpdating(true)
 
-      const response = await updateUserProfile(profileForm)
+      const response = await updateProfile(profileForm)
 
       if (response.success) {
         setUser(response.user)
@@ -131,7 +153,7 @@ export default function ProfilePage() {
         addresses.push(addressForm)
       }
 
-      const response = await updateUserProfile({ addresses })
+      const response = await updateProfile({ addresses })
 
       if (response.success) {
         setUser(response.user)
