@@ -51,11 +51,6 @@ export default function ProfilePage() {
   })
 
   useEffect(() => {
-    if (!session) {
-      router.push("/auth/login")
-      return
-    }
-
     fetchUserData()
   }, [session])
 

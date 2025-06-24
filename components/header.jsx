@@ -164,7 +164,7 @@ export function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
-                  <Link href="/account">{t("nav.profile")}</Link>
+                  <Link href="/profile">{t("nav.profile")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout")}</DropdownMenuItem>

@@ -22,11 +22,6 @@ export default function UserInvoicePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!session) {
-      router.push("/auth/login")
-      return
-    }
-
     fetchData()
   }, [session, id])
 
