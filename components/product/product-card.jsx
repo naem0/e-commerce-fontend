@@ -9,12 +9,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, ShoppingCart, Eye } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export function ProductCard({ product, handleAddToCart, showDiscount = false, discountPercentage = 0 }) {
   const { t } = useLanguage()
   const { addToCart } = useCart()
   const [isLoading, setIsLoading] = useState(false)
-
+  const router = useRouter()
 
   // Calculate discount percentage
   const calculatedDiscountPercentage = product.salePrice
@@ -24,16 +25,24 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
   const finalPrice = product.salePrice || product.price
   const originalPrice = product.price
 
+  const handleBuyNow = async (product) => {
+    setIsLoading(true)
+    try {
+      await addToCart(product._id, 1)
+      router.push("/checkout")
+    } catch (error) {
+      console.error("Buy now error:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
       <Link href={`/products/${product._id}`} className="block">
         <div className="relative aspect-square overflow-hidden">
           <Image
-            src={
-              // product.images?.[0] ||
-              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D" ||
-              "/placeholder.svg?height=300&width=300"
-            }
+            src={product.images?.[0] || "/placeholder.svg?height=300&width=300"}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 hover:scale-105"
@@ -85,13 +94,28 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
         </Button>
         <Button
           size="sm"
+          variant="outline"
           className="flex-1"
-          onClick={(e) => { e.preventDefault(); handleAddToCart(product) }}
+          onClick={(e) => {
+            e.preventDefault()
+            handleAddToCart(product)
+          }}
           disabled={isLoading || product.stock <= 0}
           data-testid="add-to-cart-button"
         >
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
-          {t("products.add") || "Add"}
+          {t("product.addToCart") || "Add to Cart"}
+        </Button>
+        <Button
+          size="sm"
+          className="flex-1 bg-primary hover:bg-primary/90"
+          onClick={(e) => {
+            e.preventDefault()
+            handleBuyNow(product)
+          }}
+          disabled={isLoading || product.stock <= 0}
+        >
+          {t("product.buyNow") || "Buy Now"}
         </Button>
       </CardFooter>
     </Card>

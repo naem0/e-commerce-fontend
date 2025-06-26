@@ -254,7 +254,7 @@ export default function HomeSettingsPage() {
   const addCategorySection = () => {
     const newSection = {
       id: `category-${Date.now()}`,
-      categoryId: "",
+      categoryId: "", // This should be empty initially
       title: "Category Products",
       enabled: true,
       design: "category-1",
@@ -262,7 +262,7 @@ export default function HomeSettingsPage() {
       settings: {
         limit: 8,
         showViewAll: true,
-        backgroundColor: "",
+        backgroundColor: "#ffffff",
         textColor: "",
       },
     }
