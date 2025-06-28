@@ -37,7 +37,8 @@ import {
   Star,
 } from "lucide-react"
 import { formatPrice, formatDate } from "@/services/utils"
-import { getProfile, updateProfile, getOrders } from "@/services/user.service"
+import { getProfile, updateProfile } from "@/services/user.service"
+import { getOrders } from "@/services/order.service"
 
 export default function ProfilePage() {
   const { data: session } = useSession()
@@ -78,16 +79,12 @@ export default function ProfilePage() {
     confirmPassword: "",
   })
 
-  useEffect(() => {
-    fetchUserData()
-  }, [session])
-
   const fetchUserData = async () => {
     try {
       setLoading(true)
-
       // Fetch user profile
       const profileResponse = await getProfile()
+      console.log("Profile Response:", profileResponse)
       if (profileResponse.success) {
         setUser(profileResponse.user)
         setProfileForm({
@@ -115,7 +112,9 @@ export default function ProfilePage() {
       setLoading(false)
     }
   }
-
+  useEffect(() => {
+    fetchUserData()
+  }, [session])
   const handleProfileUpdate = async (e) => {
     e.preventDefault()
     try {
@@ -332,7 +331,7 @@ export default function ProfilePage() {
                 </Badge>
                 <Badge variant="outline" className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  {/* Member since {formatDate(user?.createdAt)} */}
+                  Member since {formatDate(user?.createdAt)}
                 </Badge>
               </div>
             </div>
@@ -684,7 +683,7 @@ export default function ProfilePage() {
                             <h3 className="font-semibold text-lg">Order #{order._id.slice(-8).toUpperCase()}</h3>
                             <p className="text-sm text-gray-600 flex items-center gap-2 mt-1">
                               <Calendar className="h-4 w-4" />
-                              {/* {formatDate(order.createdAt)} • {order.items?.length || 0} items */}
+                              {formatDate(order.createdAt)} • {order.items?.length || 0} items
                             </p>
                           </div>
                           <div className="text-right">

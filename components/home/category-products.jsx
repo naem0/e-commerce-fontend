@@ -28,7 +28,7 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
 
         // Fetch category info and products in parallel
         const [categoryResult, productsResult] = await Promise.all([
-          getCategory(categoryId),
+          getCategory(categoryId?._id || categoryId),
           getProducts({ category: categoryId, limit }),
         ])
 

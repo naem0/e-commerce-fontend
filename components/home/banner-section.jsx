@@ -111,7 +111,7 @@ export function BannerSection() {
   // Banner Design 1: Simple Slider with Side Category
   if (bannerDesign === "banner-1") {
     return (
-      <section className="relative w-full overflow-hidden bg-gray-50">
+      <section className="relative w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Side Category Menu - Only visible on desktop */}
@@ -220,7 +220,7 @@ export function BannerSection() {
   // Banner Design 1: Simple Slider with Side Category
   if (bannerDesign === "banner-11") {
     return (
-      <section className="relative w-full overflow-hidden bg-gray-50">
+      <section className="relative w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Side Category Menu - Only visible on desktop */}

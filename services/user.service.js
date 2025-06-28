@@ -52,7 +52,7 @@ export const getUserById = async (id) => {
 export const updateUser = async (id, userData) => {
   try {
     const response = await userAPI.put(`/${id}`, userData)
-    return response.data
+    return response
   } catch (error) {
     throw handleError(error)
   }
@@ -72,7 +72,7 @@ export const deleteUser = async (id) => {
 export const getProfile = async () => {
   try {
     const response = await userAPI.get("/profile")
-    return response.data
+    return response
   } catch (error) {
     throw handleError(error)
   }
