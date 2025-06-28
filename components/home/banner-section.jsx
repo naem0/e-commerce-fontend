@@ -41,30 +41,30 @@ export function BannerSection() {
               image: "/placeholder.svg?height=600&width=1200",
               buttonText: t("banner.shopNow") || "Shop Now",
               buttonLink: "/products",
-              backgroundColor: "#f8fafc",
-              textColor: "#1e293b",
+              backgroundColor: "",
+              textColor: "",
             },
             {
               _id: "default-2",
-              title: t("banner.title2") || "Winter Sale 2024",
-              subtitle: t("banner.subtitle2") || "Up to 70% off on selected items",
-              description: t("banner.description2") || "Grab the best deals before they're gone",
+              title: t("banner.title2") || "New Collection",
+              subtitle: t("banner.subtitle2") || "Fresh styles for the season",
+              description: t("banner.description2") || "Discover our latest arrivals and trending products",
               image: "/placeholder.svg?height=600&width=1200",
-              buttonText: t("banner.shopNow") || "Shop Now",
-              buttonLink: "/products",
-              backgroundColor: "#f8fafc",
-              textColor: "#1e293b",
+              buttonText: t("banner.exploreNow") || "Explore Now",
+              buttonLink: "/categories",
+              backgroundColor: "",
+              textColor: "",
             },
             {
               _id: "default-3",
-              title: t("banner.title3") || "Spring Sale 2024",
-              subtitle: t("banner.subtitle3") || "Up to 60% off on selected items",
-              description: t("banner.description3") || "Don't miss out on our exclusive spring offers",
+              title: t("banner.title3") || "Free Shipping",
+              subtitle: t("banner.subtitle3") || "On orders over $100",
+              description: t("banner.description3") || "Fast and reliable delivery to your doorstep",
               image: "/placeholder.svg?height=600&width=1200",
-              buttonText: t("banner.shopNow") || "Shop Now",
+              buttonText: t("banner.orderNow") || "Order Now",
               buttonLink: "/products",
-              backgroundColor: "#f8fafc",
-              textColor: "#1e293b",
+              backgroundColor: "",
+              textColor: "",
             },
           ])
         }
@@ -102,121 +102,25 @@ export function BannerSection() {
 
   // Auto-slide functionality
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000)
-    return () => clearInterval(interval)
+    if (banners.length > 1) {
+      const interval = setInterval(nextSlide, 5000)
+      return () => clearInterval(interval)
+    }
   }, [banners.length])
 
   // Banner Design 1: Simple Slider with Side Category
   if (bannerDesign === "banner-1") {
     return (
-      <section className="relative w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4 overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            {/* Side Category Menu - Only visible on desktop */}
-            <div className="hidden lg:block">
-              <SideCategoryMenu className="h-[400px] md:h-[500px]" />
-            </div>
-
-            {/* Banner Slider */}
-            <div className="lg:col-span-3 relative h-[400px] md:h-[500px] overflow-hidden">
-              {banners.map((banner, index) => {
-                // Process image URL
-                let imageUrl = banner.image
-                if (imageUrl && imageUrl.startsWith("/uploads")) {
-                  imageUrl = `${process.env.NEXT_PUBLIC_API_URL}${imageUrl}`
-                }
-
-                  <div
-                    key={banner._id}
-                    className={`absolute inset-0 transition-transform duration-500 ease-in-out ${
-                      index === currentSlide
-                        ? "translate-x-0"
-                        : index < currentSlide
-                          ? "-translate-x-full"
-                          : "translate-x-full"
-                    }`}
-                    style={{ backgroundColor: banner?.backgroundColor}}
-                  >
-                    <div className="h-full flex items-center">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full">
-                        <div className="space-y-4 p-6" style={{ color: banner?.textColor }}>
-                          <h1 className="text-3xl md:text-4xl font-bold">{banner.title}</h1>
-                          {banner.subtitle && (
-                            <h2 className="text-xl md:text-2xl font-semibold opacity-90">{banner.subtitle}</h2>
-                          )}
-                          {banner.description && <p className="text-base opacity-80">{banner.description}</p>}
-                          <Button
-                            asChild
-                            size="lg"
-                            className="text-lg px-6 py-2"
-                            style={{
-                              backgroundColor: banner?.textColor,
-                              color: banner?.backgroundColor,
-                            }}
-                          >
-                            <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>
-                          </Button>
-                        </div>
-                        <div className="relative h-[250px] md:h-[400px]">
-                          <img
-                            src={imageUrl || "/placeholder.svg"}
-                            alt={banner.title}
-                            className="w-full h-full object-cover rounded-lg"
-                            onError={(e) => {
-                              e.target.src = "/placeholder.svg?height=400&width=600"
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              })}
-
-              {/* Navigation Arrows */}
-              <button
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors"
-              >
-                <ChevronLeft className="w-6 h-6 text-gray-800" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors"
-              >
-                <ChevronRight className="w-6 h-6 text-gray-800" />
-              </button>
-
-              {/* Dots Indicator */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {banners.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-colors ${
-                      index === currentSlide ? "bg-gray-800" : "bg-gray-400"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-  // Banner Design 11: Simple Slider with Side Category
-  if (bannerDesign === "banner-11") {
-    return (
-      <section className="relative w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
+      <section className="relative w-full overflow-hidden bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Side Category Menu - Only visible on desktop */}
-            <div className="hidden lg:block">
-              <SideCategoryMenu className="h-[400px] md:h-[500px]" />
+            <div className="hidden lg:block h-[400px] md:h-[500px] overflow-hidden">
+              <SideCategoryMenu className="h-full" />
             </div>
 
             {/* Banner Slider */}
-            <div className="lg:col-span-3 relative h-[400px] md:h-[500px]">
+            <div className="lg:col-span-3 relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
               {banners.map((banner, index) => {
                 // Process image URL
                 let imageUrl = banner.image
@@ -227,29 +131,141 @@ export function BannerSection() {
                 return (
                   <div
                     key={banner._id}
-                    className={`absolute inset-0 transition-transform duration-500 ease-in-out ${
-                      index === currentSlide ? "translate-x-0"
+                    className={`absolute inset-0 transition-all duration-500 ease-in-out ${
+                      index === currentSlide
+                        ? "opacity-100 translate-x-0"
                         : index < currentSlide
-                          ? "-translate-x-full"
-                          : "translate-x-full"
+                          ? "opacity-0 -translate-x-full"
+                          : "opacity-0 translate-x-full"
                     }`}
-                    style={{ backgroundImage: `url(${imageUrl || "/placeholder.svg"})`, backgroundSize: "cover", backgroundPosition: "center" }}
+                    style={{ backgroundColor: banner.backgroundColor || "#f8fafc" }}
                   >
                     <div className="h-full flex items-center">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full">
-                        <div className="space-y-4 p-6" style={{ color: banner?.textColor }}>
-                          <h1 className="text-3xl md:text-4xl font-bold">{banner.title}</h1>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full px-6">
+                        <div className="space-y-4" style={{ color: banner.textColor || "#1e293b" }}>
+                          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">{banner.title}</h1>
                           {banner.subtitle && (
                             <h2 className="text-xl md:text-2xl font-semibold opacity-90">{banner.subtitle}</h2>
                           )}
-                          {banner.description && <p className="text-base opacity-80">{banner.description}</p>}
+                          {banner.description && (
+                            <p className="text-base md:text-lg opacity-80 max-w-md">{banner.description}</p>
+                          )}
                           <Button
                             asChild
                             size="lg"
-                            className="text-lg px-6 py-2"
+                            className="text-lg px-8 py-3 mt-6"
                             style={{
-                              backgroundColor: banner?.textColor,
-                              color: banner?.backgroundColor,
+                              backgroundColor: banner.textColor || "#1e293b",
+                              color: banner.backgroundColor || "#f8fafc",
+                            }}
+                          >
+                            <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>
+                          </Button>
+                        </div>
+                        <div className="relative h-[250px] md:h-[400px] order-first md:order-last">
+                          <img
+                            src={imageUrl || "/placeholder.svg?height=400&width=600"}
+                            alt={banner.title}
+                            className="w-full h-full object-cover rounded-lg shadow-lg"
+                            onError={(e) => {
+                              e.target.src = "/placeholder.svg?height=400&width=600"
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+
+              {/* Navigation Arrows */}
+              {banners.length > 1 && (
+                <>
+                  <button
+                    onClick={prevSlide}
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 transition-all duration-200 shadow-lg z-10"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-gray-800" />
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 transition-all duration-200 shadow-lg z-10"
+                  >
+                    <ChevronRight className="w-6 h-6 text-gray-800" />
+                  </button>
+                </>
+              )}
+
+              {/* Dots Indicator */}
+              {banners.length > 1 && (
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+                  {banners.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                        index === currentSlide ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Banner Design 1: Simple Slider with Side Category
+  if (bannerDesign === "banner-11") {
+    return (
+      <section className="relative w-full overflow-hidden bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            {/* Side Category Menu - Only visible on desktop */}
+            <div className="hidden lg:block h-[400px] md:h-[500px] overflow-hidden">
+              <SideCategoryMenu className="h-full" />
+            </div>
+
+            {/* Banner Slider */}
+            <div className="lg:col-span-3 relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
+              {banners.map((banner, index) => {
+                // Process image URL
+                let imageUrl = banner.image
+                if (imageUrl && imageUrl.startsWith("/uploads")) {
+                  imageUrl = `${process.env.NEXT_PUBLIC_API_URL}${imageUrl}`
+                }
+
+                return (
+                  <div
+                    key={banner._id}
+                    className={`absolute inset-0 transition-all duration-500 ease-in-out ${
+                      index === currentSlide
+                        ? "opacity-100 translate-x-0"
+                        : index < currentSlide
+                          ? "opacity-0 -translate-x-full"
+                          : "opacity-0 translate-x-full"
+                    }`}
+                    style={{ backgroundColor: banner.backgroundColor || "#f8fafc", backgroundImage: `url(${imageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }}
+                  >
+                    <div className="h-full flex items-center">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full px-6">
+                        <div className="space-y-4" style={{ color: banner.textColor || "#1e293b" }}>
+                          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">{banner.title}</h1>
+                          {banner.subtitle && (
+                            <h2 className="text-xl md:text-2xl font-semibold opacity-90">{banner.subtitle}</h2>
+                          )}
+                          {banner.description && (
+                            <p className="text-base md:text-lg opacity-80 max-w-md">{banner.description}</p>
+                          )}
+                          <Button
+                            asChild
+                            size="lg"
+                            className="text-lg px-8 py-3 mt-6"
+                            style={{
+                              backgroundColor: banner.textColor || "#1e293b",
+                              color: banner.backgroundColor || "#f8fafc",
                             }}
                           >
                             <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>
@@ -262,31 +278,37 @@ export function BannerSection() {
               })}
 
               {/* Navigation Arrows */}
-              <button
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors"
-              >
-                <ChevronLeft className="w-6 h-6 text-gray-800" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors"
-              >
-                <ChevronRight className="w-6 h-6 text-gray-800" />
-              </button>
+              {banners.length > 1 && (
+                <>
+                  <button
+                    onClick={prevSlide}
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-3 transition-all duration-200 shadow-lg z-10"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-gray-800" />
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-3 transition-all duration-200 shadow-lg z-10"
+                  >
+                    <ChevronRight className="w-4 h-4 text-gray-800" />
+                  </button>
+                </>
+              )}
 
               {/* Dots Indicator */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {banners.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-colors ${
-                      index === currentSlide ? "bg-gray-800" : "bg-gray-400"
-                    }`}
-                  />
-                ))}
-              </div>
+              {banners.length > 1 && (
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+                  {banners.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                        index === currentSlide ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -328,31 +350,35 @@ export function BannerSection() {
         </div>
 
         {/* Navigation */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-3 transition-colors"
-        >
-          <ChevronLeft className="w-6 h-6 text-white" />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-3 transition-colors"
-        >
-          <ChevronRight className="w-6 h-6 text-white" />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
-          {banners.map((_, index) => (
+        {banners.length > 1 && (
+          <>
             <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-4 h-4 rounded-full transition-colors ${
-                index === currentSlide ? "bg-white" : "bg-white/50"
-              }`}
-            />
-          ))}
-        </div>
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-3 transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-3 transition-colors"
+            >
+              <ChevronRight className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Dots */}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+              {banners.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-4 h-4 rounded-full transition-colors ${
+                    index === currentSlide ? "bg-white" : "bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </section>
     )
   }
@@ -377,7 +403,7 @@ export function BannerSection() {
                   style={{ backgroundColor: banner.backgroundColor || "#f8fafc" }}
                 >
                   <img
-                    src={imageUrl || "/placeholder.svg"}
+                    src={imageUrl || "/placeholder.svg?height=400&width=600"}
                     alt={banner.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {

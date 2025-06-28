@@ -19,7 +19,7 @@ export function SideCategoryMenu({ className }) {
     const fetchCategories = async () => {
       try {
         setLoading(true)
-        const result = await getCategories()
+        const result = await getCategories( { limit: 10, populate: "icon"})
         if (result.success) {
           // Process categories to create a hierarchical structure
           const categoriesWithChildren = result.categories.map((cat) => ({

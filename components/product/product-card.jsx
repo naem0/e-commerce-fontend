@@ -9,13 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, ShoppingCart, Eye } from "lucide-react"
-import { useRouter } from "next/navigation"
 
 export function ProductCard({ product, handleAddToCart, showDiscount = false, discountPercentage = 0 }) {
   const { t } = useLanguage()
   const { addToCart } = useCart()
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+
 
   // Calculate discount percentage
   const calculatedDiscountPercentage = product.salePrice
@@ -24,18 +23,6 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
 
   const finalPrice = product.salePrice || product.price
   const originalPrice = product.price
-
-  const handleBuyNow = async (product) => {
-    setIsLoading(true)
-    try {
-      await addToCart(product._id, 1)
-      router.push("/checkout")
-    } catch (error) {
-      console.error("Buy now error:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -94,28 +81,13 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
         </Button>
         <Button
           size="sm"
-          variant="outline"
           className="flex-1"
-          onClick={(e) => {
-            e.preventDefault()
-            handleAddToCart(product)
-          }}
+          onClick={(e) => { e.preventDefault(); handleAddToCart(product) }}
           disabled={isLoading || product.stock <= 0}
           data-testid="add-to-cart-button"
         >
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
-          {t("product.addToCart") || "Add to Cart"}
-        </Button>
-        <Button
-          size="sm"
-          className="flex-1 bg-primary hover:bg-primary/90"
-          onClick={(e) => {
-            e.preventDefault()
-            handleBuyNow(product)
-          }}
-          disabled={isLoading || product.stock <= 0}
-        >
-          {t("product.buyNow") || "Buy Now"}
+          {t("products.add") || "Add"}
         </Button>
       </CardFooter>
     </Card>

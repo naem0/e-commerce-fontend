@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Loader2, CreditCard, Truck, MapPin, Plus, User } from "lucide-react"
 import { formatPrice } from "@/services/utils"
 import { createOrder } from "@/services/order.service"
@@ -128,10 +128,10 @@ export default function CheckoutPage() {
   }
 
   const calculateTotals = () => {
-    const subtotal = cart.items.reduce(
-      (sum, item) => sum + (item.product?.salePrice || item.product?.price || 0) * item.quantity,
-      0,
-    )
+    const subtotal = cart.items.reduce((sum, item) => {
+      const price = item.product?.salePrice || item.product?.price || item.price || 0
+      return sum + price * item.quantity
+    }, 0)
     const tax = subtotal * 0.05 // 5% tax
     const shipping = subtotal > 1000 ? 0 : 60 // Free shipping over 1000 BDT
     const total = subtotal + tax + shipping
@@ -173,14 +173,26 @@ export default function CheckoutPage() {
 
       const { subtotal, tax, shipping, total } = calculateTotals()
 
-      const orderData = {
-        items: cart.items.map((item) => ({
-          product: item.productId,
-          name: item.product?.name || item.name,
-          price: item.product?.salePrice || item.product?.price || item.price,
+      // Prepare order items with proper product IDs
+      const orderItems = cart.items.map((item) => {
+        // Get product ID from different possible sources
+        const productId = item.productId || item.product?._id || item.product?.id || item.id
+
+        if (!productId) {
+          throw new Error(`Product ID missing for item: ${item.product?.name || item.name || "Unknown product"}`)
+        }
+
+        return {
+          product: productId,
+          name: item.product?.name || item.name || "Unknown Product",
+          price: item.product?.salePrice || item.product?.price || item.price || 0,
           quantity: item.quantity,
-          image: item.product?.images?.[0] || "",
-        })),
+          image: item.product?.images?.[0] || item.image || "",
+        }
+      })
+
+      const orderData = {
+        items: orderItems,
         shippingAddress: {
           name: formData.name,
           email: formData.email,
@@ -199,6 +211,8 @@ export default function CheckoutPage() {
         notes: formData.notes,
         userId: userId || null, // null for guest orders
       }
+
+      console.log("Order data being sent:", orderData) // Debug log
 
       const response = await createOrder(orderData)
 
@@ -462,15 +476,17 @@ export default function CheckoutPage() {
             <CardContent className="space-y-4">
               {/* Cart Items */}
               <div className="space-y-2">
-                {cart.items.map((item) => (
+                {cart.items.map((item, index) => (
                   <div
-                    key={`${item?.product?._id}-${item.product?.selectedVariant || "default"}`}
+                    key={`${item?.product?._id || item?.productId || index}-${item.product?.selectedVariant || "default"}`}
                     className="flex justify-between text-sm"
                   >
                     <span>
-                      {item.product?.name || item.name} × {item.quantity}
+                      {item.product?.name || item.name || "Unknown Product"} × {item.quantity}
                     </span>
-                    <span>{formatPrice((item.product?.salePrice || item.product?.price || 0) * item.quantity)}</span>
+                    <span>
+                      {formatPrice((item.product?.salePrice || item.product?.price || item.price || 0) * item.quantity)}
+                    </span>
                   </div>
                 ))}
               </div>
