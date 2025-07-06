@@ -38,7 +38,11 @@ import { PartialPaymentModal } from "@/components/partial-payment-modal"
 export default function AdminOrderDetailsPage() {
   const { id } = useParams()
   const router = useRouter()
+<<<<<<< HEAD
   const { data: session, status } = useSession()
+=======
+  const { data: session } = useSession()
+>>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
   const { t } = useLanguage()
   const { toast } = useToast()
 
@@ -53,7 +57,11 @@ export default function AdminOrderDetailsPage() {
   useEffect(() => {
 
     fetchOrder()
+<<<<<<< HEAD
   }, [status, id])
+=======
+  }, [session, id])
+>>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
 
   const fetchOrder = async () => {
     try {
