@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import axios from "axios"
 
 const handler = NextAuth({
   providers: [
@@ -12,29 +11,44 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-            email: credentials.email,
-            password: credentials.password,
+          if (!credentials?.email || !credentials?.password) {
+            return null
+          }
+
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+
+          const response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
           })
 
-          if (response.data.success) {
-            const user = response.data.user
-            const token = response.data.token
+          if (!response.ok) {
+            const errorText = await response.text()
+            return null
+          }
 
-            console.log("NextAuth authorize - User:", user.email, "Role:", user.role)
-            console.log("NextAuth authorize - Token:", token ? "Present" : "Missing")
+          const data = await response.json()
 
-            return {
-              id: user._id,
-              email: user.email,
-              name: user.name,
-              role: user.role,
-              accessToken: token,
+          if (data.success && data.user && data.token) {
+            const user = {
+              id: data.user._id,
+              email: data.user.email,
+              name: data.user.name,
+              role: data.user.role,
+              accessToken: data.token,
             }
+
+            return user
           }
           return null
         } catch (error) {
-          console.error("NextAuth authorize error:", error.response?.data || error.message)
+          console.error("NextAuth authorize error:", error)
           return null
         }
       },
@@ -42,47 +56,29 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // Initial sign in
       if (user) {
-        console.log("NextAuth JWT callback - User login:", user.email)
         token.accessToken = user.accessToken
         token.role = user.role
         token.id = user.id
       }
-
-      console.log("NextAuth JWT callback - Token:", {
-        email: token.email,
-        role: token.role,
-        hasAccessToken: !!token.accessToken,
-      })
-
       return token
     },
     async session({ session, token }) {
-      // Send properties to the client
       session.accessToken = token.accessToken
       session.user.role = token.role
       session.user.id = token.id
-
-      console.log("NextAuth session callback - Session:", {
-        email: session.user.email,
-        role: session.user.role,
-        hasAccessToken: !!session.accessToken,
-      })
-
       return session
     },
   },
   pages: {
     signIn: "/auth/login",
-    signUp: "/auth/register",
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-key",
+  debug: true,
 })
 
 export { handler as GET, handler as POST }

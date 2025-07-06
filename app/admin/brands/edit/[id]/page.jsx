@@ -1,17 +1,18 @@
 "use client"
-
+import React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { brandService } from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
+import { updateBrand, getBrandById } from "@/services/brand.service"
 
 export default function EditBrandPage({ params }) {
   const router = useRouter()
-  const { id } = params
+  const { id } = React.use(params)
+  console.log("Editing brand with ID:", id)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -27,7 +28,7 @@ export default function EditBrandPage({ params }) {
   useEffect(() => {
     const fetchBrand = async () => {
       try {
-        const response = await brandService.getBrand(id)
+        const response = await getBrandById(id)
         const brand = response.brand
         setFormData({
           name: brand.name,
@@ -77,7 +78,7 @@ export default function EditBrandPage({ params }) {
         brandData.logo = logo
       }
 
-      await brandService.updateBrand(id, brandData)
+      await updateBrand(id, brandData)
       router.push("/admin/brands")
     } catch (error) {
       console.error("Error updating brand:", error)
@@ -106,7 +107,7 @@ export default function EditBrandPage({ params }) {
         <h1 className="text-2xl font-bold">Edit Brand</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4 flex items-center">
             <AlertCircle className="h-4 w-4 mr-2" />

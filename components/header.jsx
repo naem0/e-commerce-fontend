@@ -8,6 +8,7 @@ import { useTheme } from "next-themes"
 import { useLanguage } from "@/components/language-provider"
 import { useSiteSettings } from "@/components/site-settings-provider"
 import { useCart } from "@/components/cart-provider"
+import { useWishlist } from "@/components/wishlist-provider"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -16,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ShoppingCart, User, Sun, Moon, Globe, Search } from "lucide-react"
+import { ShoppingCart, User, Sun, Moon, Globe, Search, Heart } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -29,10 +30,12 @@ export function Header() {
   const { language, setLanguage, t } = useLanguage()
   const { settings } = useSiteSettings()
   const { getCartItemCount } = useCart()
+  const { getWishlistCount } = useWishlist()
   const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
 
   const cartItemCount = getCartItemCount()
+  const wishlistCount = getWishlistCount()
 
   const isActive = (path) => {
     return pathname === path
@@ -137,6 +140,24 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Wishlist */}
+          {session && (
+            <Link href="/wishlist">
+              <Button variant="ghost" size="icon" className="relative">
+                <Heart className="h-5 w-5" />
+                {wishlistCount > 0 && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-[10px]"
+                  >
+                    {wishlistCount}
+                  </Badge>
+                )}
+                <span className="sr-only">{t("nav.wishlist")}</span>
+              </Button>
+            </Link>
+          )}
+
           {/* Cart */}
           <Link href="/cart">
             <Button variant="ghost" size="icon" className="relative">
@@ -164,7 +185,13 @@ export function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
-                  <Link href="/account">{t("nav.profile")}</Link>
+                  <Link href="/profile">{t("nav.profile")}</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/orders">{t("nav.orders")}</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/wishlist">{t("nav.wishlist")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout")}</DropdownMenuItem>

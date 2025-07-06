@@ -1,79 +1,182 @@
-import { apiRequest } from "./api.utils"
+import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
-export const bannerService = {
-  // Get all banners
-  getBanners: async (params = {}) => {
-    try {
-      const queryString = new URLSearchParams(params).toString()
-      const url = `${API_URL}/api/banners${queryString ? `?${queryString}` : ""}`
+// Helper function to get auth headers
+const getAuthHeaders = async () => {
+  try {
+    const session = await getSession()
+    let token = null
 
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch banners")
-      }
-
-      return data
-    } catch (error) {
-      console.error("Error fetching banners:", error)
-      throw error
+    if (session?.accessToken) {
+      token = session.accessToken
+    } else if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken")
     }
-  },
 
-  // Get single banner
-  getBanner: async (id) => {
-    try {
-      const response = await fetch(`${API_URL}/api/banners/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch banner")
+    if (token) {
+      return {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       }
-
-      return data
-    } catch (error) {
-      console.error("Error fetching banner:", error)
-      throw error
+    } else {
+      return {
+        "Content-Type": "application/json",
+      }
     }
-  },
-
-  // Create banner (Admin only)
-  createBanner: async (bannerData) => {
-    return apiRequest(`${API_URL}/api/banners`, {
-      method: "POST",
-      body: bannerData,
-    })
-  },
-
-  // Update banner (Admin only)
-  updateBanner: async (id, bannerData) => {
-    return apiRequest(`${API_URL}/api/banners/${id}`, {
-      method: "PUT",
-      body: bannerData,
-    })
-  },
-
-  // Delete banner (Admin only)
-  deleteBanner: async (id) => {
-    return apiRequest(`${API_URL}/api/banners/${id}`, {
-      method: "DELETE",
-    })
-  },
+  } catch (error) {
+    console.error("Error getting auth headers:", error)
+    return {
+      "Content-Type": "application/json",
+    }
+  }
 }
 
-export const { getBanners, getBanner, createBanner, updateBanner, deleteBanner } = bannerService
+// Get all banners
+export const getBanners = async (params = {}) => {
+  try {
+    const headers = await getAuthHeaders()
+    const queryString = new URLSearchParams(params).toString()
+    const url = `${API_URL}/banners${queryString ? `?${queryString}` : ""}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Banners API error:", errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Get banners error:", error)
+    return {
+      success: false,
+      message: error.message,
+      banners: [],
+    }
+  }
+}
+
+// Get single banner
+export const getBannerById = async (id) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/banners/${id}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Banner API error:", errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Get banner error:", error)
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Create banner (Admin only)
+export const createBanner = async (bannerData) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/banners`
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(bannerData),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Create banner error:", errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Create banner error:", error)
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Update banner (Admin only)
+export const updateBanner = async (id, bannerData) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/banners/${id}`
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(bannerData),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Update banner error:", errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Update banner error:", error)
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Delete banner (Admin only)
+export const deleteBanner = async (id) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/banners/${id}`
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Delete banner error:", errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Delete banner error:", error)
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Get active banners
+export const getActiveBanners = async () => {
+  return getBanners({ status: "active" })
+}

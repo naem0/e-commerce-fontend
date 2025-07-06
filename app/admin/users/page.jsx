@@ -38,7 +38,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Search, MoreHorizontal, Edit, Trash2, Eye, UserPlus } from 'lucide-react'
-import { userService } from "@/services/api"
+import { getUsers, updateUser, deleteUser } from "@/services/user.service"
 import { format } from "date-fns"
 
 export default function UsersPage() {
@@ -77,12 +77,12 @@ export default function UsersPage() {
         }
       })
 
-      const response = await userService.getUsers(params)
-      setUsers(response.users)
+      const response = await getUsers(params)
+      setUsers(response?.users)
       setPagination({
         ...pagination,
-        total: response.total,
-        totalPages: response.totalPages,
+        total: response?.total,
+        totalPages: response?.totalPages,
       })
     } catch (error) {
       console.error("Error fetching users:", error)
@@ -142,7 +142,7 @@ export default function UsersPage() {
   // Handle status change
   const handleStatusChange = async (userId, newStatus) => {
     try {
-      await userService.updateUser(userId, { status: newStatus })
+      await updateUser(userId, { status: newStatus })
 
       // Update user in state
       setUsers((prevUsers) => prevUsers.map((user) => (user._id === userId ? { ...user, status: newStatus } : user)))
@@ -171,7 +171,7 @@ export default function UsersPage() {
     if (!userToDelete) return
 
     try {
-      await userService.deleteUser(userToDelete._id)
+      await deleteUser(userToDelete._id)
 
       // Remove user from state
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userToDelete._id))

@@ -8,7 +8,6 @@ export const register = async (userData) => {
     const response = await axios.post(`${API_URL}/auth/register`, userData)
     return response.data
   } catch (error) {
-    console.error("Registration error:", error)
     throw {
       success: false,
       message: error.response?.data?.message || "Registration failed",
@@ -29,7 +28,6 @@ export const login = async (credentials) => {
 
     return response.data
   } catch (error) {
-    console.error("Login error:", error)
     throw {
       success: false,
       message: error.response?.data?.message || "Login failed",
@@ -67,7 +65,6 @@ export const getCurrentUser = async () => {
 
     return response.data
   } catch (error) {
-    console.error("Get current user error:", error)
     throw {
       success: false,
       message: error.response?.data?.message || "Failed to get user data",
@@ -81,7 +78,6 @@ export const forgotPassword = async (email) => {
     const response = await axios.post(`${API_URL}/auth/forgot-password`, { email })
     return response.data
   } catch (error) {
-    console.error("Forgot password error:", error)
     throw {
       success: false,
       message: error.response?.data?.message || "Failed to process forgot password request",
@@ -95,7 +91,6 @@ export const resetPassword = async (token, password) => {
     const response = await axios.post(`${API_URL}/auth/reset-password/${token}`, { password })
     return response.data
   } catch (error) {
-    console.error("Reset password error:", error)
     throw {
       success: false,
       message: error.response?.data?.message || "Failed to reset password",
@@ -109,7 +104,6 @@ export const verifyEmail = async (token) => {
     const response = await axios.get(`${API_URL}/auth/verify-email/${token}`)
     return response.data
   } catch (error) {
-    console.error("Verify email error:", error)
     throw {
       success: false,
       message: error.response?.data?.message || "Failed to verify email",
@@ -123,7 +117,6 @@ export const resendVerificationEmail = async (email) => {
     const response = await axios.post(`${API_URL}/auth/resend-verification`, { email })
     return response.data
   } catch (error) {
-    console.error("Resend verification email error:", error)
     throw {
       success: false,
       message: error.response?.data?.message || "Failed to resend verification email",

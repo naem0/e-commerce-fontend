@@ -12,6 +12,7 @@ import { getProducts } from "@/services/product.service"
 import ProductCard1 from "@/components/home/product-card-1"
 import ProductCard2 from "@/components/home/product-card-2"
 import ProductCard3 from "@/components/home/product-card-3"
+import ProductCard from "../product/product-card"
 
 export function FeaturedProducts() {
   const { t } = useLanguage()
@@ -87,12 +88,12 @@ export function FeaturedProducts() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
             {products.map((product) => (
-              // <ProductCard1 
-              //  product={product} 
-              //  key={product._id} 
-              //  handleAddToCart={handleAddToCart} 
+              // <ProductCard1
+              //   product={product}
+              //   key={product._id}
+              //   handleAddToCart={handleAddToCart}
               // />
 
               // <ProductCard2
@@ -101,7 +102,13 @@ export function FeaturedProducts() {
               //   handleAddToCart={handleAddToCart}
               // />
 
-              <ProductCard3
+              // <ProductCard3
+              //   key={product._id}
+              //   product={product}
+              //   handleAddToCart={handleAddToCart}
+              // />
+
+              <ProductCard
                 key={product._id}
                 product={product}
                 handleAddToCart={handleAddToCart}

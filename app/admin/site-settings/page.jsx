@@ -55,7 +55,7 @@ export default function SiteSettingsPage() {
     } else if (status === "authenticated" && session.user.role !== "admin") {
       router.push("/")
     }
-  }, [status, session, router])
+  }, [status, router])
 
   // Load settings when available
   useEffect(() => {

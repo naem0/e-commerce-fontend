@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { productService, categoryService, brandService } from "@/services/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -12,7 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/components/ui/use-toast"
 import { AlertCircle, ArrowLeft, Loader2, Plus, Trash2, X } from "lucide-react"
-import { AdminLayout } from "@/components/admin/admin-layout"
+import { createProduct } from "@/services/product.service"
+import { getCategories } from "@/services/category.service"
+import { getBrands } from "@/services/brand.service"
 
 export default function CreateProductPage() {
   const router = useRouter()
@@ -82,7 +83,7 @@ export default function CreateProductPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await categoryService.getCategories({ status: "active" })
+        const response = await getCategories({ status: "active" })
         setCategories(response.categories)
       } catch (error) {
         console.error("Error fetching categories:", error)
@@ -92,7 +93,7 @@ export default function CreateProductPage() {
 
     const fetchBrands = async () => {
       try {
-        const response = await brandService.getBrands({ status: "active" })
+        const response = await getBrands({ status: "active" })
         setBrands(response.brands)
       } catch (error) {
         console.error("Error fetching brands:", error)
@@ -378,7 +379,7 @@ export default function CreateProductPage() {
         })
       }
 
-      await productService.createProduct(productData)
+      await createProduct(productData)
 
       toast({
         title: "Success",
@@ -403,7 +404,7 @@ export default function CreateProductPage() {
           <h1 className="text-2xl font-bold">Create Product</h1>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-card rounded-lg shadow-md p-6">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4 flex items-center">
               <AlertCircle className="h-4 w-4 mr-2" />

@@ -1,4 +1,4 @@
-import { createAPI, handleError } from "./api.utils"
+import { createAPI, getAuthHeaders, handleError } from "./api.utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
@@ -32,7 +32,7 @@ const userAPI = createAPI("users")
 export const getUsers = async (params = {}) => {
   try {
     const response = await userAPI.get("/", { params })
-    return response.data
+    return response
   } catch (error) {
     throw handleError(error)
   }
@@ -52,7 +52,7 @@ export const getUserById = async (id) => {
 export const updateUser = async (id, userData) => {
   try {
     const response = await userAPI.put(`/${id}`, userData)
-    return response.data
+    return response
   } catch (error) {
     throw handleError(error)
   }
@@ -72,7 +72,7 @@ export const deleteUser = async (id) => {
 export const getProfile = async () => {
   try {
     const response = await userAPI.get("/profile")
-    return response.data
+    return response
   } catch (error) {
     throw handleError(error)
   }
@@ -145,5 +145,30 @@ export const setDefaultAddress = async (id) => {
     return response.data
   } catch (error) {
     throw handleError(error)
+  }
+}
+
+// Get user addresses with error handling
+export const getUserAddresses = async () => {
+  try {
+    const headers = await getAuthHeaders()
+    const response = await fetch(`${API_URL}/users/addresses`, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+      addresses: [],
+    }
   }
 }

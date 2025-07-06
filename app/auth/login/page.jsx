@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { signIn } from "next-auth/react"
+import { signIn, getSession } from "next-auth/react"
 import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -76,20 +76,38 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        // Show specific error message
+        console.error("Login error:", result.error)
         setError("Invalid email or password. Please try again.")
         toast({
           title: t("auth.loginFailed") || "Login Failed",
           description: "Invalid email or password. Please try again.",
           variant: "destructive",
         })
+      } else if (result?.ok) {
+        // Get the session to verify login
+        const session = await getSession()
+        if (session?.user) {
+          // Store user info in localStorage as backup
+          localStorage.setItem("user", JSON.stringify(session.user))
+          if (session.accessToken) {
+            localStorage.setItem("authToken", session.accessToken)
+          }
+
+          toast({
+            title: t("auth.loginSuccess") || "Login Successful",
+            description: t("auth.welcomeBack") || "Welcome back!",
+          })
+
+          // Small delay to ensure session is set
+          setTimeout(() => {
+            router.push(callbackUrl)
+            router.refresh()
+          }, 500)
+        } else {
+          throw new Error("Session not created properly")
+        }
       } else {
-        // Success
-        toast({
-          title: t("auth.loginSuccess") || "Login Successful",
-          description: t("auth.welcomeBack") || "Welcome back!",
-        })
-        router.push(callbackUrl)
+        throw new Error("Login failed - unknown error")
       }
     } catch (error) {
       const errorMessage = error.message || t("auth.errorOccurred") || "An error occurred during login."
@@ -157,7 +175,7 @@ export default function LoginPage() {
                 />
                 {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -27,6 +27,7 @@ const en = {
   "products.reviews": "Reviews",
   "products.relatedProducts": "Related Products",
   "products.productDetails": "Product Details",
+  "product.view": "View",
   "products.viewAll": "View All Products",
 
   "categories.title": "Shop by Category",

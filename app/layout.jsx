@@ -1,38 +1,44 @@
-import "./globals.css"
 import { Inter } from "next/font/google"
-import { ThemeProvider } from "next-themes"
-import { LanguageProvider } from "@/components/language-provider"
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
+import { LanguageProvider } from "@/components/language-provider"
 import { SiteSettingsProvider } from "@/components/site-settings-provider"
 import { CartProvider } from "@/components/cart-provider"
+import { WishlistProvider } from "@/components/wishlist-provider"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "E-Commerce Solution",
-  description: "A complete e-commerce solution",
-    generator: 'v0.dev'
+  title: "E-Commerce Store",
+  description: "Modern e-commerce solution built with Next.js",
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider>
-          <LanguageProvider>
-            <SiteSettingsProvider>
-              <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            <LanguageProvider>
+              <SiteSettingsProvider>
                 <CartProvider>
-                  <Header />
-                  {children}
-                  <Footer />
+                  <WishlistProvider>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <main className="flex-1">{children}</main>
+                      <Footer />
+                    </div>
+                    <Toaster />
+                  </WishlistProvider>
                 </CartProvider>
-              </ThemeProvider>
-            </SiteSettingsProvider>
-          </LanguageProvider>
-        </AuthProvider>
+              </SiteSettingsProvider>
+            </LanguageProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

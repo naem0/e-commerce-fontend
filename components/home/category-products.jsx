@@ -28,8 +28,8 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
 
         // Fetch category info and products in parallel
         const [categoryResult, productsResult] = await Promise.all([
-          getCategory(categoryId),
-          getProducts({ category: categoryId, limit }),
+          getCategory(categoryId?._id || categoryId),
+          getProducts({ category: categoryId?._id || categoryId, limit }),
         ])
 
         if (categoryResult.success) {
@@ -90,7 +90,7 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.map((product) => (
                 <ProductCard key={product._id} product={product} handleAddToCart={handleAddToCart} />
               ))}

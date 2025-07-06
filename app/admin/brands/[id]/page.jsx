@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { brandService } from "@/services/api"
+import { getBrandById, deleteBrand } from "@/services/brand.service"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Edit, Trash2, AlertTriangle, ExternalLink } from "lucide-react"
@@ -29,7 +29,7 @@ export default function BrandDetailsPage({ params }) {
   useEffect(() => {
     const fetchBrand = async () => {
       try {
-        const response = await brandService.getBrand(id)
+        const response = await getBrandById(id)
         setBrand(response.brand)
         setLoading(false)
       } catch (error) {
@@ -44,7 +44,7 @@ export default function BrandDetailsPage({ params }) {
 
   const handleDelete = async () => {
     try {
-      await brandService.deleteBrand(id)
+      await deleteBrand(id)
       router.push("/admin/brands")
     } catch (error) {
       console.error("Error deleting brand:", error)
@@ -100,7 +100,7 @@ export default function BrandDetailsPage({ params }) {
         <h1 className="text-2xl font-bold">Brand Details</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/3">
             {brand.logo ? (

@@ -170,7 +170,7 @@ export default function ProductsPage() {
       <h1 className="text-3xl font-bold mb-6">{t("products.allProducts") || "All Products"}</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ShoppingBag, Users, Package, Settings, BarChart, LogOut, Menu, X, Tag } from "lucide-react"
+import { LayoutDashboard, ShoppingBag, Users, Package, Settings, BarChart, LogOut, Menu, X, Tag, Tags, GalleryHorizontal, Layers, MonitorCog } from "lucide-react"
 
 export function AdminLayout({ children }) {
   const pathname = usePathname()
@@ -32,7 +32,7 @@ export function AdminLayout({ children }) {
     {
       name: "Categories",
       href: "/admin/categories",
-      icon: Tag,
+      icon: Layers,
       current: isActive("/admin/categories"),
     },
     {
@@ -54,6 +54,12 @@ export function AdminLayout({ children }) {
       current: isActive("/admin/users"),
     },
     {
+      name: "Banners",
+      href: "/admin/banners",
+      icon: GalleryHorizontal,
+      current: isActive("/admin/banners"),
+    },
+    {
       name: "Analytics",
       href: "/admin/analytics",
       icon: BarChart,
@@ -62,14 +68,14 @@ export function AdminLayout({ children }) {
     {
       name: "Home Settings",
       href: "/admin/home-settings",
-      icon: Settings,
+      icon: MonitorCog,
       current: isActive("/admin/home-settings"),
     },
     {
       name: "Settings",
-      href: "/admin/settings",
+      href: "/admin/site-settings",
       icon: Settings,
-      current: isActive("/admin/settings"),
+      current: isActive("/admin/site-settings"),
     },
   ]
 
@@ -144,7 +150,7 @@ export function AdminLayout({ children }) {
             <h1 className="text-xl font-semibold">E-Commerce Admin</h1>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 bg-gray-100 dark:bg-gray-900">{children}</main>
       </div>
     </div>
   )

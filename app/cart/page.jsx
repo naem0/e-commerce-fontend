@@ -89,11 +89,7 @@ export default function CartPage() {
   }
 
   const handleCheckout = () => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/checkout")
-    } else {
-      router.push("/checkout")
-    }
+    router.push("/checkout")
   }
 
   if (loading) {

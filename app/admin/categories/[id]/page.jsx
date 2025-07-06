@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { categoryService } from "@/services/api"
+import { deleteCategory, getCategory } from "@/services/category.service"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Edit, Trash2, AlertTriangle } from "lucide-react"
@@ -29,7 +29,7 @@ export default function CategoryDetailsPage({ params }) {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await categoryService.getCategory(id)
+        const response = await getCategory(id)
         setCategory(response.category)
         setLoading(false)
       } catch (error) {
@@ -44,7 +44,7 @@ export default function CategoryDetailsPage({ params }) {
 
   const handleDelete = async () => {
     try {
-      await categoryService.deleteCategory(id)
+      await deleteCategory(id)
       router.push("/admin/categories")
     } catch (error) {
       console.error("Error deleting category:", error)
@@ -100,7 +100,7 @@ export default function CategoryDetailsPage({ params }) {
         <h1 className="text-2xl font-bold">Category Details</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/3">
             {category.image ? (

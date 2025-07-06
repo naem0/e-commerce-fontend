@@ -1,135 +1,203 @@
-import axios from "axios"
-import { getAuthHeader } from "./utils"
+import { getSession } from "next-auth/react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
-// Create axios instance for products
-const productAPI = axios.create({
-  baseURL: `${API_URL}/products`,
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
+// Helper function to get auth headers
+const getAuthHeaders = async () => {
+  try {
+    const session = await getSession()
 
-// Add auth token to requests
-productAPI.interceptors.request.use(
-  (config) => {
-    const authHeader = getAuthHeader()
-    if (authHeader) {
-      config.headers = {
-        ...config.headers,
-        ...authHeader,
+    let token = null
+
+    // Get token from session
+    if (session?.accessToken) {
+      token = session.accessToken
+    }
+    // Fallback: get from localStorage
+    else if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken")
+    }
+
+    if (token) {
+      return {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    } else {
+      return {
+        "Content-Type": "application/json",
       }
     }
-    return config
-  },
-  (error) => Promise.reject(error),
-)
-
-// Get all products with optional filters
-export const getProducts = async (params = {}) => {
-  try {
-    const response = await productAPI.get("/", { params })
-    return response.data
   } catch (error) {
-    return handleError(error)
+    return {
+      "Content-Type": "application/json",
+    }
   }
 }
 
-// Get a single product by ID
+// Get all products
+export const getProducts = async (params = {}) => {
+  try {
+    const headers = await getAuthHeaders()
+    const queryString = new URLSearchParams(params).toString()
+    const url = `${API_URL}/products${queryString ? `?${queryString}` : ""}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+      products: [],
+    }
+  }
+}
+
+// Get single product
 export const getProductById = async (id) => {
   try {
-    const response = await productAPI.get(`/${id}`)
-    return response.data
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/products/${id}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
   } catch (error) {
-    return handleError(error)
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Create product (Admin only)
+export const createProduct = async (productData) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/products`
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(productData),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Update product (Admin only)
+export const updateProduct = async (id, productData) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/products/${id}`
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(productData),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Delete product (Admin only)
+export const deleteProduct = async (id) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/products/${id}`
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
   }
 }
 
 // Get featured products
 export const getFeaturedProducts = async (limit = 8) => {
-  try {
-    const response = await productAPI.get("/", { params: { featured: true, limit } })
-    return response.data
-  } catch (error) {
-    return handleError(error)
-  }
-}
-
-// Get products by category
-export const getProductsByCategory = async (categoryId, params = {}) => {
-  try {
-    const response = await productAPI.get("/", {
-      params: {
-        category: categoryId,
-        ...params,
-      },
-    })
-    return response.data
-  } catch (error) {
-    return handleError(error)
-  }
-}
-
-// Get products by brand
-export const getProductsByBrand = async (brandId, params = {}) => {
-  try {
-    const response = await productAPI.get("/", {
-      params: {
-        brand: brandId,
-        ...params,
-      },
-    })
-    return response.data
-  } catch (error) {
-    return handleError(error)
-  }
+  return getProducts({ featured: true, limit })
 }
 
 // Search products
 export const searchProducts = async (query, params = {}) => {
   try {
-    const response = await productAPI.get("/search", {
-      params: {
-        q: query,
-        ...params,
-      },
+    const headers = await getAuthHeaders()
+    const searchParams = new URLSearchParams({ q: query, ...params })
+    const url = `${API_URL}/products/search?${searchParams.toString()}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
     })
-    return response.data
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
   } catch (error) {
-    return handleError(error)
-  }
-}
-
-// Add a review to a product
-// export const addProductReview = async (id, reviewData) => {
-//   try {
-//     const response = await productAPI.post(`/${id}/reviews`, reviewData)
-//     return response.data
-//   } catch (error) {
-//     throw handleError(error)
-//   }
-// }
-
-// Helper function to handle errors
-function handleError(error) {
-  if (error.response) {
     return {
       success: false,
-      status: error.response.status,
-      message: error.response.data.message || "An error occurred",
-    }
-  } else if (error.request) {
-    return {
-      success: false,
-      status: 503,
-      message: "Server not responding. Please try again later.",
-    }
-  } else {
-    return {
-      success: false,
-      status: 500,
-      message: error.message || "An unexpected error occurred",
+      message: error.message,
+      products: [],
     }
   }
 }
