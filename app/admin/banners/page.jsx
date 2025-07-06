@@ -46,11 +46,7 @@ export default function BannersPage() {
     } else if (status === "authenticated" && session?.user?.role !== "admin") {
       router.push("/")
     }
-<<<<<<< HEAD
   }, [status, router])
-=======
-  }, [status, session, router])
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -79,11 +75,7 @@ export default function BannersPage() {
     if (status === "authenticated" && session?.user?.role === "admin") {
       fetchBanners()
     }
-<<<<<<< HEAD
   }, [status, toast])
-=======
-  }, [status, session, toast])
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

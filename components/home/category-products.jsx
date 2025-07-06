@@ -29,11 +29,7 @@ export function CategoryProducts({ categoryId, title, limit = 8, design = "categ
         // Fetch category info and products in parallel
         const [categoryResult, productsResult] = await Promise.all([
           getCategory(categoryId?._id || categoryId),
-<<<<<<< HEAD
           getProducts({ category: categoryId?._id || categoryId, limit }),
-=======
-          getProducts({ category: categoryId, limit }),
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
         ])
 
         if (categoryResult.success) {

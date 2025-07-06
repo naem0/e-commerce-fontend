@@ -41,11 +41,7 @@ import { getProfile, updateProfile } from "@/services/user.service"
 import { getOrders } from "@/services/order.service"
 
 export default function ProfilePage() {
-<<<<<<< HEAD
   const { data: session, status } = useSession()
-=======
-  const { data: session } = useSession()
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
   const router = useRouter()
   const { t } = useLanguage()
   const { toast } = useToast()
@@ -118,11 +114,7 @@ export default function ProfilePage() {
   }
   useEffect(() => {
     fetchUserData()
-<<<<<<< HEAD
   }, [status])
-=======
-  }, [session])
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
   const handleProfileUpdate = async (e) => {
     e.preventDefault()
     try {

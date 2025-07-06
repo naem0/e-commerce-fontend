@@ -26,11 +26,7 @@ export default function ViewBannerPage({ params }) {
     } else if (status === "authenticated" && session?.user?.role !== "admin") {
       router.push("/")
     }
-<<<<<<< HEAD
   }, [status, router])
-=======
-  }, [status, session, router])
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -59,11 +55,7 @@ export default function ViewBannerPage({ params }) {
     if (status === "authenticated" && session?.user?.role === "admin" && id) {
       fetchBanner()
     }
-<<<<<<< HEAD
   }, [id, status, toast])
-=======
-  }, [id, status, session, toast])
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this banner?")) return

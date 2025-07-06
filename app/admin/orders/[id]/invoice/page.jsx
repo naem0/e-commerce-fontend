@@ -13,11 +13,7 @@ import Invoice from "@/components/invoice"
 export default function AdminInvoicePage() {
   const { id } = useParams()
   const router = useRouter()
-<<<<<<< HEAD
   const { data: session, status } = useSession()
-=======
-  const { data: session } = useSession()
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
   const { toast } = useToast()
   const invoiceRef = useRef()
 
@@ -27,11 +23,7 @@ export default function AdminInvoicePage() {
 
   useEffect(() => {
     fetchData()
-<<<<<<< HEAD
   }, [status, id])
-=======
-  }, [session, id])
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
 
   const fetchData = async () => {
     try {

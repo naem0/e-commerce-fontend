@@ -186,15 +186,12 @@ export function Header() {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
                   <Link href="/profile">{t("nav.profile")}</Link>
-<<<<<<< HEAD
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link href="/orders">{t("nav.orders")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link href="/wishlist">{t("nav.wishlist")}</Link>
-=======
->>>>>>> deb65d4920e3458694b3a9a4b2e330575dad9038
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout")}</DropdownMenuItem>
