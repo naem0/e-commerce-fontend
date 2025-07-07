@@ -29,7 +29,7 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
       <Link href={`/products/${product._id}`} className="block">
         <div className="relative aspect-square overflow-hidden">
           <Image
-            src={product.images?.[0] || "/placeholder.svg?height=300&width=300"}
+            src={product.images?.length > 0 ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=48&width=48"}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 hover:scale-105"

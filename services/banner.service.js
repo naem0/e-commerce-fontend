@@ -1,8 +1,33 @@
 import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-// Helper function to get auth headers
+// Helper function to get auth headers for FormData
+const getAuthHeadersForFormData = async () => {
+  try {
+    const session = await getSession()
+    let token = null
+    if (session?.accessToken) {
+      token = session.accessToken
+    } else if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken")
+    }
+
+    if (token) {
+      return {
+        Authorization: `Bearer ${token}`,
+        // Don't set Content-Type for FormData, let browser set it
+      }
+    } else {
+      return {}
+    }
+  } catch (error) {
+    console.error("Error getting auth headers:", error)
+    return {}
+  }
+}
+
+// Helper function to get auth headers for JSON
 const getAuthHeaders = async () => {
   try {
     const session = await getSession()
@@ -37,7 +62,7 @@ export const getBanners = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/banners${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/banners${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -66,7 +91,7 @@ export const getBanners = async (params = {}) => {
 export const getBannerById = async (id) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/banners/${id}`
+    const url = `${API_URL}/api/banners/${id}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -93,13 +118,31 @@ export const getBannerById = async (id) => {
 // Create banner (Admin only)
 export const createBanner = async (bannerData) => {
   try {
-    const headers = await getAuthHeaders()
-    const url = `${API_URL}/banners`
+    const headers = await getAuthHeadersForFormData()
+    const url = `${API_URL}/api/banners`
+
+    // Create FormData
+    const formData = new FormData()
+
+    // Add text fields
+    formData.append("title", bannerData.title || "")
+    formData.append("subtitle", bannerData.subtitle || "")
+    formData.append("description", bannerData.description || "")
+    formData.append("buttonText", bannerData.buttonText || "Shop Now")
+    formData.append("buttonLink", bannerData.buttonLink || "/products")
+    formData.append("backgroundColor", bannerData.backgroundColor || "#f8fafc")
+    formData.append("textColor", bannerData.textColor || "#1e293b")
+    formData.append("enabled", bannerData.enabled || true)
+
+    // Add image file if exists
+    if (bannerData.image && bannerData.image instanceof File) {
+      formData.append("image", bannerData.image)
+    }
 
     const response = await fetch(url, {
       method: "POST",
       headers,
-      body: JSON.stringify(bannerData),
+      body: formData,
     })
 
     if (!response.ok) {
@@ -122,13 +165,31 @@ export const createBanner = async (bannerData) => {
 // Update banner (Admin only)
 export const updateBanner = async (id, bannerData) => {
   try {
-    const headers = await getAuthHeaders()
-    const url = `${API_URL}/banners/${id}`
+    const headers = await getAuthHeadersForFormData()
+    const url = `${API_URL}/api/banners/${id}`
+
+    // Create FormData
+    const formData = new FormData()
+
+    // Add text fields
+    formData.append("title", bannerData.title || "")
+    formData.append("subtitle", bannerData.subtitle || "")
+    formData.append("description", bannerData.description || "")
+    formData.append("buttonText", bannerData.buttonText || "Shop Now")
+    formData.append("buttonLink", bannerData.buttonLink || "/products")
+    formData.append("backgroundColor", bannerData.backgroundColor || "#f8fafc")
+    formData.append("textColor", bannerData.textColor || "#1e293b")
+    formData.append("enabled", bannerData.enabled || true)
+
+    // Add image file if exists
+    if (bannerData.image && bannerData.image instanceof File) {
+      formData.append("image", bannerData.image)
+    }
 
     const response = await fetch(url, {
       method: "PUT",
       headers,
-      body: JSON.stringify(bannerData),
+      body: formData,
     })
 
     if (!response.ok) {
@@ -152,7 +213,7 @@ export const updateBanner = async (id, bannerData) => {
 export const deleteBanner = async (id) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/banners/${id}`
+    const url = `${API_URL}/api/banners/${id}`
 
     const response = await fetch(url, {
       method: "DELETE",

@@ -1,6 +1,6 @@
 import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Helper function to get auth headers
 const getAuthHeaders = async () => {
@@ -37,7 +37,7 @@ export const getOrders = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/orders/my-orders${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/orders/my-orders${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -64,7 +64,7 @@ export const getAllOrders = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/orders${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/orders${queryString ? `?${queryString}` : ""}`
     const response = await fetch(url, {
       method: "GET",
       headers,
@@ -88,7 +88,7 @@ export const getAllOrders = async (params = {}) => {
 export const getOrderById = async (id) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/orders/${id}`
+    const url = `${API_URL}/api/orders/${id}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -114,7 +114,7 @@ export const getOrderById = async (id) => {
 export const createOrder = async (orderData) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/orders`
+    const url = `${API_URL}/api/orders`
     const response = await fetch(url, {
       method: "POST",
       headers,
@@ -140,7 +140,7 @@ export const createOrder = async (orderData) => {
 export const updatePaymentStatus = async (orderId, paymentData) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/orders/${orderId}/payment`
+    const url = `${API_URL}/api/orders/${orderId}/payment`
 
     const response = await fetch(url, {
       method: "PATCH",
@@ -167,7 +167,7 @@ export const updatePaymentStatus = async (orderId, paymentData) => {
 export const updateOrderStatus = async (orderId, status) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/orders/${orderId}/status`
+    const url = `${API_URL}/api/orders/${orderId}/status`
 
     const response = await fetch(url, {
       method: "PATCH",
@@ -194,7 +194,7 @@ export const updateOrderStatus = async (orderId, status) => {
 export const cancelOrder = async (orderId) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/orders/${orderId}/status`
+    const url = `${API_URL}/api/orders/${orderId}/status`
 
     const response = await fetch(url, {
       method: "PATCH",

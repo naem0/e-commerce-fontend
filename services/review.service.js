@@ -1,6 +1,6 @@
 import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Helper function to get auth headers
 const getAuthHeaders = async () => {
@@ -37,7 +37,7 @@ export const addProductReview = async (productId, reviewData) => {
   try {
     console.log("=== Adding Product Review ===")
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/products/${productId}/reviews`
+    const url = `${API_URL}/api/products/${productId}/reviews`
 
     console.log("Review API URL:", url)
     console.log("Review data:", reviewData)
@@ -73,7 +73,7 @@ export const getProductReviews = async (productId, params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/products/${productId}/reviews${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/products/${productId}/reviews${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -101,7 +101,7 @@ export const getProductReviews = async (productId, params = {}) => {
 export const updateReview = async (productId, reviewId, reviewData) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/products/${productId}/reviews/${reviewId}`
+    const url = `${API_URL}/api/products/${productId}/reviews/${reviewId}`
 
     const response = await fetch(url, {
       method: "PUT",
@@ -129,7 +129,7 @@ export const updateReview = async (productId, reviewId, reviewData) => {
 export const deleteReview = async (productId, reviewId) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/products/${productId}/reviews/${reviewId}`
+    const url = `${API_URL}/api/products/${productId}/reviews/${reviewId}`
 
     const response = await fetch(url, {
       method: "DELETE",

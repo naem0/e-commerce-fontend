@@ -1,11 +1,11 @@
 import axios from "axios"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Register a new user
 export const register = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/register`, userData)
+    const response = await axios.post(`${API_URL}/api/auth/register`, userData)
     return response.data
   } catch (error) {
     throw {
@@ -18,7 +18,7 @@ export const register = async (userData) => {
 // Login user
 export const login = async (credentials) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/login`, credentials)
+    const response = await axios.post(`${API_URL}/api/auth/login`, credentials)
 
     // Store token and user data in localStorage
     if (typeof window !== "undefined" && response.data.token) {
@@ -57,7 +57,7 @@ export const getCurrentUser = async () => {
       }
     }
 
-    const response = await axios.get(`${API_URL}/auth/me`, {
+    const response = await axios.get(`${API_URL}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -75,7 +75,7 @@ export const getCurrentUser = async () => {
 // Forgot password
 export const forgotPassword = async (email) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/forgot-password`, { email })
+    const response = await axios.post(`${API_URL}/api/auth/forgot-password`, { email })
     return response.data
   } catch (error) {
     throw {
@@ -88,7 +88,7 @@ export const forgotPassword = async (email) => {
 // Reset password
 export const resetPassword = async (token, password) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/reset-password/${token}`, { password })
+    const response = await axios.post(`${API_URL}/api/auth/reset-password/${token}`, { password })
     return response.data
   } catch (error) {
     throw {
@@ -101,7 +101,7 @@ export const resetPassword = async (token, password) => {
 // Verify email
 export const verifyEmail = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}/auth/verify-email/${token}`)
+    const response = await axios.get(`${API_URL}/api/auth/verify-email/${token}`)
     return response.data
   } catch (error) {
     throw {
@@ -114,7 +114,7 @@ export const verifyEmail = async (token) => {
 // Resend verification email
 export const resendVerificationEmail = async (email) => {
   try {
-    const response = await axios.post(`${API_URL}/auth/resend-verification`, { email })
+    const response = await axios.post(`${API_URL}/api/auth/resend-verification`, { email })
     return response.data
   } catch (error) {
     throw {

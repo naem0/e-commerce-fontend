@@ -1,7 +1,7 @@
 import axios from "axios"
 import { getAuthHeader } from "./utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Local storage key for cart
 const CART_STORAGE_KEY = "e-commerce-cart"
@@ -27,7 +27,7 @@ export const getCart = async () => {
     const authHeader = getAuthHeader()
 
     if (authHeader) {
-      const response = await axios.get(`${API_URL}/cart`, {
+      const response = await axios.get(`${API_URL}/api/cart`, {
         headers: {
           ...authHeader,
         },
@@ -93,7 +93,7 @@ export const addToCart = async (productId, quantity = 1, variation = null) => {
     if (authHeader) {
       // Add to authenticated cart
       const response = await axios.post(
-        `${API_URL}/cart/items`,
+        `${API_URL}/api/cart/items`,
         { productId, quantity, variation },
         {
           headers: {
@@ -108,7 +108,7 @@ export const addToCart = async (productId, quantity = 1, variation = null) => {
       const localCart = getLocalCart()
 
       // Get product details
-      const productResponse = await axios.get(`${API_URL}/products/${productId}`)
+      const productResponse = await axios.get(`${API_URL}/api/products/${productId}`)
       const product = productResponse.data.product
 
       // Check if product already exists in cart
@@ -169,7 +169,7 @@ export const updateCartItem = async (itemId, quantity) => {
     if (authHeader) {
       // Update authenticated cart
       const response = await axios.put(
-        `${API_URL}/cart/items/${itemId}`,
+        `${API_URL}/api/cart/items/${itemId}`,
         { quantity },
         {
           headers: {
@@ -236,7 +236,7 @@ export const removeFromCart = async (itemId) => {
 
     if (authHeader) {
       // Remove from authenticated cart
-      const response = await axios.delete(`${API_URL}/cart/items/${itemId}`, {
+      const response = await axios.delete(`${API_URL}/api/cart/items/${itemId}`, {
         headers: {
           ...authHeader,
         },
@@ -289,7 +289,7 @@ export const clearCart = async () => {
 
     if (authHeader) {
       // Clear authenticated cart
-      const response = await axios.delete(`${API_URL}/cart`, {
+      const response = await axios.delete(`${API_URL}/api/cart`, {
         headers: {
           ...authHeader,
         },
@@ -341,7 +341,7 @@ export const syncCart = async () => {
     }
 
     const response = await axios.post(
-      `${API_URL}/cart/sync`,
+      `${API_URL}/api/cart/sync`,
       { items: localCart.items },
       {
         headers: {

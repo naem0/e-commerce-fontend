@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,7 @@ import { getBrands } from "@/services/brand.service"
 
 export default function EditProductPage({ params }) {
   const router = useRouter()
-  const { id } = params
+  const { id } = React.use(params)
   const [formData, setFormData] = useState({
     name: "",
     description: "",

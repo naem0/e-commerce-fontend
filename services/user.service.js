@@ -1,10 +1,10 @@
 import { createAPI, getAuthHeaders, handleError } from "./api.utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Create axios instance for users
 // const userAPI = axios.create({
-//   baseURL: `${API_URL}/users`,
+//   baseURL: `${API_URL}/api/users`,
 //   headers: {
 //     "Content-Type": "application/json",
 //   },
@@ -152,7 +152,7 @@ export const setDefaultAddress = async (id) => {
 export const getUserAddresses = async () => {
   try {
     const headers = await getAuthHeaders()
-    const response = await fetch(`${API_URL}/users/addresses`, {
+    const response = await fetch(`${API_URL}/api/users/addresses`, {
       method: "GET",
       headers,
     })

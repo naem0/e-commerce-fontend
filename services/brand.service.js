@@ -2,17 +2,39 @@ import { getSession } from "next-auth/react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-// Helper function to get auth headers
-const getAuthHeaders = async () => {
+// Helper function to get auth headers for FormData
+const getAuthHeadersForFormData = async () => {
   try {
-    // Try to get session first
     const session = await getSession()
     let token = null
     if (session?.accessToken) {
       token = session.accessToken
+    } else if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken")
     }
-    // Fallback: get from localStorage
-    else if (typeof window !== "undefined") {
+
+    if (token) {
+      return {
+        Authorization: `Bearer ${token}`,
+        // Don't set Content-Type for FormData, let browser set it
+      }
+    } else {
+      return {}
+    }
+  } catch (error) {
+    console.error("Error getting auth headers:", error)
+    return {}
+  }
+}
+
+// Helper function to get auth headers for JSON
+const getAuthHeaders = async () => {
+  try {
+    const session = await getSession()
+    let token = null
+    if (session?.accessToken) {
+      token = session.accessToken
+    } else if (typeof window !== "undefined") {
       token = localStorage.getItem("authToken")
     }
 
@@ -39,7 +61,7 @@ export const getBrands = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/brands${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/brands${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -68,7 +90,7 @@ export const getBrands = async (params = {}) => {
 export const getBrandById = async (id) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/brands/${id}`
+    const url = `${API_URL}/api/brands/${id}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -95,13 +117,27 @@ export const getBrandById = async (id) => {
 // Create brand (Admin only)
 export const createBrand = async (brandData) => {
   try {
-    const headers = await getAuthHeaders()
-    const url = `${API_URL}/brands`
+    const headers = await getAuthHeadersForFormData()
+    const url = `${API_URL}/api/brands`
+
+    // Create FormData
+    const formData = new FormData()
+
+    // Add text fields
+    formData.append("name", brandData.name || "")
+    formData.append("description", brandData.description || "")
+    formData.append("website", brandData.website || "")
+    formData.append("status", brandData.status || "active")
+
+    // Add logo file if exists
+    if (brandData.logo && brandData.logo instanceof File) {
+      formData.append("logo", brandData.logo)
+    }
 
     const response = await fetch(url, {
       method: "POST",
       headers,
-      body: JSON.stringify(brandData),
+      body: formData,
     })
 
     if (!response.ok) {
@@ -123,13 +159,27 @@ export const createBrand = async (brandData) => {
 // Update brand (Admin only)
 export const updateBrand = async (id, brandData) => {
   try {
-    const headers = await getAuthHeaders()
-    const url = `${API_URL}/brands/${id}`
+    const headers = await getAuthHeadersForFormData()
+    const url = `${API_URL}/api/brands/${id}`
+
+    // Create FormData
+    const formData = new FormData()
+
+    // Add text fields
+    formData.append("name", brandData.name || "")
+    formData.append("description", brandData.description || "")
+    formData.append("website", brandData.website || "")
+    formData.append("status", brandData.status || "active")
+
+    // Add logo file if exists
+    if (brandData.logo && brandData.logo instanceof File) {
+      formData.append("logo", brandData.logo)
+    }
 
     const response = await fetch(url, {
       method: "PUT",
       headers,
-      body: JSON.stringify(brandData),
+      body: formData,
     })
 
     if (!response.ok) {
@@ -153,7 +203,7 @@ export const updateBrand = async (id, brandData) => {
 export const deleteBrand = async (id) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/brands/${id}`
+    const url = `${API_URL}/api/brands/${id}`
 
     const response = await fetch(url, {
       method: "DELETE",
@@ -187,7 +237,7 @@ export const getBrandWithProducts = async (id, params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/brands/${id}/products${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/brands/${id}/products${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",

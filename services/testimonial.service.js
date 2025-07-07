@@ -1,11 +1,11 @@
 import axios from "axios"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Get all testimonials
 export const getTestimonials = async (params = {}) => {
   try {
-    const response = await axios.get(`${API_URL}/testimonials`, { params })
+    const response = await axios.get(`${API_URL}/api/testimonials`, { params })
     return response.data
   } catch (error) {
     console.error("Get testimonials error:", error)
@@ -19,7 +19,7 @@ export const getTestimonials = async (params = {}) => {
 // Get featured testimonials
 export const getFeaturedTestimonials = async (limit = 6) => {
   try {
-    const response = await axios.get(`${API_URL}/testimonials`, {
+    const response = await axios.get(`${API_URL}/api/testimonials`, {
       params: { featured: true, limit },
     })
     return response.data
@@ -35,7 +35,7 @@ export const getFeaturedTestimonials = async (limit = 6) => {
 // Get single testimonial
 export const getTestimonialById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/testimonials/${id}`)
+    const response = await axios.get(`${API_URL}/api/testimonials/${id}`)
     return response.data
   } catch (error) {
     console.error("Get testimonial error:", error)
@@ -51,7 +51,7 @@ export const createTestimonial = async (testimonialData) => {
   try {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
-    const response = await axios.post(`${API_URL}/testimonials`, testimonialData, {
+    const response = await axios.post(`${API_URL}/api/testimonials`, testimonialData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ export const updateTestimonial = async (id, testimonialData) => {
   try {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
-    const response = await axios.put(`${API_URL}/testimonials/${id}`, testimonialData, {
+    const response = await axios.put(`${API_URL}/api/testimonials/${id}`, testimonialData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -95,7 +95,7 @@ export const deleteTestimonial = async (id) => {
   try {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
-    const response = await axios.delete(`${API_URL}/testimonials/${id}`, {
+    const response = await axios.delete(`${API_URL}/api/testimonials/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

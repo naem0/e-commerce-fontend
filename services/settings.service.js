@@ -1,7 +1,7 @@
 import axios from "axios"
 import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Helper function to get auth headers
 const getAuthHeaders = async () => {
@@ -56,7 +56,7 @@ const getAuthHeaders = async () => {
 // Get site settings
 export const getSiteSettings = async () => {
   try {
-    const response = await axios.get(`${API_URL}/site-settings`)
+    const response = await axios.get(`${API_URL}/api/site-settings`)
     return {
       success: true,
       settings: response.data.settings,
@@ -88,10 +88,10 @@ export const updateSiteSettings = async (settings) => {
       throw new Error("No authentication token available. Please login again.")
     }
 
-    console.log("Sending request to:", `${API_URL}/site-settings`)
+    console.log("Sending request to:", `${API_URL}/api/site-settings`)
     console.log("Settings data keys:", Object.keys(settings))
 
-    const response = await axios.put(`${API_URL}/site-settings`, settings, {
+    const response = await axios.put(`${API_URL}/api/site-settings`, settings, {
       headers: {
         "Content-Type": "application/json",
         ...authHeaders,
@@ -127,7 +127,7 @@ export const updateSiteSettingsWithFiles = async (formData) => {
       throw new Error("No authentication token available. Please login again.")
     }
 
-    const response = await axios.put(`${API_URL}/site-settings`, formData, {
+    const response = await axios.put(`${API_URL}/api/site-settings`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         ...authHeaders,

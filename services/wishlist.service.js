@@ -1,5 +1,5 @@
 import { getSession } from "next-auth/react"
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Helper function to get auth headers
 const getAuthHeaders = async () => {
@@ -35,7 +35,7 @@ const getAuthHeaders = async () => {
 export const getWishlist = async () => {
   try {
     const headers = await getAuthHeaders()
-    const response = await fetch(`${API_URL}/wishlist`, {
+    const response = await fetch(`${API_URL}/api/wishlist`, {
       method: "GET",
       headers,
     })
@@ -60,7 +60,7 @@ export const getWishlist = async () => {
 export const addToWishlist = async (productId) => {
   try {
     const headers = await getAuthHeaders()
-    const response = await fetch(`${API_URL}/wishlist`, {
+    const response = await fetch(`${API_URL}/api/wishlist`, {
       method: "POST",
       headers,
       body: JSON.stringify({ productId }),
@@ -85,7 +85,7 @@ export const addToWishlist = async (productId) => {
 export const removeFromWishlist = async (productId) => {
   try {
     const headers = await getAuthHeaders()
-    const response = await fetch(`${API_URL}/wishlist/${productId}`, {
+    const response = await fetch(`${API_URL}/api/wishlist/${productId}`, {
       method: "DELETE",
       headers,
     })
@@ -109,7 +109,7 @@ export const removeFromWishlist = async (productId) => {
 export const checkWishlist = async (productId) => {
   try {
     const headers = await getAuthHeaders()
-    const response = await fetch(`${API_URL}/wishlist/check/${productId}`, {
+    const response = await fetch(`${API_URL}/api/wishlist/check/${productId}`, {
       method: "GET",
       headers,
     })
@@ -134,7 +134,7 @@ export const checkWishlist = async (productId) => {
 export const clearWishlist = async () => {
   try {
     const headers = await getAuthHeaders()
-    const response = await fetch(`${API_URL}/wishlist`, {
+    const response = await fetch(`${API_URL}/api/wishlist`, {
       method: "DELETE",
       headers,
     })

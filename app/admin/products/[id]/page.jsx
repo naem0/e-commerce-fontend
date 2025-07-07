@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { productService } from "@/services/api"
@@ -20,7 +20,7 @@ import {
 
 export default function ProductDetailsPage({ params }) {
   const router = useRouter()
-  const { id } = params
+  const { id } = React.use(params)
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)

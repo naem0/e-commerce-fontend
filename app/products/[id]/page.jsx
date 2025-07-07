@@ -131,7 +131,7 @@ export default function ProductPage() {
         <div className="space-y-4">
           <div className="relative aspect-square overflow-hidden rounded-lg border bg-white">
             <Image
-              src={product.images?.[activeImage] || "/placeholder.svg?height=600&width=600"}
+              src={ product.images?.length > 0 ? process.env.NEXT_PUBLIC_API_URL + product.images[activeImage] : "/placeholder.svg?height=600&width=600"}
               alt={product.name}
               fill
               className="object-cover"
@@ -148,10 +148,10 @@ export default function ProductPage() {
                   onClick={() => setActiveImage(index)}
                 >
                   <Image
-                    src={image || "/placeholder.svg"}
+                    src={image ? process.env.NEXT_PUBLIC_API_URL + image : "/placeholder.svg"}
                     alt={`${product.name} ${index + 1}`}
                     fill
-                    className="object-cover"
+                    className="object-cover overflow-hidden"
                   />
                 </button>
               ))}

@@ -1,6 +1,6 @@
 import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Helper function to get auth headers
 const getAuthHeaders = async () => {
@@ -36,7 +36,7 @@ const getAuthHeaders = async () => {
 export const getDashboardAnalytics = async (period = "30") => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/analytics/dashboard?period=${period}`
+    const url = `${API_URL}/api/analytics/dashboard?period=${period}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -64,7 +64,7 @@ export const getSalesReport = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/analytics/sales-report${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/analytics/sales-report${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -91,7 +91,7 @@ export const getSalesReport = async (params = {}) => {
 export const getTopCustomers = async () => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/analytics/top-customers`
+    const url = `${API_URL}/api/analytics/top-customers`
 
     const response = await fetch(url, {
       method: "GET",

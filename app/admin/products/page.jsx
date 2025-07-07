@@ -322,12 +322,22 @@ export default function ProductsPage() {
                       <TableRow key={product._id}>
                         <TableCell>
                           <div className="h-12 w-12 relative rounded overflow-hidden">
-                            <Image
-                              src={product.images?.[0] || "/placeholder.svg?height=48&width=48"}
-                              alt={product.name}
-                              fill
+                            {console.log("Product image URL:", product.images?.[0])}
+                            {product.images?.[0] ? (
+                              <Image
+                                src={process.env.NEXT_PUBLIC_API_URL + product.images[0]}
+                                alt={product.name}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <Image
+                                src="/placeholder.svg?height=48&width=48"
+                                alt={product.name}
+                                fill
                               className="object-cover"
                             />
+                            )}
                           </div>
                         </TableCell>
                         <TableCell className="font-medium">{product.name}</TableCell>

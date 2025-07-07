@@ -149,7 +149,7 @@ export function Categories() {
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative h-40 w-full">
                     <Image
-                      src={category.image || "/placeholder.svg?height=160&width=256"}
+                      src={category.image ? process.env.NEXT_PUBLIC_API_URL + category.image : "/placeholder.svg?height=160&width=256"}
                       alt={category.name}
                       fill
                       className="object-cover"

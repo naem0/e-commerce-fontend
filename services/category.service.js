@@ -1,8 +1,32 @@
 import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-// Helper function to get auth headers
+// Helper function to get auth headers for FormData
+const getAuthHeadersForFormData = async () => {
+  try {
+    const session = await getSession()
+    let token = null
+    if (session?.accessToken) {
+      token = session.accessToken
+    } else if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken")
+    }
+
+    if (token) {
+      return {
+        Authorization: `Bearer ${token}`,
+        // Don't set Content-Type for FormData, let browser set it
+      }
+    } else {
+      return {}
+    }
+  } catch (error) {
+    return {}
+  }
+}
+
+// Helper function to get auth headers for JSON
 const getAuthHeaders = async () => {
   try {
     // Try to get session first
@@ -41,7 +65,7 @@ export const getCategories = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/categories${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/categories${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -68,7 +92,7 @@ export const getCategories = async (params = {}) => {
 export const getCategoryById = async (id) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/categories/${id}`
+    const url = `${API_URL}/api/categories/${id}`
 
     const response = await fetch(url, {
       method: "GET",
@@ -98,13 +122,27 @@ export const getCategory = async (id) => {
 // Create category (Admin only)
 export const createCategory = async (categoryData) => {
   try {
-    const headers = await getAuthHeaders()
-    const url = `${API_URL}/categories`
+    const headers = await getAuthHeadersForFormData()
+    const url = `${API_URL}/api/categories`
+
+    // Create FormData
+    const formData = new FormData()
+
+    // Add text fields
+    formData.append("name", categoryData.name || "")
+    formData.append("description", categoryData.description || "")
+    formData.append("parent", categoryData.parent || "")
+    formData.append("status", categoryData.status || "active")
+
+    // Add image file if exists
+    if (categoryData.image && categoryData.image instanceof File) {
+      formData.append("image", categoryData.image)
+    }
 
     const response = await fetch(url, {
       method: "POST",
       headers,
-      body: JSON.stringify(categoryData),
+      body: formData,
     })
 
     if (!response.ok) {
@@ -125,13 +163,27 @@ export const createCategory = async (categoryData) => {
 // Update category (Admin only)
 export const updateCategory = async (id, categoryData) => {
   try {
-    const headers = await getAuthHeaders()
-    const url = `${API_URL}/categories/${id}`
+    const headers = await getAuthHeadersForFormData()
+    const url = `${API_URL}/api/categories/${id}`
+
+    // Create FormData
+    const formData = new FormData()
+
+    // Add text fields
+    formData.append("name", categoryData.name || "")
+    formData.append("description", categoryData.description || "")
+    formData.append("parent", categoryData.parent || "")
+    formData.append("status", categoryData.status || "active")
+
+    // Add image file if exists
+    if (categoryData.image && categoryData.image instanceof File) {
+      formData.append("image", categoryData.image)
+    }
 
     const response = await fetch(url, {
       method: "PUT",
       headers,
-      body: JSON.stringify(categoryData),
+      body: formData,
     })
 
     if (!response.ok) {
@@ -153,7 +205,7 @@ export const updateCategory = async (id, categoryData) => {
 export const deleteCategory = async (id) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/categories/${id}`
+    const url = `${API_URL}/api/categories/${id}`
 
     const response = await fetch(url, {
       method: "DELETE",
@@ -185,7 +237,7 @@ export const getCategoryWithProducts = async (id, params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/categories/${id}/products${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/categories/${id}/products${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",

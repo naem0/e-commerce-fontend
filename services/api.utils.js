@@ -1,20 +1,12 @@
 import { getSession } from "next-auth/react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Get auth headers with token
 export const getAuthHeaders = async () => {
   try {
-    console.log("Getting auth headers...")
-
     // Try to get session
     const session = await getSession()
-    console.log("Session retrieved:", {
-      hasSession: !!session,
-      hasUser: !!session?.user,
-      hasAccessToken: !!session?.accessToken,
-      userRole: session?.user?.role,
-    })
 
     if (session?.accessToken) {
       return {
@@ -27,7 +19,6 @@ export const getAuthHeaders = async () => {
     if (typeof window !== "undefined") {
       const storedToken = localStorage.getItem("authToken")
       if (storedToken) {
-        console.log("Using token from localStorage")
         return {
           Authorization: `Bearer ${storedToken}`,
           "Content-Type": "application/json",
@@ -35,7 +26,6 @@ export const getAuthHeaders = async () => {
       }
     }
 
-    console.log("No auth token found")
     return {
       "Content-Type": "application/json",
     }
@@ -51,9 +41,6 @@ export const getAuthHeaders = async () => {
 export const apiRequest = async (url, options = {}) => {
   try {
     const headers = await getAuthHeaders()
-    console.log("Making API request to:", url)
-    console.log("Request headers:", headers)
-
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -62,16 +49,12 @@ export const apiRequest = async (url, options = {}) => {
       },
     })
 
-    console.log("API response status:", response.status)
-
     if (!response.ok) {
       const errorText = await response.text()
-      console.log("API error response:", errorText)
       throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
 
     const data = await response.json()
-    console.log("API response data:", data)
     return data
   } catch (error) {
     console.error("API request error:", error)
@@ -81,7 +64,7 @@ export const apiRequest = async (url, options = {}) => {
 
 // Create API instance for specific endpoints
 export const createAPI = (endpoint) => {
-  const baseURL = `${API_URL}/${endpoint}`
+  const baseURL = `${API_URL}/api/${endpoint}`
 
   return {
     get: async (path = "", options = {}) => {
