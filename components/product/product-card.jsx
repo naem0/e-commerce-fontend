@@ -94,5 +94,4 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
   )
 }
 
-// Default export
 export default ProductCard
