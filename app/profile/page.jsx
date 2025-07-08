@@ -39,6 +39,7 @@ import {
 import { formatPrice, formatDate } from "@/services/utils"
 import { getProfile, updateProfile } from "@/services/user.service"
 import { getOrders } from "@/services/order.service"
+import Image from "next/image"
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
@@ -702,8 +703,8 @@ export default function ProfilePage() {
                                   className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center"
                                 >
                                   {item.product?.images?.[0] ? (
-                                    <img
-                                      src={item.product.images[0] || "/placeholder.svg"}
+                                    <Image
+                                      src={item.product.images[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg"}
                                       alt={item.product.name}
                                       className="w-full h-full object-cover rounded-lg"
                                     />

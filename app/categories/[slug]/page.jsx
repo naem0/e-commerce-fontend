@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/components/ui/use-toast"
 import { Search, Filter } from "lucide-react"
+import Image from "next/image"
 
 export default function CategoryPage() {
   const { t } = useLanguage()
@@ -160,10 +161,12 @@ export default function CategoryPage() {
         <div className="flex flex-col md:flex-row gap-6 items-start">
           {category.image && (
             <div className="w-full md:w-48 h-48 rounded-lg overflow-hidden">
-              <img
-                src={category.image || "/placeholder.svg"}
+              <Image
+                src={category.image ? process.env.NEXT_PUBLIC_API_URL + category.image : "/placeholder.svg"}
                 alt={category.name}
                 className="w-full h-full object-cover"
+                width={1920}
+                height={1080}
               />
             </div>
           )}

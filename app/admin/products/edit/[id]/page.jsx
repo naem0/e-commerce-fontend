@@ -424,7 +424,9 @@ export default function EditProductPage({ params }) {
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     {newImagesPreviews.map((preview, index) => (
                       <div key={index} className="relative">
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           src={preview || "/placeholder.svg"}
                           alt={`New preview ${index + 1}`}
                           className="h-24 w-full object-cover rounded-md"

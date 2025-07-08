@@ -16,6 +16,7 @@ import {
 } from "@/components/ui"
 import { Trash, Plus, ImageIcon } from "lucide-react"
 import { toast } from "react-hot-toast"
+import Image from "next/image"
 
 export default function VariationManager({
   initialVariations = [],
@@ -316,8 +317,8 @@ export default function VariationManager({
                       {variation.images &&
                         variation.images.map((img, imgIndex) => (
                           <div key={imgIndex} className="relative">
-                            <img
-                              src={img || "/placeholder.svg"}
+                            <Image
+                              src={ img ? process.env.NEXT_PUBLIC_API_URL + img : "/placeholder.svg"}
                               alt={`Variation ${index} image ${imgIndex}`}
                               className="h-20 w-20 object-cover rounded-md"
                             />

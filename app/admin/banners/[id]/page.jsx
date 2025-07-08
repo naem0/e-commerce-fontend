@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { AlertCircle, ImageIcon, ArrowLeft, Edit, Trash2 } from "lucide-react"
 import { getBanner, deleteBanner } from "@/services/banner.service"
 import { useToast } from "@/hooks/use-toast"
+import Image from "next/image"
 
 export default function ViewBannerPage({ params }) {
   const { id } = params
@@ -152,7 +153,7 @@ export default function ViewBannerPage({ params }) {
               style={{ backgroundColor: banner.backgroundColor || "#f8fafc" }}
             >
               <div className="relative aspect-[2/1] w-full">
-                <img
+                <Image
                   src={
                     banner.image.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${banner.image}` : banner.image
                   }

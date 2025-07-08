@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { SideCategoryMenu } from "@/components/side-category-menu"
 import { getBanners } from "@/services/banner.service"
+import Image from "next/image"
 
 export function BannerSection() {
   const { t } = useLanguage()
@@ -163,7 +164,7 @@ export function BannerSection() {
                           </Button>
                         </div>
                         <div className="relative h-[250px] md:h-[400px] order-first md:order-last">
-                          <img
+                          <Image
                             src={imageUrl || "/placeholder.svg?height=400&width=600"}
                             alt={banner.title}
                             className="w-full h-full object-cover rounded-lg shadow-lg"
@@ -402,7 +403,7 @@ export function BannerSection() {
                   className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden group cursor-pointer"
                   style={{ backgroundColor: banner.backgroundColor || "#f8fafc" }}
                 >
-                  <img
+                  <Image
                     src={imageUrl || "/placeholder.svg?height=400&width=600"}
                     alt={banner.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

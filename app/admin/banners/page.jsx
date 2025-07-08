@@ -16,6 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Trash2, Edit, Eye, AlertCircle, ImageIcon } from "lucide-react"
 import { getBanners, createBanner, updateBanner, deleteBanner } from "@/services/banner.service"
 import { useToast } from "@/hooks/use-toast"
+import Image from "next/image"
 
 export default function BannersPage() {
   const { data: session, status } = useSession()
@@ -464,7 +465,7 @@ function BannersList({ banners, onDelete, onToggleStatus }) {
             <TableRow key={banner._id}>
               <TableCell>
                 <div className="w-16 h-12 relative">
-                  <img
+                  <Image
                     src={
                       banner.image.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${banner.image}` : banner.image
                     }

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useTranslation } from "@/components/language-provider"
 import { useSiteSettings } from "@/components/site-settings-provider"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export function HeroSection() {
   const { t } = useTranslation()
@@ -37,7 +38,7 @@ export function HeroSection() {
             </div>
           </div>
           <div className="relative h-[300px] md:h-[500px] rounded-lg overflow-hidden">
-            <img src="/placeholder.svg?height=500&width=600" alt="Hero" className="w-full h-full object-cover" />
+            <Image src="/placeholder.svg?height=500&width=600" alt="Hero" className="w-full h-full object-cover" />
           </div>
         </div>
       </section>
@@ -122,7 +123,7 @@ export function HeroSection() {
           </div>
         </div>
         <div className="relative h-[300px] md:h-[500px] rounded-lg overflow-hidden">
-          <img src="/placeholder.svg?height=500&width=600" alt="Hero" className="w-full h-full object-cover" />
+          <Image src="/placeholder.svg?height=500&width=600" alt="Hero" className="w-full h-full object-cover" />
         </div>
       </div>
     </section>
