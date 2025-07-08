@@ -707,6 +707,8 @@ export default function ProfilePage() {
                                       src={item.product.images[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg"}
                                       alt={item.product.name}
                                       className="w-full h-full object-cover rounded-lg"
+                                      width={64}
+                                      height={64}
                                     />
                                   ) : (
                                     <Package className="h-6 w-6 text-gray-400" />
