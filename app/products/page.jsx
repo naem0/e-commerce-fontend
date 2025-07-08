@@ -267,7 +267,7 @@ export default function ProductsPage() {
               <Link href={`/products/${product._id}`}>
                 <div className="aspect-square relative overflow-hidden group">
                   <Image
-                    src={product.images?.[0] || "/placeholder.svg?height=300&width=300"}
+                    src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=300&width=300"}
                     alt={product.name}
                     fill
                     className="object-cover transition-transform group-hover:scale-110"

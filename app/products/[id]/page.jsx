@@ -131,7 +131,7 @@ export default function ProductPage() {
         <div className="space-y-4">
           <div className="relative aspect-square overflow-hidden rounded-lg border bg-white">
             <Image
-              src={ product.images?.length > 0 ? process.env.NEXT_PUBLIC_API_URL + product.images[activeImage] : "/placeholder.svg?height=600&width=600"}
+              src={product.images?.length > 0 ? process.env.NEXT_PUBLIC_API_URL + product.images[activeImage] : "/placeholder.svg?height=600&width=600"}
               alt={product.name}
               fill
               className="object-cover"

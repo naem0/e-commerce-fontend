@@ -44,7 +44,7 @@ const testimonialDesigns = [
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="relative h-10 w-10 rounded-full overflow-hidden">
                       <Image
-                        src={testimonial.avatar || "/placeholder.svg?height=40&width=40"}
+                        src={ testimonial?.avatar ? process.env.NEXT_PUBLIC_API_URL + testimonial.avatar : "/placeholder.svg?height=40&width=40"}
                         alt={testimonial.name}
                         fill
                         className="object-cover"
@@ -97,7 +97,7 @@ const testimonialDesigns = [
                       <div className="flex items-center gap-4">
                         <div className="relative h-12 w-12 rounded-full overflow-hidden">
                           <Image
-                            src={testimonial.avatar || "/placeholder.svg?height=48&width=48"}
+                            src={testimonial?.avatar ? process.env.NEXT_PUBLIC_API_URL + testimonial.avatar : "/placeholder.svg?height=48&width=48"}
                             alt={testimonial.name}
                             fill
                             className="object-cover"

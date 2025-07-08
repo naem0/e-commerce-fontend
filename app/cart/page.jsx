@@ -147,7 +147,7 @@ export default function CartPage() {
                   <div key={`${item.product._id}-${index}`} className="flex py-4 px-6">
                     <div className="relative h-24 w-24 rounded-md overflow-hidden">
                       <Image
-                        src={item.product.images?.[0] || "/placeholder.svg?height=96&width=96"}
+                        src={item.product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=96&width=96"}
                         alt={item.product.name}
                         fill
                         className="object-cover"

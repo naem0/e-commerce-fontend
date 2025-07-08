@@ -14,11 +14,7 @@ const ProductCard1 = ({ product, handleAddToCart }) => {
             <Link href={`/product/${product._id}`}>
                 <div className="aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
                     <Image 
-                        src={
-                            // product.images?.[0] ||
-                            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D" ||
-                            "/placeholder.svg?height=192&width=256"
-                        }
+                        src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=192&width=256"}
                         alt={product.name} 
                         width={400}
                         height={400}

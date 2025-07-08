@@ -70,7 +70,7 @@ export default function CategoriesPage() {
               <Card className="overflow-hidden transition-transform hover:scale-105">
                 <div className="aspect-square relative">
                   <Image
-                    src={category.image || "/placeholder.svg?height=300&width=300"}
+                    src={category.image ? process.env.NEXT_PUBLIC_API_URL + category.image : "/placeholder.svg?height=300&width=300"}
                     alt={category.name}
                     fill
                     className="object-cover"

@@ -56,7 +56,7 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             {settings?.logo ? (
               <Image
-                src={settings.logo || "/placeholder.svg"}
+                src={settings.logo ? process.env.NEXT_PUBLIC_API_URL + settings.logo : "/placeholder.svg"}
                 alt={settings.siteName}
                 width={40}
                 height={40}

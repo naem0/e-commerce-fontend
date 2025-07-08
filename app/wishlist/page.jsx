@@ -89,7 +89,7 @@ export default function WishlistPage() {
                   <Link href={`/products/${product._id}`}>
                     <div className="aspect-square overflow-hidden bg-gray-100">
                       <Image
-                        src={product.images?.[0] || "/placeholder.svg?height=300&width=300"}
+                        src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=300&width=300"}
                         alt={product.name}
                         width={300}
                         height={300}
