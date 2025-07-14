@@ -26,7 +26,7 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
-      <Link href={`/products/${product._id}`} className="block">
+      <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-square overflow-hidden">
           <Image
             src={product.images?.length > 0 ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=48&width=48"}
@@ -74,7 +74,7 @@ export function ProductCard({ product, handleAddToCart, showDiscount = false, di
       </Link>
       <CardFooter className="p-4 pt-0 flex gap-2">
         <Button variant="outline" size="sm" className="flex-1" asChild>
-          <Link href={`/products/${product._id}`}>
+          <Link href={`/products/${product.slug}`}>
             <Eye className="mr-2 h-4 w-4" />
             {t("product.view") || "View"}
           </Link>

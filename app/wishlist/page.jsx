@@ -86,7 +86,7 @@ export default function WishlistPage() {
             return (
               <Card key={product._id} className="overflow-hidden group hover:shadow-lg transition-shadow">
                 <div className="relative">
-                  <Link href={`/products/${product._id}`}>
+                  <Link href={`/products/${product.slug}`}>
                     <div className="aspect-square overflow-hidden bg-gray-100">
                       <Image
                         src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=300&width=300"}
@@ -115,7 +115,7 @@ export default function WishlistPage() {
                 </div>
 
                 <CardContent className="p-4">
-                  <Link href={`/products/${product._id}`}>
+                  <Link href={`/products/${product.slug}`}>
                     <h3 className="font-medium text-gray-900 hover:text-primary transition-colors line-clamp-2 mb-2">
                       {product.name}
                     </h3>

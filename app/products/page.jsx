@@ -264,7 +264,7 @@ export default function ProductsPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <Card key={product._id} className="overflow-hidden">
-              <Link href={`/products/${product._id}`}>
+              <Link href={`/products/${product.slug}`}>
                 <div className="aspect-square relative overflow-hidden group">
                   <Image
                     src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=300&width=300"}
@@ -283,7 +283,7 @@ export default function ProductsPage() {
                 </div>
               </Link>
               <CardContent className="p-4">
-                <Link href={`/products/${product._id}`}>
+                <Link href={`/products/${product.slug}`}>
                   <h3 className="font-medium line-clamp-1 hover:underline">{product.name}</h3>
                 </Link>
                 <div className="flex items-center mt-1">

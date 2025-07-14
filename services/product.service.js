@@ -113,6 +113,32 @@ export const getProductById = async (id) => {
   }
 }
 
+// Get single product by slug
+export const getProductBySlug = async (slug) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/api/products/slug/${slug}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
 // Create product (Admin only)
 export const createProduct = async (productData) => {
   try {

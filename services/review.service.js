@@ -35,20 +35,14 @@ const getAuthHeaders = async () => {
 // Add product review
 export const addProductReview = async (productId, reviewData) => {
   try {
-    console.log("=== Adding Product Review ===")
     const headers = await getAuthHeaders()
     const url = `${API_URL}/api/products/${productId}/reviews`
-
-    console.log("Review API URL:", url)
-    console.log("Review data:", reviewData)
 
     const response = await fetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify(reviewData),
     })
-
-    console.log("Review API response status:", response.status)
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -57,7 +51,6 @@ export const addProductReview = async (productId, reviewData) => {
     }
 
     const data = await response.json()
-    console.log("Review API response data:", data)
     return data
   } catch (error) {
     console.error("Add product review error:", error)
