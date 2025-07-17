@@ -14,7 +14,7 @@ import { AlertCircle, ArrowLeft, Loader2, Plus, Trash2, X } from "lucide-react"
 import { createProduct } from "@/services/product.service"
 import { getCategories } from "@/services/category.service"
 import { getBrands } from "@/services/brand.service"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
+import RichTextEditor from "@/components/ui/rich-text-editor"
 
 export default function CreateProductPage() {
   const router = useRouter()

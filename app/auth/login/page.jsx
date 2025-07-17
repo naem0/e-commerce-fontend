@@ -57,6 +57,34 @@ export default function LoginPage() {
     }
   }
 
+  // Test backend connection
+  const testBackendConnection = async () => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+      console.log("Testing backend connection to:", API_URL)
+
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      })
+
+      console.log("Direct backend test - Status:", response.status)
+      const data = await response.text()
+      console.log("Direct backend test - Response:", data)
+
+      return response.ok
+    } catch (error) {
+      console.error("Backend connection test failed:", error)
+      return false
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -68,6 +96,12 @@ export default function LoginPage() {
     setError("")
 
     try {
+      // Test backend connection first
+      const backendConnected = await testBackendConnection()
+      if (!backendConnected) {
+        throw new Error("Cannot connect to backend server. Please make sure the backend is running on port 5000.")
+      }
+
       // Try to login with NextAuth
       const result = await signIn("credentials", {
         redirect: false,
@@ -77,10 +111,16 @@ export default function LoginPage() {
 
       if (result?.error) {
         console.error("Login error:", result.error)
-        setError("Invalid email or password. Please try again.")
+        let errorMessage = "Invalid email or password. Please try again."
+
+        if (result.error === "CredentialsSignin") {
+          errorMessage = "Invalid email or password. Please check your credentials."
+        }
+
+        setError(errorMessage)
         toast({
           title: t("auth.loginFailed") || "Login Failed",
-          description: "Invalid email or password. Please try again.",
+          description: errorMessage,
           variant: "destructive",
         })
       } else if (result?.ok) {
@@ -110,6 +150,7 @@ export default function LoginPage() {
         throw new Error("Login failed - unknown error")
       }
     } catch (error) {
+      console.error("Login error:", error)
       const errorMessage = error.message || t("auth.errorOccurred") || "An error occurred during login."
       setError(errorMessage)
       toast({

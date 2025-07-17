@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 import { useCart } from "@/components/cart-provider"
 import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
@@ -70,7 +70,7 @@ export default function CheckoutPage() {
       // Load user addresses
       loadUserAddresses()
     }
-  }, [status, cart.items.length, router])
+  }, [status, cart.items.length, router, session])
 
   const loadUserAddresses = async () => {
     try {
@@ -145,13 +145,15 @@ export default function CheckoutPage() {
 
     try {
       let userId = session?.user?.id
+      let userSession = session
 
-      // If not logged in and wants to create account, register first
+      // If not logged in and wants to create account, register first then auto login
       if (!session && createAccount) {
         if (!formData.password) {
           throw new Error("Password is required to create account")
         }
 
+        console.log("Creating new account...")
         const registerResponse = await register({
           name: formData.name,
           email: formData.email,
@@ -163,12 +165,42 @@ export default function CheckoutPage() {
           throw new Error(registerResponse.message || "Failed to create account")
         }
 
-        userId = registerResponse.user.id
-
         toast({
           title: "Account Created",
           description: "Your account has been created successfully!",
         })
+
+        // Auto login after registration
+        console.log("Auto logging in...")
+        const loginResult = await signIn("credentials", {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+        })
+
+        if (loginResult?.error) {
+          console.error("Auto login failed:", loginResult.error)
+          // Continue as guest but show warning
+          toast({
+            title: "Account Created",
+            description: "Account created but auto-login failed. You can login later.",
+            variant: "default",
+          })
+        } else if (loginResult?.ok) {
+          // Wait a bit for session to update
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+
+          // Get fresh session
+          const { getSession } = await import("next-auth/react")
+          userSession = await getSession()
+          userId = userSession?.user?.id || registerResponse.user._id
+
+          console.log("Auto login successful, user ID:", userId)
+          toast({
+            title: "Success",
+            description: "Account created and logged in successfully!",
+          })
+        }
       }
 
       const { subtotal, tax, shipping, total } = calculateTotals()
@@ -212,7 +244,7 @@ export default function CheckoutPage() {
         userId: userId || null, // null for guest orders
       }
 
-      console.log("Order data being sent:", orderData) // Debug log
+      console.log("Order data being sent:", orderData)
 
       const response = await createOrder(orderData)
 

@@ -2,42 +2,59 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 
-const ThemeContext = createContext({ theme: "light", setTheme: () => null })
+const ThemeContext = createContext({
+  theme: "light",
+  setTheme: () => null,
+  toggleTheme: () => null,
+})
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState("light")
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     // Check if theme is stored in localStorage
-    const storedTheme = typeof window !== "undefined" ? localStorage.getItem("theme") : null
+    const storedTheme = localStorage.getItem("theme")
 
-    // Check system preference if no stored theme
-    if (!storedTheme && typeof window !== "undefined") {
+    if (storedTheme && (storedTheme === "light" || storedTheme === "dark")) {
+      setTheme(storedTheme)
+    } else {
+      // Check system preference if no stored theme
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
       setTheme(systemTheme)
       localStorage.setItem("theme", systemTheme)
-    } else if (storedTheme) {
-      setTheme(storedTheme)
     }
   }, [])
 
   useEffect(() => {
+    if (!mounted) return
+
     // Apply theme to document
-    if (typeof document !== "undefined") {
-      if (theme === "dark") {
-        document.documentElement.classList.add("dark")
-      } else {
-        document.documentElement.classList.remove("dark")
-      }
+    const root = document.documentElement
 
-      // Save theme to localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem("theme", theme)
-      }
+    if (theme === "dark") {
+      root.classList.add("dark")
+      root.classList.remove("light")
+    } else {
+      root.classList.add("light")
+      root.classList.remove("dark")
     }
-  }, [theme])
 
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>
+    // Save theme to localStorage
+    localStorage.setItem("theme", theme)
+  }, [theme, mounted])
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"))
+  }
+
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return <div className="opacity-0">{children}</div>
+  }
+
+  return <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {

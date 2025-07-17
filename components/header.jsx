@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
-import { useTheme } from "next-themes"
+import { useTheme } from "@/components/theme-provider"
 import { useLanguage } from "@/components/language-provider"
 import { useSiteSettings } from "@/components/site-settings-provider"
 import { useCart } from "@/components/cart-provider"
@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ShoppingCart, User, Sun, Moon, Globe, Search, Heart } from "lucide-react"
+import { ShoppingCart, User, Sun, Moon, Globe, Search, Heart, Menu } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -26,12 +26,13 @@ import { Input } from "@/components/ui/input"
 export function Header() {
   const pathname = usePathname()
   const { data: session } = useSession()
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, toggleTheme } = useTheme()
   const { language, setLanguage, t } = useLanguage()
   const { settings } = useSiteSettings()
   const { getCartItemCount } = useCart()
   const { getWishlistCount } = useWishlist()
   const [searchQuery, setSearchQuery] = useState("")
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const router = useRouter()
 
   const cartItemCount = getCartItemCount()
@@ -56,7 +57,7 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             {settings?.logo ? (
               <Image
-                src={settings.logo ? process.env.NEXT_PUBLIC_API_URL + settings.logo : "/placeholder.svg"}
+                src={settings.logo || "/placeholder.svg"}
                 alt={settings.siteName}
                 width={40}
                 height={40}
@@ -68,48 +69,55 @@ export function Header() {
               </span>
             )}
           </Link>
-          <nav className="hidden md:flex gap-6 align-center">
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex gap-6">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors hover:text-primary my-auto ${
-                isActive("/") ? "text-foreground" : "text-muted-foreground"
-              }`}
+              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/") ? "text-foreground" : "text-muted-foreground"
+                }`}
             >
-              {t("nav.home")}
+              {t("nav.home") || "Home"}
             </Link>
             <Link
               href="/products"
-              className={`text-sm font-medium transition-colors hover:text-primary my-auto ${
-                isActive("/products") ? "text-foreground" : "text-muted-foreground"
-              }`}
+              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/products") ? "text-foreground" : "text-muted-foreground"
+                }`}
             >
-              {t("nav.products")}
+              {t("nav.products") || "Products"}
             </Link>
             <Link
               href="/categories"
-              className={`text-sm font-medium transition-colors hover:text-primary my-auto ${
-                isActive("/categories") ? "text-foreground" : "text-muted-foreground"
-              }`}
+              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"
+                }`}
             >
-              {t("nav.categories")}
+              {t("nav.categories") || "Categories"}
             </Link>
-            <div className="hidden md:flex items-center ml-6">
-              <form onSubmit={handleSearch} className="relative">
-                <Input
-                  type="text"
-                  placeholder={t("nav.searchPlaceholder") || "Search products..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 pr-10"
-                />
-                <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </form>
-            </div>
           </nav>
+
+          {/* Desktop Search */}
+          <div className="hidden md:flex items-center ml-6">
+            <form onSubmit={handleSearch} className="relative">
+              <Input
+                type="text"
+                placeholder={t("nav.searchPlaceholder") || "Search products..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-64 pr-10"
+              />
+              <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
+                <Search className="h-4 w-4" />
+              </Button>
+            </form>
+          </div>
         </div>
+
         <div className="flex items-center gap-2">
+          {/* Mobile Menu Button */}
+          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <Menu className="h-5 w-5" />
+          </Button>
+
           {/* Language Toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -125,20 +133,10 @@ export function Header() {
           </DropdownMenu>
 
           {/* Theme Toggle */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                <span className="sr-only">Toggle theme</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button variant="ghost" size="icon" onClick={toggleTheme}>
+            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
 
           {/* Wishlist */}
           {session && (
@@ -153,7 +151,7 @@ export function Header() {
                     {wishlistCount}
                   </Badge>
                 )}
-                <span className="sr-only">{t("nav.wishlist")}</span>
+                <span className="sr-only">{t("nav.wishlist") || "Wishlist"}</span>
               </Button>
             </Link>
           )}
@@ -170,7 +168,7 @@ export function Header() {
                   {cartItemCount}
                 </Badge>
               )}
-              <span className="sr-only">{t("nav.cart")}</span>
+              <span className="sr-only">{t("nav.cart") || "Cart"}</span>
             </Button>
           </Link>
 
@@ -180,30 +178,70 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
-                  <span className="sr-only">{t("nav.account")}</span>
+                  <span className="sr-only">{t("nav.account") || "Account"}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Link href="/profile">{t("nav.profile")}</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/orders">{t("nav.orders")}</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/wishlist">{t("nav.wishlist")}</Link>
-                </DropdownMenuItem>
+                <Link href="/profile">
+                  <DropdownMenuItem>
+                    {t("nav.profile") || "Profile"}
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/orders">
+                  <DropdownMenuItem>
+                    {t("nav.orders") || "Orders"}
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/wishlist">
+                  <DropdownMenuItem>
+                    {t("nav.wishlist") || "Wishlist"}
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout")}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout") || "Logout"}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Link href="/auth/login">
-              <Button variant="outline">{t("auth.login")}</Button>
+              <Button variant="outline">{t("auth.login") || "Login"}</Button>
             </Link>
           )}
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t bg-background">
+          <div className="container py-4 space-y-4">
+            {/* Mobile Search */}
+            <form onSubmit={handleSearch} className="relative">
+              <Input
+                type="text"
+                placeholder={t("nav.searchPlaceholder") || "Search products..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pr-10"
+              />
+              <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
+                <Search className="h-4 w-4" />
+              </Button>
+            </form>
+
+            {/* Mobile Navigation */}
+            <nav className="flex flex-col space-y-2">
+              <Link href="/" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
+                {t("nav.home") || "Home"}
+              </Link>
+              <Link href="/products" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
+                {t("nav.products") || "Products"}
+              </Link>
+              <Link href="/categories" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
+                {t("nav.categories") || "Categories"}
+              </Link>
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
