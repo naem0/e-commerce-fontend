@@ -226,7 +226,6 @@ export function Header() {
                 <Search className="h-4 w-4" />
               </Button>
             </form>
-
             {/* Mobile Navigation */}
             <nav className="flex flex-col space-y-2">
               <Link href="/" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
