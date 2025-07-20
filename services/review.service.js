@@ -1,4 +1,5 @@
 import { getSession } from "next-auth/react"
+import { api } from "./api"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
@@ -150,28 +151,28 @@ export const deleteReview = async (reviewId) => {
 // Create review
 export const createReview = async (reviewData) => {
   try {
-    const isFormData = reviewData instanceof FormData
-    const headers = await getAuthHeaders(isFormData)
-    const url = `${API_URL}/api/reviews`
+    const formData = new FormData()
+    formData.append("productId", reviewData.productId)
+    formData.append("orderId", reviewData.orderId)
+    formData.append("rating", reviewData.rating)
+    formData.append("title", reviewData.title)
+    formData.append("comment", reviewData.comment)
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: reviewData,
+    // Add images if any
+    if (reviewData.images && reviewData.images.length > 0) {
+      reviewData.images.forEach((image) => {
+        formData.append("images", image)
+      })
+    }
+
+    const response = await api.post("/reviews", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
-    const data = await response.json()
-    return data
+    return response.data
   } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    }
+    throw error.response?.data || error
   }
 }
 
@@ -252,4 +253,23 @@ export const addAdminResponse = async (reviewId, message) => {
       message: error.message,
     }
   }
+}
+
+// Delete review (Admin)
+export const deleteReviewAdmin = async (reviewId) => {
+  try {
+    const response = await api.delete(`/reviews/${reviewId}`)
+    return response.data
+  } catch (error) {
+    throw error.response?.data || error
+  }
+}
+
+export const reviewService = {
+  createReview,
+  getProductReviews,
+  getAllReviews,
+  updateReviewStatus,
+  addAdminResponse,
+  deleteReviewAdmin,
 }
