@@ -3,7 +3,7 @@ import { getSession } from "next-auth/react"
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Helper function to get auth headers
-const getAuthHeaders = async () => {
+const getAuthHeaders = async (isFormData = false) => {
   try {
     const session = await getSession()
 
@@ -15,20 +15,20 @@ const getAuthHeaders = async () => {
       token = localStorage.getItem("authToken")
     }
 
+    const headers = {}
+
     if (token) {
-      return {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      }
-    } else {
-      return {
-        "Content-Type": "application/json",
-      }
+      headers.Authorization = `Bearer ${token}`
     }
+
+    // Don't set Content-Type for FormData, let browser set it
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json"
+    }
+
+    return headers
   } catch (error) {
-    return {
-      "Content-Type": "application/json",
-    }
+    return isFormData ? {} : { "Content-Type": "application/json" }
   }
 }
 
@@ -46,6 +46,7 @@ export const getOrders = async (params = {}) => {
 
     if (!response.ok) {
       const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
 
     const data = await response.json()
@@ -119,6 +120,61 @@ export const createOrder = async (orderData) => {
       method: "POST",
       headers,
       body: JSON.stringify(orderData),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Add partial payment (supports FormData for file upload)
+export const addPartialPayment = async (orderId, paymentData) => {
+  try {
+    const isFormData = paymentData instanceof FormData
+    const headers = await getAuthHeaders(isFormData)
+    const url = `${API_URL}/api/orders/${orderId}/payments`
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: paymentData,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Confirm payment (Admin only)
+export const confirmPayment = async (orderId, paymentId, confirmData) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/api/orders/${orderId}/payments/${paymentId}/confirm`
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(confirmData),
     })
 
     if (!response.ok) {

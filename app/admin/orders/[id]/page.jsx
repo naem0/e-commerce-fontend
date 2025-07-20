@@ -29,16 +29,16 @@ import {
   Download,
   Printer,
   Plus,
-  Edit,
+  Check,
+  X,
 } from "lucide-react"
 import { formatPrice, formatDate } from "@/services/utils"
-import { getOrderById, updateOrderStatus } from "@/services/order.service"
-import { PartialPaymentModal } from "@/components/partial-payment-modal"
+import { getOrderById, updateOrderStatus, addPartialPayment, confirmPayment } from "@/services/order.service"
 
 export default function AdminOrderDetailsPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const { t } = useLanguage()
   const { toast } = useToast()
 
@@ -49,11 +49,19 @@ export default function AdminOrderDetailsPage() {
   const [statusUpdateOpen, setStatusUpdateOpen] = useState(false)
   const [trackingInfo, setTrackingInfo] = useState("")
   const [adminNotes, setAdminNotes] = useState("")
+  const [paymentForm, setPaymentForm] = useState({
+    amount: "",
+    method: "bkash",
+    transactionId: "",
+    phoneNumber: "",
+    notes: "",
+  })
 
   useEffect(() => {
-
-    fetchOrder()
-  }, [status, id])
+    if (session?.accessToken && id) {
+      fetchOrder()
+    }
+  }, [session?.accessToken, id])
 
   const fetchOrder = async () => {
     try {
@@ -64,6 +72,13 @@ export default function AdminOrderDetailsPage() {
         setOrder(response.order)
         setTrackingInfo(response.order.trackingInfo || "")
         setAdminNotes(response.order.adminNotes || "")
+
+        // Set default payment amount to due amount
+        const dueAmount = calculateDueAmount(response.order)
+        setPaymentForm((prev) => ({
+          ...prev,
+          amount: dueAmount.toString(),
+        }))
       } else {
         throw new Error(response.message || "Order not found")
       }
@@ -83,14 +98,7 @@ export default function AdminOrderDetailsPage() {
   const handleStatusUpdate = async (newStatus) => {
     try {
       setUpdating(true)
-
-      const updateData = {
-        status: newStatus,
-        trackingInfo,
-        adminNotes,
-      }
-
-      const response = await updateOrderStatus(id, updateData)
+      const response = await updateOrderStatus(id, newStatus)
 
       if (response.success) {
         setOrder(response.order)
@@ -111,6 +119,76 @@ export default function AdminOrderDetailsPage() {
       })
     } finally {
       setUpdating(false)
+    }
+  }
+
+  const handleAddPayment = async () => {
+    try {
+      if (!paymentForm.amount || Number.parseFloat(paymentForm.amount) <= 0) {
+        toast({
+          title: "Error",
+          description: "Please enter a valid payment amount",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const formData = new FormData()
+      formData.append("amount", paymentForm.amount)
+      formData.append("method", paymentForm.method)
+      formData.append("transactionId", paymentForm.transactionId)
+      formData.append("phoneNumber", paymentForm.phoneNumber)
+      formData.append("notes", paymentForm.notes)
+
+      const response = await addPartialPayment(id, formData)
+
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: "Payment added successfully",
+        })
+        setPaymentModalOpen(false)
+        setPaymentForm({
+          amount: "",
+          method: "bkash",
+          transactionId: "",
+          phoneNumber: "",
+          notes: "",
+        })
+        fetchOrder()
+      } else {
+        throw new Error(response.message || "Failed to add payment")
+      }
+    } catch (error) {
+      console.error("Add payment error:", error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add payment",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleConfirmPayment = async (paymentId, status, adminNote = "") => {
+    try {
+      const response = await confirmPayment(id, paymentId, { status, adminNote })
+
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: `Payment ${status} successfully`,
+        })
+        fetchOrder()
+      } else {
+        throw new Error(response.message || `Failed to ${status} payment`)
+      }
+    } catch (error) {
+      console.error("Confirm payment error:", error)
+      toast({
+        title: "Error",
+        description: error.message || `Failed to ${status} payment`,
+        variant: "destructive",
+      })
     }
   }
 
@@ -163,15 +241,16 @@ export default function AdminOrderDetailsPage() {
     }
   }
 
-  const calculateTotalPaid = () => {
+  const calculateTotalPaid = (order) => {
     if (!order?.payments) return 0
     return order.payments.reduce((total, payment) => {
-      return payment.status === "completed" ? total + payment.amount : total
+      return payment.status === "confirmed" ? total + payment.amount : total
     }, 0)
   }
 
-  const calculateDueAmount = () => {
-    return order?.total - calculateTotalPaid()
+  const calculateDueAmount = (order) => {
+    if (!order) return 0
+    return order.total - calculateTotalPaid(order)
   }
 
   if (loading) {
@@ -193,8 +272,8 @@ export default function AdminOrderDetailsPage() {
     )
   }
 
-  const totalPaid = calculateTotalPaid()
-  const dueAmount = calculateDueAmount()
+  const totalPaid = calculateTotalPaid(order)
+  const dueAmount = calculateDueAmount(order)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -236,54 +315,18 @@ export default function AdminOrderDetailsPage() {
                     <span className="capitalize">{order.paymentStatus}</span>
                   </Badge>
                   <div className="mt-2">
-                    <Dialog open={statusUpdateOpen} onOpenChange={setStatusUpdateOpen}>
-                      <DialogTrigger asChild>
-                        <Button size="sm">
-                          <Edit className="mr-1 h-3 w-3" />
-                          Update Status
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Update Order Status</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <Label>Order Status</Label>
-                            <Select defaultValue={order.status} onValueChange={(value) => handleStatusUpdate(value)}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="processing">Processing</SelectItem>
-                                <SelectItem value="shipped">Shipped</SelectItem>
-                                <SelectItem value="delivered">Delivered</SelectItem>
-                                <SelectItem value="cancelled">Cancelled</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="trackingInfo">Tracking Information</Label>
-                            <Input
-                              id="trackingInfo"
-                              value={trackingInfo}
-                              onChange={(e) => setTrackingInfo(e.target.value)}
-                              placeholder="Enter tracking number or info"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="adminNotes">Admin Notes</Label>
-                            <Textarea
-                              id="adminNotes"
-                              value={adminNotes}
-                              onChange={(e) => setAdminNotes(e.target.value)}
-                              placeholder="Internal notes about this order"
-                            />
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                    <Select value={order.status} onValueChange={handleStatusUpdate}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="processing">Processing</SelectItem>
+                        <SelectItem value="shipped">Shipped</SelectItem>
+                        <SelectItem value="delivered">Delivered</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
@@ -332,7 +375,7 @@ export default function AdminOrderDetailsPage() {
                   <div key={index} className="flex items-center space-x-4 p-4 border rounded-lg">
                     <div className="relative h-16 w-16 flex-shrink-0">
                       <Image
-                        src={item?.product?.images?.length > 0 ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=64&width=64"}
+                        src={item.product?.images?.[0] || "/placeholder.svg?height=64&width=64"}
                         alt={item.name}
                         fill
                         className="object-cover rounded"
@@ -356,12 +399,89 @@ export default function AdminOrderDetailsPage() {
           {/* Payment History */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Payment History</CardTitle>
+              <CardTitle>Payment Management</CardTitle>
               {dueAmount > 0 && (
-                <Button onClick={() => setPaymentModalOpen(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Payment
-                </Button>
+                <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Payment
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add Payment</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="amount">Amount</Label>
+                          <Input
+                            id="amount"
+                            type="number"
+                            value={paymentForm.amount}
+                            onChange={(e) => setPaymentForm((prev) => ({ ...prev, amount: e.target.value }))}
+                            placeholder="Enter amount"
+                            max={dueAmount}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="method">Payment Method</Label>
+                          <Select
+                            value={paymentForm.method}
+                            onValueChange={(value) => setPaymentForm((prev) => ({ ...prev, method: value }))}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="bkash">bKash</SelectItem>
+                              <SelectItem value="nagad">Nagad</SelectItem>
+                              <SelectItem value="rocket">Rocket</SelectItem>
+                              <SelectItem value="bank">Bank Transfer</SelectItem>
+                              <SelectItem value="cash">Cash</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="transactionId">Transaction ID</Label>
+                        <Input
+                          id="transactionId"
+                          value={paymentForm.transactionId}
+                          onChange={(e) => setPaymentForm((prev) => ({ ...prev, transactionId: e.target.value }))}
+                          placeholder="Enter transaction ID"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phoneNumber">Phone Number</Label>
+                        <Input
+                          id="phoneNumber"
+                          value={paymentForm.phoneNumber}
+                          onChange={(e) => setPaymentForm((prev) => ({ ...prev, phoneNumber: e.target.value }))}
+                          placeholder="Enter phone number"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="notes">Notes</Label>
+                        <Textarea
+                          id="notes"
+                          value={paymentForm.notes}
+                          onChange={(e) => setPaymentForm((prev) => ({ ...prev, notes: e.target.value }))}
+                          placeholder="Add payment notes"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline" onClick={() => setPaymentModalOpen(false)} className="flex-1">
+                          Cancel
+                        </Button>
+                        <Button onClick={handleAddPayment} className="flex-1">
+                          Add Payment
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               )}
             </CardHeader>
             <CardContent>
@@ -398,7 +518,39 @@ export default function AdminOrderDetailsPage() {
                             <p className="text-xs text-gray-500">ID: {payment.transactionId}</p>
                           )}
                         </div>
-                        <Badge className={getPaymentStatusColor(payment.status)}>{payment.status}</Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            className={
+                              payment.status === "confirmed"
+                                ? "bg-green-100 text-green-800"
+                                : payment.status === "rejected"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                            }
+                          >
+                            {payment.status}
+                          </Badge>
+                          {payment.status === "pending" && (
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleConfirmPayment(payment._id, "confirmed")}
+                              >
+                                <Check className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  handleConfirmPayment(payment._id, "rejected", "Payment rejected by admin")
+                                }
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -522,15 +674,6 @@ export default function AdminOrderDetailsPage() {
           )}
         </div>
       </div>
-
-      {/* Partial Payment Modal */}
-      <PartialPaymentModal
-        isOpen={paymentModalOpen}
-        onClose={() => setPaymentModalOpen(false)}
-        orderId={order._id}
-        dueAmount={dueAmount}
-        onPaymentAdded={fetchOrder}
-      />
     </div>
   )
 }

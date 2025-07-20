@@ -3,39 +3,35 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/use-toast"
-import {
-  Loader2,
-  Package,
-  Truck,
-  CheckCircle,
-  Clock,
-  XCircle,
-  MapPin,
-  CreditCard,
-  Star,
-  MessageSquare,
-} from "lucide-react"
-import { formatPrice, formatDate } from "@/services/utils"
-import { getOrderById } from "@/services/order.service"
-import { ReviewModal } from "@/components/review-modal"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast"
+import { Loader2, CreditCard, CheckCircle, Upload, X } from "lucide-react"
+import { formatPrice } from "@/services/utils"
+import { getOrderById, addPartialPayment } from "@/services/order.service"
 
-export default function OrderDetailsPage() {
-  const { id } = useParams()
+export default function PaymentPage() {
+  const { orderId } = useParams()
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const { t } = useLanguage()
   const { toast } = useToast()
 
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [reviewModalOpen, setReviewModalOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [processing, setProcessing] = useState(false)
+  const [paymentData, setPaymentData] = useState({
+    amount: "",
+    accountNumber: "",
+    transactionId: "",
+    screenshot: null,
+    notes: "",
+  })
+  const [screenshotPreview, setScreenshotPreview] = useState(null)
 
   useEffect(() => {
     if (!session) {
@@ -44,22 +40,28 @@ export default function OrderDetailsPage() {
     }
 
     fetchOrder()
-  }, [status, id])
+  }, [session, orderId])
 
   const fetchOrder = async () => {
     try {
       setLoading(true)
-      const response = await getOrderById(id)
+      const response = await getOrderById(orderId)
 
       if (response.success) {
         setOrder(response.order)
+        // Pre-fill amount with due amount
+        const dueAmount = response.order.total - (response.order.paidAmount || 0)
+        setPaymentData((prev) => ({
+          ...prev,
+          amount: dueAmount.toString(),
+        }))
       } else {
         throw new Error(response.message || "Order not found")
       }
     } catch (error) {
       console.error("Fetch order error:", error)
       toast({
-        title: t("order.error") || "Error",
+        title: t("payment.error") || "Error",
         description: error.message || "Failed to load order",
         variant: "destructive",
       })
@@ -69,103 +71,129 @@ export default function OrderDetailsPage() {
     }
   }
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "pending":
-        return <Clock className="h-4 w-4" />
-      case "processing":
-        return <Package className="h-4 w-4" />
-      case "shipped":
-        return <Truck className="h-4 w-4" />
-      case "delivered":
-        return <CheckCircle className="h-4 w-4" />
-      case "cancelled":
-        return <XCircle className="h-4 w-4" />
-      default:
-        return <Clock className="h-4 w-4" />
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setPaymentData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleScreenshotChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB limit
+        toast({
+          title: "Error",
+          description: "Screenshot size should be less than 5MB",
+          variant: "destructive",
+        })
+        return
+      }
+
+      setPaymentData((prev) => ({
+        ...prev,
+        screenshot: file,
+      }))
+
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setScreenshotPreview(e.target.result)
+      }
+      reader.readAsDataURL(file)
     }
   }
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "processing":
-        return "bg-blue-100 text-blue-800"
-      case "shipped":
-        return "bg-purple-100 text-purple-800"
-      case "delivered":
-        return "bg-green-100 text-green-800"
-      case "cancelled":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
+  const removeScreenshot = () => {
+    setPaymentData((prev) => ({
+      ...prev,
+      screenshot: null,
+    }))
+    setScreenshotPreview(null)
   }
 
-  const getPaymentStatusColor = (status) => {
-    switch (status) {
-      case "paid":
-        return "bg-green-100 text-green-800"
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "failed":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
+  const handlePayment = async () => {
+    const amount = Number.parseFloat(paymentData.amount)
+    const dueAmount = order.total - (order.paidAmount || 0)
 
-  const canReview = (order) => {
-    return order.status === "delivered" && order.paymentStatus === "paid"
-  }
-
-  const handleReview = (product) => {
-    setSelectedProduct(product)
-    setReviewModalOpen(true)
-  }
-
-  const getOrderTimeline = () => {
-    const timeline = [
-      {
-        status: "pending",
-        label: t("order.pending") || "Order Placed",
-        date: order.createdAt,
-        completed: true,
-      },
-      {
-        status: "processing",
-        label: t("order.processing") || "Processing",
-        date: order.status === "processing" ? new Date() : null,
-        completed: ["processing", "shipped", "delivered"].includes(order.status),
-      },
-      {
-        status: "shipped",
-        label: t("order.shipped") || "Shipped",
-        date: order.status === "shipped" ? new Date() : null,
-        completed: ["shipped", "delivered"].includes(order.status),
-      },
-      {
-        status: "delivered",
-        label: t("order.delivered") || "Delivered",
-        date: order.status === "delivered" ? new Date() : null,
-        completed: order.status === "delivered",
-      },
-    ]
-
-    if (order.status === "cancelled") {
-      return [
-        timeline[0],
-        {
-          status: "cancelled",
-          label: t("order.cancelled") || "Cancelled",
-          date: new Date(),
-          completed: true,
-        },
-      ]
+    if (!amount || amount <= 0) {
+      toast({
+        title: t("payment.error") || "Error",
+        description: "Please enter a valid payment amount",
+        variant: "destructive",
+      })
+      return
     }
 
-    return timeline
+    if (amount > dueAmount) {
+      toast({
+        title: t("payment.error") || "Error",
+        description: `Payment amount cannot exceed due amount of ${formatPrice(dueAmount)}`,
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!paymentData.accountNumber.trim()) {
+      toast({
+        title: t("payment.error") || "Error",
+        description: "Account number is required",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setProcessing(true)
+
+    try {
+      // Create FormData for file upload
+      const formData = new FormData()
+      formData.append("amount", amount.toString())
+      formData.append("method", order.paymentMethod)
+      formData.append("accountNumber", paymentData.accountNumber)
+      if (paymentData.transactionId) {
+        formData.append("transactionId", paymentData.transactionId)
+      }
+      if (paymentData.screenshot) {
+        formData.append("screenshot", paymentData.screenshot)
+      }
+      if (paymentData.notes) {
+        formData.append("notes", paymentData.notes)
+      }
+
+      const response = await addPartialPayment(orderId, formData)
+
+      if (response.success) {
+        toast({
+          title: t("payment.success") || "Payment Submitted!",
+          description:
+            amount >= dueAmount
+              ? "Your full payment has been submitted for verification."
+              : `Partial payment of ${formatPrice(amount)} submitted. Remaining: ${formatPrice(dueAmount - amount)}`,
+        })
+
+        // Refresh order data
+        await fetchOrder()
+
+        // Redirect to order details after 2 seconds
+        setTimeout(() => {
+          router.push(`/orders/${orderId}`)
+        }, 2000)
+      } else {
+        throw new Error(response.message || "Payment submission failed")
+      }
+    } catch (error) {
+      console.error("Payment error:", error)
+      toast({
+        title: t("payment.error") || "Error",
+        description: error.message || "Payment submission failed",
+        variant: "destructive",
+      })
+    } finally {
+      setProcessing(false)
+    }
   }
 
   if (loading) {
@@ -180,241 +208,248 @@ export default function OrderDetailsPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("order.notFound") || "Order not found"}</h1>
-          <Button onClick={() => router.push("/orders")}>{t("order.viewOrders") || "View All Orders"}</Button>
+          <h1 className="text-2xl font-bold mb-4">{t("payment.orderNotFound") || "Order not found"}</h1>
+          <Button onClick={() => router.push("/orders")}>{t("payment.viewOrders") || "View Orders"}</Button>
         </div>
       </div>
     )
   }
 
-  const timeline = getOrderTimeline()
+  const dueAmount = order.total - (order.paidAmount || 0)
+
+  // If fully paid, show success message
+  if (dueAmount <= 0) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <Card className="max-w-md mx-auto text-center">
+          <CardContent className="pt-6">
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold mb-2">Payment Completed</h1>
+            <p className="text-gray-600 mb-4">This order has been fully paid.</p>
+            <Button onClick={() => router.push(`/orders/${orderId}`)}>View Order Details</Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  const getPaymentInstructions = () => {
+    switch (order.paymentMethod) {
+      case "bkash":
+        return {
+          title: "bKash Payment Instructions",
+          instructions: [
+            "Open your bKash app or dial *247#",
+            "Select 'Send Money'",
+            "Enter Merchant Number: 01712345678",
+            `Enter Amount: ${paymentData.amount ? formatPrice(Number.parseFloat(paymentData.amount)) : formatPrice(dueAmount)}`,
+            "Enter your bKash PIN to confirm",
+            "Save the transaction ID and screenshot",
+            "Fill the form below with your payment details",
+          ],
+        }
+      case "nagad":
+        return {
+          title: "Nagad Payment Instructions",
+          instructions: [
+            "Open your Nagad app or dial *167#",
+            "Select 'Send Money'",
+            "Enter Merchant Number: 01712345678",
+            `Enter Amount: ${paymentData.amount ? formatPrice(Number.parseFloat(paymentData.amount)) : formatPrice(dueAmount)}`,
+            "Enter your Nagad PIN to confirm",
+            "Save the transaction ID and screenshot",
+            "Fill the form below with your payment details",
+          ],
+        }
+      default:
+        return {
+          title: "Payment Instructions",
+          instructions: ["Please follow the payment instructions"],
+        }
+    }
+  }
+
+  const paymentInstructions = getPaymentInstructions()
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Button variant="outline" onClick={() => router.push("/orders")}>
-          ← {t("order.backToOrders") || "Back to Orders"}
-        </Button>
-      </div>
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-center">Complete Payment</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Order Details */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Order Header */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-2xl">
-                    {t("order.orderNumber") || "Order"} #{order._id.slice(-8).toUpperCase()}
-                  </CardTitle>
-                  <p className="text-gray-600 mt-1">
-                    {t("order.placedOn") || "Placed on"} {formatDate(order.createdAt)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <Badge className={`${getStatusColor(order.status)} mb-2`}>
-                    {getStatusIcon(order.status)}
-                    <span className="ml-1 capitalize">{order.status}</span>
-                  </Badge>
-                  <br />
-                  <Badge className={getPaymentStatusColor(order.paymentStatus)}>
-                    <CreditCard className="h-3 w-3 mr-1" />
-                    <span className="capitalize">{order.paymentStatus}</span>
-                  </Badge>
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
-
-          {/* Order Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("order.orderTimeline") || "Order Timeline"}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {timeline.map((step, index) => (
-                  <div key={step.status} className="flex items-center">
-                    <div
-                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                        step.completed ? "bg-primary text-white" : "bg-gray-200 text-gray-400"
-                      }`}
-                    >
-                      {step.completed ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <p className={`font-medium ${step.completed ? "text-gray-900" : "text-gray-400"}`}>
-                        {step.label}
-                      </p>
-                      {step.date && <p className="text-sm text-gray-500">{formatDate(step.date)}</p>}
-                    </div>
-                    {index < timeline.length - 1 && (
-                      <div
-                        className={`absolute left-4 mt-8 w-0.5 h-4 ${step.completed ? "bg-primary" : "bg-gray-200"}`}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Order Items */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("order.orderItems") || "Order Items"}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {order.items.map((item, index) => (
-                  <div key={index} className="flex items-center space-x-4 p-4 border rounded-lg">
-                    <div className="relative h-16 w-16 flex-shrink-0">
-                      <Image
-                        src={item.product?.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=64&width=64"}
-                        alt={item.name}
-                        fill
-                        className="object-cover rounded"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <p className="text-sm text-gray-600">
-                        {t("order.quantity") || "Quantity"}: {item.quantity}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {t("order.price") || "Price"}: {formatPrice(item.price)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">{formatPrice(item.price * item.quantity)}</p>
-                      {canReview(order) && (
-                        <Button size="sm" variant="outline" onClick={() => handleReview(item.product)} className="mt-2">
-                          <Star className="h-3 w-3 mr-1" />
-                          {t("order.review") || "Review"}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Order Summary & Info */}
-        <div className="space-y-6">
-          {/* Order Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("order.orderSummary") || "Order Summary"}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
+        {/* Order Summary */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
               <div className="flex justify-between">
-                <span>{t("order.subtotal") || "Subtotal"}</span>
-                <span>{formatPrice(order.subtotal)}</span>
+                <span>Order Number</span>
+                <span className="font-mono">#{order._id.slice(-8).toUpperCase()}</span>
               </div>
               <div className="flex justify-between">
-                <span>{t("order.tax") || "Tax"}</span>
-                <span>{formatPrice(order.tax)}</span>
+                <span>Payment Method</span>
+                <span className="capitalize">{order.paymentMethod.replace("_", " ")}</span>
               </div>
               <div className="flex justify-between">
-                <span>{t("order.shipping") || "Shipping"}</span>
-                <span>{formatPrice(order.shippingCost)}</span>
-              </div>
-              <hr />
-              <div className="flex justify-between font-bold text-lg">
-                <span>{t("order.total") || "Total"}</span>
+                <span>Total Amount</span>
                 <span>{formatPrice(order.total)}</span>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Shipping Address */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <MapPin className="mr-2 h-5 w-5" />
-                {t("order.shippingAddress") || "Shipping Address"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-sm space-y-1">
-                <p className="font-medium">{order.shippingAddress.name}</p>
-                <p>{order.shippingAddress.street}</p>
-                <p>
-                  {order.shippingAddress.city}
-                  {order.shippingAddress.state && `, ${order.shippingAddress.state}`}
-                  {order.shippingAddress.zipCode && ` ${order.shippingAddress.zipCode}`}
-                </p>
-                <p>{order.shippingAddress.country}</p>
+              <div className="flex justify-between">
+                <span>Paid Amount</span>
+                <span className="text-green-600">{formatPrice(order.paidAmount || 0)}</span>
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex justify-between font-bold text-lg text-red-600">
+                <span>Due Amount</span>
+                <span>{formatPrice(dueAmount)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Payment Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <CreditCard className="mr-2 h-5 w-5" />
-                {t("order.paymentInfo") || "Payment Information"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>{t("order.paymentMethod") || "Payment Method"}</span>
-                  <span className="capitalize">{order.paymentMethod.replace("_", " ")}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>{t("order.paymentStatus") || "Payment Status"}</span>
-                  <Badge className={getPaymentStatusColor(order.paymentStatus)}>{order.paymentStatus}</Badge>
-                </div>
-                {order.paymentDetails?.transactionId && (
-                  <div className="flex justify-between">
-                    <span>{t("order.transactionId") || "Transaction ID"}</span>
-                    <span className="font-mono text-sm">{order.paymentDetails.transactionId}</span>
+        {/* Payment Instructions */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <CreditCard className="mr-2 h-5 w-5" />
+              {paymentInstructions.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ol className="list-decimal list-inside space-y-2">
+              {paymentInstructions.instructions.map((instruction, index) => (
+                <li key={index} className="text-sm">
+                  {instruction}
+                </li>
+              ))}
+            </ol>
+          </CardContent>
+        </Card>
+
+        {/* Payment Form */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Payment Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="amount">Payment Amount *</Label>
+              <Input
+                id="amount"
+                name="amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                max={dueAmount}
+                value={paymentData.amount}
+                onChange={handleInputChange}
+                placeholder="Enter payment amount"
+                required
+              />
+              <p className="text-sm text-gray-500 mt-1">You can pay partially. Maximum: {formatPrice(dueAmount)}</p>
+            </div>
+
+            <div>
+              <Label htmlFor="accountNumber">Your Account Number *</Label>
+              <Input
+                id="accountNumber"
+                name="accountNumber"
+                value={paymentData.accountNumber}
+                onChange={handleInputChange}
+                placeholder="01XXXXXXXXX"
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="transactionId">Transaction ID</Label>
+              <Input
+                id="transactionId"
+                name="transactionId"
+                value={paymentData.transactionId}
+                onChange={handleInputChange}
+                placeholder="Enter transaction ID (optional)"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="screenshot">Payment Screenshot (Optional)</Label>
+              <div className="mt-2">
+                {!screenshotPreview ? (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    <div className="mt-4">
+                      <label htmlFor="screenshot" className="cursor-pointer">
+                        <span className="mt-2 block text-sm font-medium text-gray-900">Upload payment screenshot</span>
+                        <input
+                          id="screenshot"
+                          name="screenshot"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleScreenshotChange}
+                          className="sr-only"
+                        />
+                      </label>
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">PNG, JPG up to 5MB</p>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <img
+                      src={screenshotPreview || "/placeholder.svg"}
+                      alt="Payment screenshot"
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeScreenshot}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
                   </div>
                 )}
               </div>
+            </div>
 
-              {order.paymentStatus === "pending" && order.paymentMethod !== "cash_on_delivery" && (
-                <Button className="w-full mt-4" onClick={() => router.push(`/payment/${order._id}`)}>
-                  {t("order.completePayment") || "Complete Payment"}
-                </Button>
+            <div>
+              <Label htmlFor="notes">Additional Notes</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                value={paymentData.notes}
+                onChange={handleInputChange}
+                placeholder="Any additional information about this payment"
+                rows={3}
+              />
+            </div>
+
+            <Button
+              onClick={handlePayment}
+              className="w-full"
+              disabled={processing || !paymentData.amount || !paymentData.accountNumber}
+            >
+              {processing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting Payment...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Submit Payment
+                </>
               )}
-            </CardContent>
-          </Card>
+            </Button>
 
-          {/* Order Notes */}
-          {order.notes && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MessageSquare className="mr-2 h-5 w-5" />
-                  {t("order.notes") || "Order Notes"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">{order.notes}</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+            <div className="text-center">
+              <Button variant="outline" onClick={() => router.push(`/orders/${orderId}`)} className="mt-2">
+                Back to Order
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Review Modal */}
-      {selectedProduct && (
-        <ReviewModal
-          isOpen={reviewModalOpen}
-          onClose={() => {
-            setReviewModalOpen(false)
-            setSelectedProduct(null)
-          }}
-          product={selectedProduct}
-          orderId={order._id}
-        />
-      )}
     </div>
   )
 }
