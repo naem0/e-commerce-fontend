@@ -48,6 +48,12 @@ export function AdminLayout({ children }) {
       current: isActive("/admin/orders"),
     },
     {
+      name: "Reviews",
+      href: "/admin/reviews",
+      icon: Tags,
+      current: isActive("/admin/reviews"),
+    },
+    {
       name: "Customers",
       href: "/admin/users",
       icon: Users,

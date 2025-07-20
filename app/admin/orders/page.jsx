@@ -153,7 +153,7 @@ export default function OrdersPage() {
   // Handle payment status change
   const handlePaymentStatusChange = async (orderId, newStatus) => {
     try {
-      await updatePaymentStatus(orderId, { status: newStatus })
+      await updatePaymentStatus(orderId, { paymentStatus: newStatus, transactionId: "admin-updated" })
 
       // Update order in state
       setOrders((prevOrders) =>
