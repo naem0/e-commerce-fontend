@@ -119,7 +119,7 @@ export function Header() {
           </Button>
 
           {/* Language Toggle */}
-          {/* <DropdownMenu>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Globe className="h-5 w-5" />
@@ -130,13 +130,13 @@ export function Header() {
               <DropdownMenuItem onClick={() => setLanguage("en")}>English</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setLanguage("bn")}>বাংলা</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu> */}
+          </DropdownMenu>
 
           {/* Theme Toggle */}
-          {/* <Button variant="ghost" size="icon" onClick={toggleTheme}>
+          <Button variant="ghost" size="icon" onClick={toggleTheme}>
             {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             <span className="sr-only">Toggle theme</span>
-          </Button> */}
+          </Button>
 
           {/* Wishlist */}
           {session && (
