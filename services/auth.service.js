@@ -1,125 +1,121 @@
-import axios from "axios"
+import { apiRequest } from "./api.utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+class AuthService {
+  async login(credentials) {
+    try {
+      const response = await apiRequest("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(credentials),
+      })
 
-// Register a new user
-export const register = async (userData) => {
-  try {
-    const response = await axios.post(`${API_URL}/api/auth/register`, userData)
-    return response.data
-  } catch (error) {
-    throw {
-      success: false,
-      message: error.response?.data?.message || "Registration failed",
+      if (response.success && response.token) {
+        localStorage.setItem("token", response.token)
+        localStorage.setItem("user", JSON.stringify(response.user))
+      }
+
+      return response
+    } catch (error) {
+      console.error("Login error:", error)
+      throw error
     }
   }
-}
 
-// Login user
-export const login = async (credentials) => {
-  try {
-    const response = await axios.post(`${API_URL}/api/auth/login`, credentials)
+  async register(userData) {
+    try {
+      const response = await apiRequest("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(userData),
+      })
 
-    // Store token and user data in localStorage
-    if (typeof window !== "undefined" && response.data.token) {
-      localStorage.setItem("token", response.data.token)
-      localStorage.setItem("user", JSON.stringify(response.data.user))
-    }
+      if (response.success && response.token) {
+        localStorage.setItem("token", response.token)
+        localStorage.setItem("user", JSON.stringify(response.user))
+      }
 
-    return response.data
-  } catch (error) {
-    throw {
-      success: false,
-      message: error.response?.data?.message || "Login failed",
+      return response
+    } catch (error) {
+      console.error("Register error:", error)
+      throw error
     }
   }
-}
 
-// Logout user
-export const logout = () => {
-  if (typeof window !== "undefined") {
+  async forgotPassword(email) {
+    try {
+      const response = await apiRequest("/api/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      })
+
+      return response
+    } catch (error) {
+      console.error("Forgot password error:", error)
+      throw error
+    }
+  }
+
+  async resetPassword(token, password) {
+    try {
+      const response = await apiRequest(`/api/auth/reset-password/${token}`, {
+        method: "POST",
+        body: JSON.stringify({ password }),
+      })
+
+      return response
+    } catch (error) {
+      console.error("Reset password error:", error)
+      throw error
+    }
+  }
+
+  async verifyResetToken(token) {
+    try {
+      const response = await apiRequest(`/api/auth/verify-reset-token/${token}`, {
+        method: "GET",
+      })
+
+      return response
+    } catch (error) {
+      console.error("Verify reset token error:", error)
+      throw error
+    }
+  }
+
+  async getProfile() {
+    try {
+      const response = await apiRequest("/api/auth/me", {
+        method: "GET",
+      })
+
+      return response
+    } catch (error) {
+      console.error("Get profile error:", error)
+      throw error
+    }
+  }
+
+  logout() {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
+    window.location.href = "/auth/login"
   }
 
-  return { success: true }
-}
-
-// Get current user
-export const getCurrentUser = async () => {
-  try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-
-    if (!token) {
-      throw {
-        success: false,
-        message: "No token found",
-      }
+  getCurrentUser() {
+    try {
+      const user = localStorage.getItem("user")
+      return user ? JSON.parse(user) : null
+    } catch (error) {
+      console.error("Error getting current user:", error)
+      return null
     }
+  }
 
-    const response = await axios.get(`${API_URL}/api/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+  getToken() {
+    return localStorage.getItem("token")
+  }
 
-    return response.data
-  } catch (error) {
-    throw {
-      success: false,
-      message: error.response?.data?.message || "Failed to get user data",
-    }
+  isAuthenticated() {
+    return !!this.getToken()
   }
 }
 
-// Forgot password
-export const forgotPassword = async (email) => {
-  try {
-    const response = await axios.post(`${API_URL}/api/auth/forgot-password`, { email })
-    return response.data
-  } catch (error) {
-    throw {
-      success: false,
-      message: error.response?.data?.message || "Failed to process forgot password request",
-    }
-  }
-}
-
-// Reset password
-export const resetPassword = async (token, password) => {
-  try {
-    const response = await axios.post(`${API_URL}/api/auth/reset-password/${token}`, { password })
-    return response.data
-  } catch (error) {
-    throw {
-      success: false,
-      message: error.response?.data?.message || "Failed to reset password",
-    }
-  }
-}
-
-// Verify email
-export const verifyEmail = async (token) => {
-  try {
-    const response = await axios.get(`${API_URL}/api/auth/verify-email/${token}`)
-    return response.data
-  } catch (error) {
-    throw {
-      success: false,
-      message: error.response?.data?.message || "Failed to verify email",
-    }
-  }
-}
-
-// Resend verification email
-export const resendVerificationEmail = async (email) => {
-  try {
-    const response = await axios.post(`${API_URL}/api/auth/resend-verification`, { email })
-    return response.data
-  } catch (error) {
-    throw {
-      success: false,
-      message: error.response?.data?.message || "Failed to resend verification email",
-    }
-  }
-}
+export const authService = new AuthService()
