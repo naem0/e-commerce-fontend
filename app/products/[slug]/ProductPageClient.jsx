@@ -36,7 +36,7 @@ export default function ProductPageClient() {
         setProduct(response.product)
 
         // Set default variant if product has variations
-        if (response.product.hasVariations && response.product.variants?.length > 0) {
+        if (response.product?.hasVariations && response.product.variants?.length > 0) {
           const defaultVariant = response.product.variants.find((v) => v.isDefault) || response.product.variants[0]
           setSelectedVariant(defaultVariant)
 
