@@ -1,10 +1,10 @@
 import { BannerSection } from "@/components/home/banner-section"
-import { Categories } from "@/components/home/categories"
 import { CategoryProducts } from "@/components/home/category-products"
 import { CustomSection } from "@/components/home/custom-section"
 import { Newsletter } from "@/components/home/newsletter"
 import { getSiteSettings } from "@/services/settings.service"
 import FeaturedProducts  from "@/components/home/featured-products"
+import Categories from "@/components/home/categories"
 
 export default async function Home() {
   let settings
