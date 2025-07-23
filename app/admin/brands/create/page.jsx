@@ -7,12 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
-import { useTranslation } from "@/components/language-provider"
 import { createBrand } from "@/services/brand.service"
 
 export default function CreateBrandPage() {
   const router = useRouter()
-  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: "",
     description: "",
