@@ -122,7 +122,7 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p>
-            &copy; {new Date().getFullYear()} {settings?.siteName || "E-Commerce"}. {t("footer.allRightsReserved")}
+            &copy; {new Date().getFullYear()} {settings?.siteName || "E-Commerce"}. {t("footer.copyright")}
           </p>
           <div className="mt-4 md:mt-0">
             <ul className="flex space-x-4">

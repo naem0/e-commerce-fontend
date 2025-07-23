@@ -53,15 +53,15 @@ export default function ForgotPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 mb-4">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">{t("auth.emailSent")}</CardTitle>
-              <CardDescription className="text-gray-600">{t("auth.resetEmailSentDescription")}</CardDescription>
+              <CardTitle className="text-2xl font-">{t("auth.emailSent")}</CardTitle>
+              <CardDescription>{t("auth.resetEmailSentDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
@@ -89,15 +89,15 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader className="text-center">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
               <Mail className="h-6 w-6 text-blue-600" />
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-900">{t("auth.forgotPassword")}</CardTitle>
-            <CardDescription className="text-gray-600">{t("auth.forgotPasswordDescription")}</CardDescription>
+            <CardTitle className="text-2xl font-bol">{t("auth.forgotPassword")}</CardTitle>
+            <CardDescription>{t("auth.forgotPasswordDescription")}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">

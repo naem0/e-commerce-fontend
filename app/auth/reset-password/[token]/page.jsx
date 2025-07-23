@@ -106,13 +106,13 @@ export default function ResetPasswordPage() {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">{t("auth.verifyingToken")}</p>
+                <p>{t("auth.verifyingToken")}</p>
               </div>
             </CardContent>
           </Card>
@@ -123,15 +123,15 @@ export default function ResetPasswordPage() {
 
   if (!isValidToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 mb-4">
                 <XCircle className="h-6 w-6 text-red-600" />
               </div>
               <CardTitle className="text-2xl font-bold text-gray-900">{t("auth.invalidToken")}</CardTitle>
-              <CardDescription className="text-gray-600">{t("auth.invalidTokenDescription")}</CardDescription>
+              <CardDescription>{t("auth.invalidTokenDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {error && (
@@ -140,7 +140,7 @@ export default function ResetPasswordPage() {
                 </Alert>
               )}
 
-              <p className="text-sm text-gray-600 text-center">{t("auth.requestNewReset")}</p>
+              <p className="text-smtext-center">{t("auth.requestNewReset")}</p>
 
               <div className="space-y-3">
                 <Link href="/auth/forgot-password">
@@ -162,19 +162,19 @@ export default function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 mb-4">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">{t("auth.passwordResetSuccess")}</CardTitle>
-              <CardDescription className="text-gray-600">{t("auth.passwordResetSuccessDescription")}</CardDescription>
+              <CardTitle className="text-2xl font-bold">{t("auth.passwordResetSuccess")}</CardTitle>
+              <CardDescription>{t("auth.passwordResetSuccessDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-4">{t("auth.redirectingToLogin")}</p>
+                <p className="text-sm mb-4">{t("auth.redirectingToLogin")}</p>
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
               </div>
 
@@ -189,16 +189,16 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader className="text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 mb-4">
               <Lock className="h-6 w-6 text-blue-600" />
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-900">{t("auth.resetPassword")}</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t("auth.resetPassword")}</CardTitle>
             {userInfo && (
-              <CardDescription className="text-gray-600">
+              <CardDescription>
                 {t("auth.resetPasswordFor")} {userInfo.email}
               </CardDescription>
             )}
@@ -231,9 +231,9 @@ export default function ResetPasswordPage() {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
+                      <Eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
@@ -259,9 +259,9 @@ export default function ResetPasswordPage() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
+                      <Eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>

@@ -51,10 +51,10 @@ export function SideCategoryMenu({ className }) {
 
   if (loading) {
     return (
-      <div className={cn("bg-white rounded-lg shadow-sm p-2", className)}>
+      <div className={cn("bg-white dark:bg-gray-900 rounded-lg shadow-sm p-2", className)}>
         <div className="animate-pulse space-y-2">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-10 bg-gray-200 rounded"></div>
+            <div key={i} className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
           ))}
         </div>
       </div>
@@ -63,7 +63,7 @@ export function SideCategoryMenu({ className }) {
 
   if (error) {
     return (
-      <div className={cn("bg-white rounded-lg shadow-sm p-4", className)}>
+      <div className={cn("bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4", className)}>
         <p className="text-red-500">{error}</p>
       </div>
     )

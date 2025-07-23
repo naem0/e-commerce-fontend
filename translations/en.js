@@ -2930,6 +2930,6 @@ export const en = {
     followUs: "Follow Us",
     newsletter: "Newsletter",
     subscribe: "Subscribe",
-    copyright: "© 2024 E-commerce Store. All rights reserved.",
+    copyright: "All rights reserved.",
   },
 }
