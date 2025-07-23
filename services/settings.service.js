@@ -6,13 +6,10 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 // Helper function to get auth headers
 const getAuthHeaders = async () => {
   try {
-    console.log("Getting session...")
-
     // Try to get client-side session first
     const clientSession = await getSession()
 
     if (clientSession?.accessToken) {
-      console.log("Using client-side session token")
       return {
         Authorization: `Bearer ${clientSession.accessToken}`,
       }
@@ -22,7 +19,6 @@ const getAuthHeaders = async () => {
     if (typeof window !== "undefined") {
       const storedToken = localStorage.getItem("authToken")
       if (storedToken) {
-        console.log("Using token from localStorage")
         return {
           Authorization: `Bearer ${storedToken}`,
         }
@@ -34,7 +30,6 @@ const getAuthHeaders = async () => {
         try {
           const user = JSON.parse(userStr)
           if (user?.token) {
-            console.log("Using token from localStorage user object")
             return {
               Authorization: `Bearer ${user.token}`,
             }
@@ -45,7 +40,6 @@ const getAuthHeaders = async () => {
       }
     }
 
-    console.log("No authentication token found")
     return {}
   } catch (error) {
     console.error("Error getting session:", error)
@@ -73,23 +67,17 @@ export const getSiteSettings = async () => {
 // Update site settings (admin only)
 export const updateSiteSettings = async (settings) => {
   try {
-    console.log("=== UPDATE SITE SETTINGS ===")
     const authHeaders = await getAuthHeaders()
-    console.log("Auth headers:", authHeaders)
 
     // Manual token handling for testing
     const token = localStorage.getItem("authToken") || localStorage.getItem("token")
     if (token && !authHeaders.Authorization) {
-      console.log("Using manually stored token")
       authHeaders.Authorization = `Bearer ${token}`
     }
 
     if (!authHeaders.Authorization) {
       throw new Error("No authentication token available. Please login again.")
     }
-
-    console.log("Sending request to:", `${API_URL}/api/site-settings`)
-    console.log("Settings data keys:", Object.keys(settings))
 
     const response = await axios.put(`${API_URL}/api/site-settings`, settings, {
       headers: {
@@ -98,8 +86,6 @@ export const updateSiteSettings = async (settings) => {
       },
     })
 
-    console.log("Update response:", response.status, response.statusText)
-
     return {
       success: true,
       settings: response.data.settings,
@@ -107,9 +93,6 @@ export const updateSiteSettings = async (settings) => {
     }
   } catch (error) {
     console.error("Update site settings error:", error)
-    console.error("Error response:", error.response?.data)
-    console.error("Error status:", error.response?.status)
-
     return {
       success: false,
       message: error.response?.data?.message || error.message || "Failed to update settings",
