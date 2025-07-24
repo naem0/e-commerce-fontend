@@ -29,7 +29,7 @@ export default function AdminDashboard() {
     } else if (status === "authenticated" && session.user.role !== "admin") {
       router.push("/")
     }
-  }, [status, session, router])
+  }, [status, router])
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
     if (status === "authenticated" && session.user.role === "admin") {
       fetchAnalytics()
     }
-  }, [status, session, period])
+  }, [status, period])
 
   if (status === "loading") {
     return (

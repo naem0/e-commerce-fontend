@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { OrderAPI } from "@/lib/api"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ExternalLink } from "lucide-react"
+import { getAllOrders } from "@/services/order.service"
 
 export function RecentOrders() {
   const [orders, setOrders] = useState([])
@@ -18,7 +18,7 @@ export function RecentOrders() {
       try {
         setLoading(true)
 
-        const response = await OrderAPI.getAll()
+        const response = await getAllOrders()
 
         // Get the 5 most recent orders
         const recentOrders = response.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5)

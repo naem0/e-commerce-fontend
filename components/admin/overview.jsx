@@ -2,7 +2,6 @@
 
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { useTranslation } from "@/components/language-provider"
 
 // Sample data for the overview charts
 const revenueData = [
@@ -36,18 +35,17 @@ const ordersData = [
 ]
 
 export function Overview({ chartType = "revenue" }) {
-  const { t } = useTranslation()
 
   if (chartType === "revenue") {
     return (
       <ChartContainer
         config={{
           revenue: {
-            label: t("admin.revenue"),
+            label: "Revenue",
             color: "hsl(var(--chart-1))",
           },
         }}
-        className="h-[300px]"
+        className="h-auto"
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={revenueData}>
@@ -65,11 +63,11 @@ export function Overview({ chartType = "revenue" }) {
     <ChartContainer
       config={{
         orders: {
-          label: t("admin.orders"),
+          label: "Orders",
           color: "hsl(var(--chart-2))",
         },
       }}
-      className="h-[300px]"
+      className="h-auto"
     >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={ordersData}>
