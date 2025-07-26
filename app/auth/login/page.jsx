@@ -61,7 +61,6 @@ export default function LoginPage() {
   const testBackendConnection = async () => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-      console.log("Testing backend connection to:", API_URL)
 
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
@@ -73,10 +72,7 @@ export default function LoginPage() {
           password: formData.password,
         }),
       })
-
-      console.log("Direct backend test - Status:", response.status)
       const data = await response.text()
-      console.log("Direct backend test - Response:", data)
 
       return response.ok
     } catch (error) {
@@ -99,7 +95,7 @@ export default function LoginPage() {
       // Test backend connection first
       const backendConnected = await testBackendConnection()
       if (!backendConnected) {
-        throw new Error("Cannot connect to backend server. Please make sure the backend is running on port 5000.")
+        throw new Error("Cannot connect to backend server. Please try again.")
       }
 
       // Try to login with NextAuth
