@@ -30,10 +30,12 @@ export function SiteSettingsProvider({ children }) {
           // Apply CSS variables for theme colors
           if (data.settings.primaryColor) {
             document.documentElement.style.setProperty("--primary-color", data.settings.primaryColor)
+            console.log("Site settings fetched:", data.settings.primaryColor)
           }
 
           if (data.settings.secondaryColor) {
             document.documentElement.style.setProperty("--secondary-color", data.settings.secondaryColor)
+            console.log("Site settings fetched:", data.settings.secondaryColor)
           }
         } else {
           throw new Error(data.message || "Failed to fetch site settings")

@@ -152,6 +152,7 @@ export function BannerSection() {
                             <p className="text-base md:text-lg opacity-80 max-w-md">{banner.description}</p>
                           )}
                           <Button
+                            variant="default"
                             asChild
                             size="lg"
                             className="text-lg px-8 py-3 mt-6"
@@ -253,7 +254,7 @@ export function BannerSection() {
                     <div className="h-full flex items-center">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full px-6">
                         <div className="space-y-4" style={{ color: banner.textColor || "#1e293b" }}>
-                          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">{banner.title}</h1>
+                          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-primary-custom">{banner.title}</h1>
                           {banner.subtitle && (
                             <h2 className="text-xl md:text-2xl font-semibold opacity-90">{banner.subtitle}</h2>
                           )}
@@ -261,12 +262,12 @@ export function BannerSection() {
                             <p className="text-base md:text-lg opacity-80 max-w-md">{banner.description}</p>
                           )}
                           <Button
-                            asChild
+                            variant="default"
                             size="lg"
                             className="text-lg px-8 py-3 mt-6"
                             style={{
-                              backgroundColor: banner.textColor || "#1e293b",
-                              color: banner.backgroundColor || "#f8fafc",
+                              backgroundColor: banner.textColor ?? "",
+                              color: banner.backgroundColor ?? "",
                             }}
                           >
                             <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>

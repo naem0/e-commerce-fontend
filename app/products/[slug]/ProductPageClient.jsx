@@ -372,8 +372,7 @@ export default function ProductPageClient() {
                 </Button>
               </div>
               <Button
-                variant="outline"
-                className="flex-1 bg-transparent"
+                variant="default"
                 onClick={handleAddToCart}
                 disabled={currentStock <= 0 || addingToCart}
               >
@@ -390,7 +389,7 @@ export default function ProductPageClient() {
                 )}
               </Button>
               <Button
-                className="flex-1 bg-primary hover:bg-primary/90"
+                variant="default"
                 onClick={handleBuyNow}
                 disabled={currentStock <= 0 || addingToCart}
               >
