@@ -9,6 +9,7 @@ import { WishlistProvider } from "@/components/wishlist-provider"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
+import WhatsAppButton from "@/components/whatsapp-button"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
                       <Footer />
                     </div>
                     <Toaster />
+                    <WhatsAppButton />
                   </WishlistProvider>
                 </CartProvider>
               </SiteSettingsProvider>
