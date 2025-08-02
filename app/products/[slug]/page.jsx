@@ -43,5 +43,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function ProductPage() {
-  return <ProductPageClient />
+  return <ProductPageClient product={product} />
 }

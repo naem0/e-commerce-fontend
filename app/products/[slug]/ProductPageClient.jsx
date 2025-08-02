@@ -13,52 +13,52 @@ import { Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react"
 import { getProductBySlug } from "@/services/product.service"
 import { formatPrice, getErrorMessage } from "@/services/utils"
 
-export default function ProductPageClient() {
+export default function ProductPageClient({ product }) {
   const { slug } = useParams()
   const { t } = useLanguage()
   const { addToCart } = useCart()
   const { toast } = useToast()
   const router = useRouter()
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  // const [product, setProduct] = useState(null)
+  // const [loading, setLoading] = useState(true)
+  // const [error, setError] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [activeImage, setActiveImage] = useState(0)
   const [addingToCart, setAddingToCart] = useState(false)
   const [selectedVariant, setSelectedVariant] = useState(null)
   const [selectedOptions, setSelectedOptions] = useState({})
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setLoading(true)
-        const response = await getProductBySlug(slug)
-        setProduct(response.product)
+  // useEffect(() => {
+  //   const fetchProduct = async () => {
+  //     try {
+  //       setLoading(true)
+  //       const response = await getProductBySlug(slug)
+  //       setProduct(response.product)
 
-        // Set default variant if product has variations
-        if (response.product?.hasVariations && response.product.variants?.length > 0) {
-          const defaultVariant = response.product.variants.find((v) => v.isDefault) || response.product.variants[0]
-          setSelectedVariant(defaultVariant)
+  //       // Set default variant if product has variations
+  //       if (response.product?.hasVariations && response.product.variants?.length > 0) {
+  //         const defaultVariant = response.product.variants.find((v) => v.isDefault) || response.product.variants[0]
+  //         setSelectedVariant(defaultVariant)
 
-          // Set default options
-          const defaultOptions = {}
-          defaultVariant.options.forEach((option) => {
-            defaultOptions[option.type] = option.value
-          })
-          setSelectedOptions(defaultOptions)
-        }
-      } catch (err) {
-        console.error("Error fetching product:", err)
-        setError(getErrorMessage(err))
-      } finally {
-        setLoading(false)
-      }
-    }
+  //         // Set default options
+  //         const defaultOptions = {}
+  //         defaultVariant.options.forEach((option) => {
+  //           defaultOptions[option.type] = option.value
+  //         })
+  //         setSelectedOptions(defaultOptions)
+  //       }
+  //     } catch (err) {
+  //       console.error("Error fetching product:", err)
+  //       setError(getErrorMessage(err))
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
 
-    if (slug) {
-      fetchProduct()
-    }
-  }, [slug])
+  //   if (slug) {
+  //     fetchProduct()
+  //   }
+  // }, [slug])
 
   const handleQuantityChange = (amount) => {
     const maxStock = selectedVariant ? selectedVariant.stock : product?.stock || 0
@@ -151,23 +151,23 @@ export default function ProductPageClient() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
+  //       <Loader2 className="h-12 w-12 animate-spin text-primary" />
+  //     </div>
+  //   )
+  // }
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-16">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          <p>{error}</p>
-        </div>
-      </div>
-    )
-  }
+  // if (error) {
+  //   return (
+  //     <div className="container mx-auto px-4 py-16">
+  //       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+  //         <p>{error}</p>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   if (!product) {
     return (
