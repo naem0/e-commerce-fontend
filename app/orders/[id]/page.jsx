@@ -246,7 +246,7 @@ export default function OrderDetailsPage() {
                     </div>
                     {index < timeline.length - 1 && (
                       <div
-                        className={`absolute left-4 mt-8 w-0.5 h-4 ${step.completed ? "bg-primary-custom  : "bg-gray-200"}`}
+                        className={`absolute left-4 mt-8 w-0.5 h-4 ${step.completed ? "bg-primary-custom"  : "bg-gray-200"}`}
                       />
                     )}
                   </div>
