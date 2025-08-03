@@ -196,7 +196,7 @@ export default function LoginPage() {
                   <Label htmlFor="password">{t("auth.password") || "Password"}</Label>
                   <Link
                     href="/auth/forgot-password"
-                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                    className="text-sm font-medium text-primary-custom underline-offset-4 hover:underline"
                   >
                     {t("auth.forgotPassword") || "Forgot password?"}
                   </Link>
@@ -212,7 +212,7 @@ export default function LoginPage() {
                 />
                 {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
               </div>
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-primary-custom hover:bg-primary-custom/90" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -227,7 +227,7 @@ export default function LoginPage() {
           <CardFooter className="flex flex-col">
             <div className="text-center text-sm text-muted-foreground mt-2">
               {t("auth.noAccount") || "Don't have an account?"}{" "}
-              <Link href="/auth/register" className="text-primary underline-offset-4 hover:underline">
+              <Link href="/auth/register" className="text-primary-custom underline-offset-4 hover:underline">
                 {t("auth.register") || "Register"}
               </Link>
             </div>

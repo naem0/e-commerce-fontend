@@ -46,7 +46,7 @@ export default async function Categories() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Layers className="text-primary h-6 w-6" />
+              <Layers className="text-primary-customh-6 w-6" />
               <h3 className="text-xl font-semibold ml-3">
                 {"Shop by Categories"}
               </h3>

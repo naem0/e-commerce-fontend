@@ -1,4 +1,4 @@
-import { BannerSection } from "@/components/home/banner-section"
+import BannerSection from "@/components/home/banner-section"
 import CategoryProducts from "@/components/home/category-products"
 import CustomSection from "@/components/home/custom-section"
 import { Newsletter } from "@/components/home/newsletter"

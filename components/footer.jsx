@@ -28,16 +28,16 @@ export function Footer() {
             <h3 className="text-xl font-bold mb-4">{t("footer.about")}</h3>
             <p className="mb-4">{t("footer.aboutDescription")}</p>
             <div className="flex space-x-4">
-              <a href="#" style={linkStyle} className="hover:text-primary">
+              <a href="#" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-facebook-f"></i>
               </a>
-              <a href="#" style={linkStyle} className="hover:text-primary">
+              <a href="#" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-twitter"></i>
               </a>
-              <a href="#" style={linkStyle} className="hover:text-primary">
+              <a href="#" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-instagram"></i>
               </a>
-              <a href="#" style={linkStyle} className="hover:text-primary">
+              <a href="#" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-linkedin-in"></i>
               </a>
             </div>
@@ -47,22 +47,22 @@ export function Footer() {
             <h3 className="text-xl font-bold mb-4">{t("footer.quickLinks")}</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/" style={linkStyle} className="hover:text-primary">
+                <Link href="/" style={linkStyle} className="hover:text-primary-custom">
                   {t("nav.home")}
                 </Link>
               </li>
               <li>
-                <Link href="/products" style={linkStyle} className="hover:text-primary">
+                <Link href="/products" style={linkStyle} className="hover:text-primary-custom">
                   {t("nav.products")}
                 </Link>
               </li>
               <li>
-                <Link href="/about" style={linkStyle} className="hover:text-primary">
+                <Link href="/about" style={linkStyle} className="hover:text-primary-custom">
                   {t("nav.about")}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" style={linkStyle} className="hover:text-primary">
+                <Link href="/contact" style={linkStyle} className="hover:text-primary-custom">
                   {t("nav.contact")}
                 </Link>
               </li>
@@ -73,22 +73,22 @@ export function Footer() {
             <h3 className="text-xl font-bold mb-4">{t("footer.categories")}</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/category/electronics" style={linkStyle} className="hover:text-primary">
+                <Link href="/category/electronics" style={linkStyle} className="hover:text-primary-custom">
                   {t("categories.electronics")}
                 </Link>
               </li>
               <li>
-                <Link href="/category/clothing" style={linkStyle} className="hover:text-primary">
+                <Link href="/category/clothing" style={linkStyle} className="hover:text-primary-custom">
                   {t("categories.clothing")}
                 </Link>
               </li>
               <li>
-                <Link href="/category/home" style={linkStyle} className="hover:text-primary">
+                <Link href="/category/home" style={linkStyle} className="hover:text-primary-custom">
                   {t("categories.home")}
                 </Link>
               </li>
               <li>
-                <Link href="/category/beauty" style={linkStyle} className="hover:text-primary">
+                <Link href="/category/beauty" style={linkStyle} className="hover:text-primary-custom">
                   {t("categories.beauty")}
                 </Link>
               </li>
@@ -127,17 +127,17 @@ export function Footer() {
           <div className="mt-4 md:mt-0">
             <ul className="flex space-x-4">
               <li>
-                <Link href="/terms" style={linkStyle} className="hover:text-primary">
+                <Link href="/terms" style={linkStyle} className="hover:text-primary-custom">
                   {t("footer.terms")}
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" style={linkStyle} className="hover:text-primary">
+                <Link href="/privacy" style={linkStyle} className="hover:text-primary-custom">
                   {t("footer.privacy")}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" style={linkStyle} className="hover:text-primary">
+                <Link href="/faq" style={linkStyle} className="hover:text-primary-custom">
                   {t("footer.faq")}
                 </Link>
               </li>

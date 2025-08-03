@@ -291,7 +291,7 @@ export default function ProfilePage() {
     return (
       <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin text-primary-custom mx-auto mb-4" />
           <p className="text-gray-600">Loading your profile...</p>
         </div>
       </div>
@@ -307,7 +307,7 @@ export default function ProfilePage() {
             <div className="relative">
               <Avatar className="h-24 w-24">
                 <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name} />
-                <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
+                <AvatarFallback className="text-2xl font-bold bg-primary-custom text-primary-foreground">
                   {getInitials(user?.name)}
                 </AvatarFallback>
               </Avatar>
@@ -353,7 +353,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
-              <Package className="h-8 w-8 text-primary mx-auto mb-2" />
+              <Package className="h-8 w-8 text-primary-custom mx-auto mb-2" />
               <p className="text-2xl font-bold">{orders.length}</p>
               <p className="text-sm text-gray-600">Total Orders</p>
             </CardContent>
@@ -388,28 +388,28 @@ export default function ProfilePage() {
           <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-gray-800 p-1 rounded-lg shadow-sm">
             <TabsTrigger
               value="profile"
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex items-center gap-2 data-[state=active]:bg-primary-custom data-[state=active]:text-primary-foreground"
             >
               <User className="h-4 w-4" />
               Personal Info
             </TabsTrigger>
             <TabsTrigger
               value="addresses"
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex items-center gap-2 data-[state=active]:bg-primary-custom data-[state=active]:text-primary-foreground"
             >
               <MapPin className="h-4 w-4" />
               Addresses
             </TabsTrigger>
             <TabsTrigger
               value="orders"
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex items-center gap-2 data-[state=active]:bg-primary-custom data-[state=active]:text-primary-foreground"
             >
               <Package className="h-4 w-4" />
               Orders
             </TabsTrigger>
             <TabsTrigger
               value="security"
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="flex items-center gap-2 data-[state=active]:bg-primary-custom data-[state=active]:text-primary-foreground"
             >
               <Shield className="h-4 w-4" />
               Security
@@ -644,7 +644,7 @@ export default function ProfilePage() {
                           </p>
                           <p className="ml-5">{address.country}</p>
                         </div>
-                        {address.isDefault && <Badge className="mt-3 bg-primary/10 text-primary">Default</Badge>}
+                        {address.isDefault && <Badge className="mt-3 bg-primary-custom/10 text-primary-custom">Default</Badge>}
                       </div>
                     ))}
                   </div>

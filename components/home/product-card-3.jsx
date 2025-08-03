@@ -21,7 +21,7 @@ const ProductCard2 = ({ product, handleAddToCart }) => {
       </Link>
       <CardContent className="p-4">
         <Link href={`/products/${product.slug}`}>
-          <h3 className="font-semibold text-lg mb-1 hover:text-primary transition-colors">{product.name}</h3>
+          <h3 className="font-semibold text-lg mb-1 hover:text-primary-custom transition-colors">{product.name}</h3>
         </Link>
         <p className="text-lg font-bold mb-2">${product.price.toFixed(2)}</p>
         <Button

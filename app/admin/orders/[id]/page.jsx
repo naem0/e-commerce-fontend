@@ -256,7 +256,7 @@ export default function AdminOrderDetailsPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <Loader2 className="h-12 w-12 animate-spin text-primary-custom" />
       </div>
     )
   }

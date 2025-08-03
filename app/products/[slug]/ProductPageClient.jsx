@@ -154,7 +154,7 @@ export default function ProductPageClient({ product }) {
   // if (loading) {
   //   return (
   //     <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
-  //       <Loader2 className="h-12 w-12 animate-spin text-primary" />
+  //       <Loader2 className="h-12 w-12 animate-spin text-primary-custom" />
   //     </div>
   //   )
   // }
@@ -190,14 +190,14 @@ export default function ProductPageClient({ product }) {
       <nav className="flex mb-8 text-sm">
         <ol className="inline-flex items-center space-x-1 md:space-x-3">
           <li className="inline-flex items-center">
-            <a href="/" className="text-gray-700 hover:text-primary">
+            <a href="/" className="text-gray-700 hover:text-primary-custom">
               Home
             </a>
           </li>
           <li>
             <div className="flex items-center">
               <span className="mx-2 text-gray-400">/</span>
-              <a href="/products" className="text-gray-700 hover:text-primary">
+              <a href="/products" className="text-gray-700 hover:text-primary-custom">
                 Products
               </a>
             </div>
@@ -206,7 +206,7 @@ export default function ProductPageClient({ product }) {
             <li>
               <div className="flex items-center">
                 <span className="mx-2 text-gray-400">/</span>
-                <a href={`/categories/${product.category.slug}`} className="text-gray-700 hover:text-primary">
+                <a href={`/categories/${product.category.slug}`} className="text-gray-700 hover:text-primary-custom">
                   {product.category.name}
                 </a>
               </div>
@@ -311,7 +311,7 @@ export default function ProductPageClient({ product }) {
                         onClick={() => handleVariantOptionChange(variationType.name, option.value)}
                         className={`px-3 py-2 border rounded-md text-sm ${
                           selectedOptions[variationType.name] === option.value
-                            ? "border-primary bg-primary text-white"
+                            ? "border-primary bg-primary-custom text-white"
                             : "border-gray-300 hover:border-gray-400"
                         }`}
                       >

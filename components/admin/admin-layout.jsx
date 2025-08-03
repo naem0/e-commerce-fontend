@@ -128,7 +128,7 @@ export function AdminLayout({ children }) {
           <div className="p-4 border-t">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-primary-custom text-primary-foreground flex items-center justify-center">
                   {session?.user?.name?.charAt(0) || "A"}
                 </div>
               </div>

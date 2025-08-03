@@ -51,7 +51,7 @@ export default function WishlistPage() {
     return (
       <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin text-primary-custom mx-auto mb-4" />
           <p className="text-gray-600">Loading your wishlist...</p>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function WishlistPage() {
 
                 <CardContent className="p-4">
                   <Link href={`/products/${product.slug}`}>
-                    <h3 className="font-medium text-gray-900 hover:text-primary transition-colors line-clamp-2 mb-2">
+                    <h3 className="font-medium text-gray-900 hover:text-primary-custom transition-colors line-clamp-2 mb-2">
                       {product.name}
                     </h3>
                   </Link>

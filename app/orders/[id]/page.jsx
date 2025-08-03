@@ -166,7 +166,7 @@ export default function OrderDetailsPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <Loader2 className="h-12 w-12 animate-spin text-primary-custom" />
       </div>
     )
   }
@@ -233,7 +233,7 @@ export default function OrderDetailsPage() {
                   <div key={step.status} className="flex items-center">
                     <div
                       className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                        step.completed ? "bg-primary text-white" : "bg-gray-200 text-gray-400"
+                        step.completed ? "bg-primary-custom text-white" : "bg-gray-200 text-gray-400"
                       }`}
                     >
                       {step.completed ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
@@ -246,7 +246,7 @@ export default function OrderDetailsPage() {
                     </div>
                     {index < timeline.length - 1 && (
                       <div
-                        className={`absolute left-4 mt-8 w-0.5 h-4 ${step.completed ? "bg-primary" : "bg-gray-200"}`}
+                        className={`absolute left-4 mt-8 w-0.5 h-4 ${step.completed ? "bg-primary-custom  : "bg-gray-200"}`}
                       />
                     )}
                   </div>

@@ -120,7 +120,7 @@ export default function AnalyticsPage() {
   if (status === "loading" || loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <Loader2 className="h-12 w-12 animate-spin text-primary-custom" />
       </div>
     )
   }
@@ -334,8 +334,8 @@ export default function AnalyticsPage() {
                 <div className="space-y-4">
                   {analytics?.bestSellingProducts?.slice(0, 10).map((product, index) => (
                     <div key={product._id} className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-bold text-primary">#{index + 1}</span>
+                      <div className="w-8 h-8 bg-primary-custom/10 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-bold text-primary-custom">#{index + 1}</span>
                       </div>
                       <div className="flex-1">
                         <p className="font-medium">{product.productName}</p>

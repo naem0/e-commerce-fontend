@@ -206,7 +206,7 @@ export default function RegisterPage() {
           <CardFooter className="flex flex-col">
             <div className="text-center text-sm text-muted-foreground mt-2">
               {t("auth.haveAccount") || "Already have an account?"}{" "}
-              <Link href="/auth/login" className="text-primary underline-offset-4 hover:underline">
+              <Link href="/auth/login" className="text-primary-custom underline-offset-4 hover:underline">
                 {t("auth.login") || "Login"}
               </Link>
             </div>

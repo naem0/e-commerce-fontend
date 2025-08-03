@@ -74,21 +74,21 @@ export function Header() {
           <nav className="hidden md:flex gap-6">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/") ? "text-foreground" : "text-muted-foreground"
+              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/") ? "text-foreground" : "text-muted-foreground"
                 }`}
             >
               {t("nav.home") || "Home"}
             </Link>
             <Link
               href="/products"
-              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/products") ? "text-foreground" : "text-muted-foreground"
+              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/products") ? "text-foreground" : "text-muted-foreground"
                 }`}
             >
               {t("nav.products") || "Products"}
             </Link>
             <Link
               href="/categories"
-              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"
+              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"
                 }`}
             >
               {t("nav.categories") || "Categories"}

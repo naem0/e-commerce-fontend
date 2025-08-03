@@ -386,7 +386,7 @@ export default function HomeSettingsPage() {
             </p>
           )}
         </div>
-        <Button onClick={handleSave} disabled={saving} size="lg" className="bg-primary hover:bg-primary/90">
+        <Button onClick={handleSave} disabled={saving} size="lg" className="bg-primary-custom hover:bg-primary-custom/90">
           {saving ? "Saving..." : "Save Changes"}
         </Button>
       </div>
@@ -701,7 +701,7 @@ export default function HomeSettingsPage() {
               <h2 className="text-xl font-semibold">Custom Sections</h2>
               <p className="text-muted-foreground">Create custom sections like Best Sellers, Flash Sale, etc.</p>
             </div>
-            <Button onClick={addCustomSection} className="bg-primary hover:bg-primary/90">
+            <Button onClick={addCustomSection} className="bg-primary-custom hover:bg-primary-custom/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Custom Section
             </Button>
@@ -966,7 +966,7 @@ export default function HomeSettingsPage() {
                 <p className="text-muted-foreground mb-4">
                   Create custom sections like Best Sellers, Flash Sale, New Arrivals, etc.
                 </p>
-                <Button onClick={addCustomSection} className="bg-primary hover:bg-primary/90">
+                <Button onClick={addCustomSection} className="bg-primary-custom hover:bg-primary-custom/90">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Custom Section
                 </Button>
@@ -981,7 +981,7 @@ export default function HomeSettingsPage() {
               <h2 className="text-xl font-semibold">Category Sections</h2>
               <p className="text-muted-foreground">Display products from specific categories on your home page.</p>
             </div>
-            <Button onClick={addCategorySection} className="bg-primary hover:bg-primary/90">
+            <Button onClick={addCategorySection} className="bg-primary-custom hover:bg-primary-custom/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Category Section
             </Button>
@@ -1136,7 +1136,7 @@ export default function HomeSettingsPage() {
                 <p className="text-muted-foreground mb-4">
                   Add sections to display products from specific categories on your home page.
                 </p>
-                <Button onClick={addCategorySection} className="bg-primary hover:bg-primary/90">
+                <Button onClick={addCategorySection} className="bg-primary-custom hover:bg-primary-custom/90">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Category Section
                 </Button>
