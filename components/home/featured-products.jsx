@@ -19,7 +19,7 @@ export default async function FeaturedProducts() {
     }
   } catch (err) {
     console.error("Error fetching products:", err)
-    error = err.message
+    error = err.message.message
   }
 
 
