@@ -10,6 +10,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
 import WhatsAppButton from "@/components/whatsapp-button"
+import { getSiteSettings } from "@/services/settings.service"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,9 +19,22 @@ export const metadata = {
   description: "Modern e-commerce solution with Next.js",
 }
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const data = await getSiteSettings()
+  const settings = data?.success ? data.settings : {}
+  
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <style>
+          {`
+            :root {
+              --primary-color: ${settings.primaryColor || "#22c55e"};
+              --secondary-color: ${settings.secondaryColor || "#16a34a"};
+            }
+          `}
+        </style>
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <AuthProvider>
