@@ -69,6 +69,7 @@ export const getProducts = async (params = {}) => {
     const response = await fetch(url, {
       method: "GET",
       headers,
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     })
 
     if (!response.ok) {
