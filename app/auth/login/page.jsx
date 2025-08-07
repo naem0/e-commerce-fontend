@@ -4,7 +4,6 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { signIn, getSession } from "next-auth/react"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,7 +13,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, AlertCircle } from "lucide-react"
 
 export default function LoginPage() {
-  const { t } = useLanguage()
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/"
@@ -31,13 +29,13 @@ export default function LoginPage() {
     const newErrors = {}
 
     if (!formData.email) {
-      newErrors.email = t("validation.emailRequired") || "Email is required"
+      newErrors.email = "Email is required."
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = t("validation.emailInvalid") || "Email is invalid"
+      newErrors.email = "Email is invalid."
     }
 
     if (!formData.password) {
-      newErrors.password = t("validation.passwordRequired") || "Password is required"
+      newErrors.password = "Password is required."
     }
 
     setErrors(newErrors)
@@ -48,7 +46,6 @@ export default function LoginPage() {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
 
-    // Clear error when user types
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
     }
@@ -57,7 +54,6 @@ export default function LoginPage() {
     }
   }
 
-  // Test backend connection
   const testBackendConnection = async () => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -72,8 +68,6 @@ export default function LoginPage() {
           password: formData.password,
         }),
       })
-      const data = await response.text()
-
       return response.ok
     } catch (error) {
       console.error("Backend connection test failed:", error)
@@ -84,21 +78,17 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!validateForm()) {
-      return
-    }
+    if (!validateForm()) return
 
     setIsLoading(true)
     setError("")
 
     try {
-      // Test backend connection first
       const backendConnected = await testBackendConnection()
       if (!backendConnected) {
         throw new Error("Cannot connect to backend server. Please try again.")
       }
 
-      // Try to login with NextAuth
       const result = await signIn("credentials", {
         redirect: false,
         email: formData.email,
@@ -106,51 +96,42 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        console.error("Login error:", result.error)
-        let errorMessage = "Invalid email or password. Please try again."
-
-        if (result.error === "CredentialsSignin") {
-          errorMessage = "Invalid email or password. Please check your credentials."
-        }
-
+        let errorMessage = "Invalid email or password. Please check your credentials."
         setError(errorMessage)
         toast({
-          title: t("auth.loginFailed") || "Login Failed",
+          title: "Login Failed",
           description: errorMessage,
           variant: "destructive",
         })
       } else if (result?.ok) {
-        // Get the session to verify login
         const session = await getSession()
         if (session?.user) {
-          // Store user info in localStorage as backup
           localStorage.setItem("user", JSON.stringify(session.user))
           if (session.accessToken) {
             localStorage.setItem("authToken", session.accessToken)
           }
 
           toast({
-            title: t("auth.loginSuccess") || "Login Successful",
-            description: t("auth.welcomeBack") || "Welcome back!",
+            title: "Login Successful",
+            description: "Welcome back!",
           })
 
-          // Small delay to ensure session is set
           setTimeout(() => {
             router.push(callbackUrl)
             router.refresh()
           }, 500)
         } else {
-          throw new Error("Session not created properly")
+          throw new Error("Session not created properly.")
         }
       } else {
-        throw new Error("Login failed - unknown error")
+        throw new Error("Login failed - unknown error.")
       }
     } catch (error) {
       console.error("Login error:", error)
-      const errorMessage = error.message || t("auth.errorOccurred") || "An error occurred during login."
+      const errorMessage = error.message || "An error occurred during login."
       setError(errorMessage)
       toast({
-        title: t("auth.loginFailed") || "Login Failed",
+        title: "Login Failed",
         description: errorMessage,
         variant: "destructive",
       })
@@ -164,10 +145,8 @@ export default function LoginPage() {
       <main className="flex-1 flex items-center justify-center py-12">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>{t("auth.login") || "Login"}</CardTitle>
-            <CardDescription>
-              {t("auth.loginDescription") || "Enter your credentials to access your account"}
-            </CardDescription>
+            <CardTitle>Login</CardTitle>
+            <CardDescription>Enter your credentials to access your account.</CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
@@ -178,7 +157,7 @@ export default function LoginPage() {
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">{t("auth.email") || "Email"}</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   name="email"
@@ -193,12 +172,12 @@ export default function LoginPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">{t("auth.password") || "Password"}</Label>
+                  <Label htmlFor="password">Password</Label>
                   <Link
                     href="/auth/forgot-password"
                     className="text-sm font-medium text-primary-custom underline-offset-4 hover:underline"
                   >
-                    {t("auth.forgotPassword") || "Forgot password?"}
+                    Forgot password?
                   </Link>
                 </div>
                 <Input
@@ -216,19 +195,19 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("auth.loggingIn") || "Logging in..."}
+                    Logging in...
                   </>
                 ) : (
-                  t("auth.login") || "Login"
+                  "Login"
                 )}
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex flex-col">
             <div className="text-center text-sm text-muted-foreground mt-2">
-              {t("auth.noAccount") || "Don't have an account?"}{" "}
+              Don’t have an account?{" "}
               <Link href="/auth/register" className="text-primary-custom underline-offset-4 hover:underline">
-                {t("auth.register") || "Register"}
+                Register
               </Link>
             </div>
           </CardFooter>

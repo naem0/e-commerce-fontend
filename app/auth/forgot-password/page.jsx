@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowLeft, Mail, CheckCircle } from "lucide-react"
 import { authService } from "@/services/auth.service"
-import { useLanguage } from "@/components/language-provider"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -18,7 +17,6 @@ export default function ForgotPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
-  const { t } = useLanguage()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -27,12 +25,12 @@ export default function ForgotPasswordPage() {
 
     try {
       if (!email) {
-        setError(t("validation.emailRequired"))
+        setError("Email is required.")
         return
       }
 
       if (!/\S+@\S+\.\S+/.test(email)) {
-        setError(t("validation.emailInvalid"))
+        setError("Please enter a valid email address.")
         return
       }
 
@@ -41,11 +39,11 @@ export default function ForgotPasswordPage() {
       if (response.success) {
         setIsSuccess(true)
       } else {
-        setError(response.message || t("auth.errorOccurred"))
+        setError(response.message || "An error occurred. Please try again.")
       }
     } catch (error) {
       console.error("Forgot password error:", error)
-      setError(error.message || t("auth.errorOccurred"))
+      setError(error.message || "An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -60,24 +58,24 @@ export default function ForgotPasswordPage() {
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 mb-4">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
-              <CardTitle className="text-2xl font-">{t("auth.emailSent")}</CardTitle>
-              <CardDescription>{t("auth.resetEmailSentDescription")}</CardDescription>
+              <CardTitle className="text-2xl font-bold">Email Sent</CardTitle>
+              <CardDescription>We’ve sent you an email with a link to reset your password.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-4">{t("auth.checkEmailInbox")}</p>
-                <p className="text-xs text-gray-500">{t("auth.emailNotReceived")}</p>
+                <p className="text-sm text-gray-600 mb-4">Please check your inbox and follow the instructions.</p>
+                <p className="text-xs text-gray-500">Didn’t receive the email?</p>
               </div>
 
               <div className="space-y-3">
                 <Button onClick={() => setIsSuccess(false)} variant="outline" className="w-full">
-                  {t("auth.tryAgain")}
+                  Try Again
                 </Button>
 
                 <Link href="/auth/login">
                   <Button variant="ghost" className="w-full">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    {t("auth.backToLogin")}
+                    Back to Login
                   </Button>
                 </Link>
               </div>
@@ -96,8 +94,8 @@ export default function ForgotPasswordPage() {
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
               <Mail className="h-6 w-6 text-blue-600" />
             </div>
-            <CardTitle className="text-2xl font-bol">{t("auth.forgotPassword")}</CardTitle>
-            <CardDescription>{t("auth.forgotPasswordDescription")}</CardDescription>
+            <CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
+            <CardDescription>Enter your email and we’ll send you instructions to reset your password.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -108,7 +106,7 @@ export default function ForgotPasswordPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">{t("auth.email")}</Label>
+                <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
                   name="email"
@@ -123,7 +121,7 @@ export default function ForgotPasswordPage() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? t("auth.sending") : t("auth.sendResetEmail")}
+                {isLoading ? "Sending..." : "Send Reset Email"}
               </Button>
 
               <div className="text-center">
@@ -132,7 +130,7 @@ export default function ForgotPasswordPage() {
                   className="text-sm text-blue-600 hover:text-blue-500 flex items-center justify-center"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  {t("auth.rememberPassword")} {t("auth.backToLogin")}
+                  Remember your password? Back to Login
                 </Link>
               </div>
             </form>

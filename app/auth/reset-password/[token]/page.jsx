@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckCircle, XCircle, Eye, EyeOff, Lock } from "lucide-react"
 import { authService } from "@/services/auth.service"
-import { useLanguage } from "@/components/language-provider"
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("")
@@ -25,7 +24,6 @@ export default function ResetPasswordPage() {
   const [userInfo, setUserInfo] = useState(null)
   const router = useRouter()
   const params = useParams()
-  const { t } = useLanguage()
   const token = params.token
 
   useEffect(() => {
@@ -51,12 +49,12 @@ export default function ResetPasswordPage() {
         setUserInfo(response.user)
       } else {
         setIsValidToken(false)
-        setError(response.message || t("auth.invalidToken"))
+        setError(response.message || "Invalid or expired token.")
       }
     } catch (error) {
       console.error("Token verification error:", error)
       setIsValidToken(false)
-      setError(error.message || t("auth.invalidToken"))
+      setError(error.message || "Invalid or expired token.")
     } finally {
       setIsVerifying(false)
     }
@@ -68,24 +66,23 @@ export default function ResetPasswordPage() {
     setIsLoading(true)
 
     try {
-      // Validation
       if (!password) {
-        setError(t("validation.passwordRequired"))
+        setError("Password is required.")
         return
       }
 
       if (password.length < 6) {
-        setError(t("validation.passwordMinLength"))
+        setError("Password must be at least 6 characters long.")
         return
       }
 
       if (!confirmPassword) {
-        setError(t("validation.confirmPasswordRequired"))
+        setError("Please confirm your password.")
         return
       }
 
       if (password !== confirmPassword) {
-        setError(t("validation.passwordMismatch"))
+        setError("Passwords do not match.")
         return
       }
 
@@ -94,11 +91,11 @@ export default function ResetPasswordPage() {
       if (response.success) {
         setIsSuccess(true)
       } else {
-        setError(response.message || t("auth.errorOccurred"))
+        setError(response.message || "An error occurred during password reset.")
       }
     } catch (error) {
       console.error("Reset password error:", error)
-      setError(error.message || t("auth.errorOccurred"))
+      setError(error.message || "An error occurred.")
     } finally {
       setIsLoading(false)
     }
@@ -112,7 +109,7 @@ export default function ResetPasswordPage() {
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p>{t("auth.verifyingToken")}</p>
+                <p>Verifying token...</p>
               </div>
             </CardContent>
           </Card>
@@ -130,8 +127,8 @@ export default function ResetPasswordPage() {
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 mb-4">
                 <XCircle className="h-6 w-6 text-red-600" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">{t("auth.invalidToken")}</CardTitle>
-              <CardDescription>{t("auth.invalidTokenDescription")}</CardDescription>
+              <CardTitle className="text-2xl font-bold text-gray-900">Invalid or Expired Token</CardTitle>
+              <CardDescription>The link may be expired or incorrect.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {error && (
@@ -139,17 +136,14 @@ export default function ResetPasswordPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-
-              <p className="text-smtext-center">{t("auth.requestNewReset")}</p>
-
+              <p className="text-sm text-center">You can request a new password reset link.</p>
               <div className="space-y-3">
                 <Link href="/auth/forgot-password">
-                  <Button className="w-full">{t("auth.requestNewLink")}</Button>
+                  <Button className="w-full">Request New Link</Button>
                 </Link>
-
                 <Link href="/auth/login">
                   <Button variant="outline" className="w-full bg-transparent">
-                    {t("auth.backToLogin")}
+                    Back to Login
                   </Button>
                 </Link>
               </div>
@@ -169,17 +163,16 @@ export default function ResetPasswordPage() {
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 mb-4">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
-              <CardTitle className="text-2xl font-bold">{t("auth.passwordResetSuccess")}</CardTitle>
-              <CardDescription>{t("auth.passwordResetSuccessDescription")}</CardDescription>
+              <CardTitle className="text-2xl font-bold">Password Reset Successful</CardTitle>
+              <CardDescription>Your password has been updated successfully.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <p className="text-sm mb-4">{t("auth.redirectingToLogin")}</p>
+                <p className="text-sm mb-4">Redirecting to login page...</p>
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
               </div>
-
               <Link href="/auth/login">
-                <Button className="w-full">{t("auth.goToLogin")}</Button>
+                <Button className="w-full">Go to Login</Button>
               </Link>
             </CardContent>
           </Card>
@@ -196,11 +189,9 @@ export default function ResetPasswordPage() {
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 mb-4">
               <Lock className="h-6 w-6 text-blue-600" />
             </div>
-            <CardTitle className="text-2xl font-bold">{t("auth.resetPassword")}</CardTitle>
+            <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
             {userInfo && (
-              <CardDescription>
-                {t("auth.resetPasswordFor")} {userInfo.email}
-              </CardDescription>
+              <CardDescription>Resetting password for {userInfo.email}</CardDescription>
             )}
           </CardHeader>
           <CardContent>
@@ -212,7 +203,7 @@ export default function ResetPasswordPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="password">{t("auth.enterNewPassword")}</Label>
+                <Label htmlFor="password">New Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -222,7 +213,7 @@ export default function ResetPasswordPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder={t("auth.newPassword")}
+                    placeholder="Enter new password"
                     disabled={isLoading}
                   />
                   <button
@@ -230,17 +221,13 @@ export default function ResetPasswordPage() {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">{t("auth.confirmNewPassword")}</Label>
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
@@ -250,7 +237,7 @@ export default function ResetPasswordPage() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder={t("auth.confirmNewPassword")}
+                    placeholder="Confirm new password"
                     disabled={isLoading}
                   />
                   <button
@@ -258,22 +245,18 @@ export default function ResetPasswordPage() {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? t("auth.resetting") : t("auth.resetPassword")}
+                {isLoading ? "Resetting..." : "Reset Password"}
               </Button>
 
               <div className="text-center">
                 <Link href="/auth/login" className="text-sm text-blue-600 hover:text-blue-500">
-                  {t("auth.backToLogin")}
+                  Back to Login
                 </Link>
               </div>
             </form>

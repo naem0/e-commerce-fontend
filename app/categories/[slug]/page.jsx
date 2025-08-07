@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
-import { useLanguage } from "@/components/language-provider"
 import { getCategoryById } from "@/services/category.service"
 import { getProducts } from "@/services/product.service"
 import { ProductCard } from "@/components/product/product-card"
@@ -15,7 +14,6 @@ import { Search, Filter } from "lucide-react"
 import Image from "next/image"
 
 export default function CategoryPage() {
-  const { t } = useLanguage()
   const { slug } = useParams()
   const { toast } = useToast()
   const [category, setCategory] = useState(null)
@@ -30,7 +28,6 @@ export default function CategoryPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalProducts, setTotalProducts] = useState(0)
 
-  // Fetch category data
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -59,7 +56,6 @@ export default function CategoryPage() {
     }
   }, [slug, toast])
 
-  // Fetch products for this category
   useEffect(() => {
     const fetchProducts = async () => {
       if (!category) return
@@ -100,7 +96,7 @@ export default function CategoryPage() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    setCurrentPage(1) // Reset to first page when searching
+    setCurrentPage(1)
   }
 
   const handleSortChange = (value) => {
@@ -145,10 +141,8 @@ export default function CategoryPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("category.notFound") || "Category Not Found"}</h1>
-          <p className="text-gray-600">
-            {t("category.notFoundDescription") || "The category you're looking for doesn't exist."}
-          </p>
+          <h1 className="text-2xl font-bold mb-4">Category Not Found</h1>
+          <p className="text-gray-600">The category you're looking for doesn't exist.</p>
         </div>
       </div>
     )
@@ -175,9 +169,7 @@ export default function CategoryPage() {
             {category.description && (
               <p className="text-gray-600 dark:text-gray-300 text-lg mb-4">{category.description}</p>
             )}
-            <p className="text-sm text-gray-500">
-              {totalProducts} {t("category.productsFound") || "products found"}
-            </p>
+            <p className="text-sm text-gray-500">{totalProducts} products found</p>
           </div>
         </div>
       </div>
@@ -189,7 +181,7 @@ export default function CategoryPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               type="text"
-              placeholder={t("category.searchProducts") || "Search products..."}
+              placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -202,15 +194,15 @@ export default function CategoryPage() {
 
         <Select value={`${sortBy}-${sortOrder}`} onValueChange={handleSortChange}>
           <SelectTrigger className="w-full md:w-48">
-            <SelectValue placeholder={t("category.sortBy") || "Sort by"} />
+            <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="name-asc">{t("category.nameAsc") || "Name A-Z"}</SelectItem>
-            <SelectItem value="name-desc">{t("category.nameDesc") || "Name Z-A"}</SelectItem>
-            <SelectItem value="price-asc">{t("category.priceAsc") || "Price Low-High"}</SelectItem>
-            <SelectItem value="price-desc">{t("category.priceDesc") || "Price High-Low"}</SelectItem>
-            <SelectItem value="createdAt-desc">{t("category.newest") || "Newest First"}</SelectItem>
-            <SelectItem value="createdAt-asc">{t("category.oldest") || "Oldest First"}</SelectItem>
+            <SelectItem value="name-asc">Name A-Z</SelectItem>
+            <SelectItem value="name-desc">Name Z-A</SelectItem>
+            <SelectItem value="price-asc">Price Low-High</SelectItem>
+            <SelectItem value="price-desc">Price High-Low</SelectItem>
+            <SelectItem value="createdAt-desc">Newest First</SelectItem>
+            <SelectItem value="createdAt-asc">Oldest First</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -242,11 +234,11 @@ export default function CategoryPage() {
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
-                {t("category.previous") || "Previous"}
+                Previous
               </Button>
 
               <span className="px-4 py-2">
-                {t("category.pageOf") || "Page"} {currentPage} {t("category.of") || "of"} {totalPages}
+                Page {currentPage} of {totalPages}
               </span>
 
               <Button
@@ -254,18 +246,18 @@ export default function CategoryPage() {
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
               >
-                {t("category.next") || "Next"}
+                Next
               </Button>
             </div>
           )}
         </>
       ) : (
         <div className="text-center py-12">
-          <h3 className="text-xl font-semibold mb-2">{t("category.noProducts") || "No products found"}</h3>
+          <h3 className="text-xl font-semibold mb-2">No products found</h3>
           <p className="text-gray-600">
             {searchTerm
-              ? t("category.noProductsSearch") || "Try adjusting your search terms"
-              : t("category.noProductsCategory") || "This category doesn't have any products yet"}
+              ? "Try adjusting your search terms"
+              : "This category doesn't have any products yet"}
           </p>
         </div>
       )}

@@ -6,7 +6,6 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { useCart } from "@/components/cart-provider"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -16,7 +15,6 @@ import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react"
 export default function CartPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { t } = useLanguage()
   const { cart, removeFromCart, updateCartItemQuantity } = useCart()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -28,20 +26,17 @@ export default function CartPage() {
 
     try {
       setUpdating(true)
-      console.log("Updating quantity:", { item, newQuantity })
-
-      // Use the correct item identifier
       const itemId = item._id || item.product._id
       await updateCartItemQuantity(itemId, newQuantity, item.variation)
 
       toast({
-        title: t("cart.updated") || "Cart Updated",
-        description: t("cart.quantityUpdated") || "Item quantity has been updated",
+        title: "Cart Updated",
+        description: "Item quantity has been updated",
       })
     } catch (err) {
       console.error("Error updating quantity:", err)
       toast({
-        title: t("cart.updateError") || "Error",
+        title: "Error",
         description: err.message || "Failed to update cart",
         variant: "destructive",
       })
@@ -53,20 +48,17 @@ export default function CartPage() {
   const handleRemoveItem = async (item) => {
     try {
       setUpdating(true)
-      console.log("Removing item:", item)
-
-      // Use the correct item identifier
       const itemId = item._id || item.product._id
       await removeFromCart(itemId, item.variation)
 
       toast({
-        title: t("cart.removed") || "Item Removed",
-        description: t("cart.itemRemoved") || "Item has been removed from your cart",
+        title: "Item Removed",
+        description: "Item has been removed from your cart",
       })
     } catch (err) {
       console.error("Error removing item:", err)
       toast({
-        title: t("cart.removeError") || "Error",
+        title: "Error",
         description: err.message || "Failed to remove item from cart",
         variant: "destructive",
       })
@@ -84,9 +76,7 @@ export default function CartPage() {
     )
   }
 
-  const formatPrice = (price) => {
-    return `$${price.toFixed(2)}`
-  }
+  const formatPrice = (price) => `$${price.toFixed(2)}`
 
   const handleCheckout = () => {
     router.push("/checkout")
@@ -116,14 +106,14 @@ export default function CartPage() {
         <Card className="mx-auto max-w-3xl">
           <CardHeader className="text-center">
             <ShoppingCart className="mx-auto h-12 w-12 text-muted-foreground" />
-            <CardTitle className="mt-4 text-2xl">{t("cart.empty") || "Your cart is empty"}</CardTitle>
+            <CardTitle className="mt-4 text-2xl">Your cart is empty</CardTitle>
           </CardHeader>
           <CardContent className="text-center text-muted-foreground">
-            <p>{t("cart.emptyMessage") || "Looks like you haven't added any products to your cart yet."}</p>
+            <p>Looks like you haven't added any products to your cart yet.</p>
           </CardContent>
           <CardFooter className="flex justify-center">
             <Button asChild>
-              <Link href="/products">{t("cart.continueShopping") || "Continue Shopping"}</Link>
+              <Link href="/products">Continue Shopping</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -133,13 +123,13 @@ export default function CartPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">{t("cart.title") || "Shopping Cart"}</h1>
+      <h1 className="text-3xl font-bold mb-6">Shopping Cart</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>{t("cart.items") || "Cart Items"}</CardTitle>
+              <CardTitle>Cart Items</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
@@ -182,7 +172,7 @@ export default function CartPage() {
                           disabled={updating}
                         >
                           <Trash2 className="h-4 w-4" />
-                          <span className="sr-only">{t("cart.remove") || "Remove"}</span>
+                          <span className="sr-only">Remove</span>
                         </Button>
                       </div>
                       <div className="mt-2 flex items-center">
@@ -218,7 +208,7 @@ export default function CartPage() {
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button variant="outline" asChild>
-                <Link href="/products">{t("cart.continueShopping") || "Continue Shopping"}</Link>
+                <Link href="/products">Continue Shopping</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -227,32 +217,32 @@ export default function CartPage() {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>{t("cart.summary") || "Order Summary"}</CardTitle>
+              <CardTitle>Order Summary</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span>{t("cart.subtotal") || "Subtotal"}</span>
+                  <span>Subtotal</span>
                   <span>{formatPrice(calculateSubtotal())}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{t("cart.shipping") || "Shipping"}</span>
-                  <span>{t("cart.calculatedAtCheckout") || "Calculated at checkout"}</span>
+                  <span>Shipping</span>
+                  <span>Calculated at checkout</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{t("cart.tax") || "Tax"}</span>
-                  <span>{t("cart.calculatedAtCheckout") || "Calculated at checkout"}</span>
+                  <span>Tax</span>
+                  <span>Calculated at checkout</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-medium text-lg">
-                  <span>{t("cart.total") || "Total"}</span>
+                  <span>Total</span>
                   <span>{formatPrice(calculateSubtotal())}</span>
                 </div>
               </div>
             </CardContent>
             <CardFooter>
               <Button className="w-full" onClick={handleCheckout} disabled={updating}>
-                {t("cart.proceedToCheckout") || "Proceed to Checkout"}
+                Proceed to Checkout
               </Button>
             </CardFooter>
           </Card>

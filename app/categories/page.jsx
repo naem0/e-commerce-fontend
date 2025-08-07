@@ -3,13 +3,11 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useLanguage } from "@/components/language-provider"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { categoryService } from "@/services/api"
 
 export default function CategoriesPage() {
-  const { t } = useLanguage()
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -47,7 +45,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">{t("categories.allCategories") || "All Categories"}</h1>
+      <h1 className="text-3xl font-bold mb-6">All Categories</h1>
 
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -79,7 +77,7 @@ export default function CategoriesPage() {
                 <CardContent className="p-4">
                   <h3 className="font-medium">{category.name}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {category.productCount || 0} {t("categories.products") || "products"}
+                    {category.productCount || 0} products
                   </p>
                 </CardContent>
               </Card>
