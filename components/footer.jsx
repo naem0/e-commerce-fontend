@@ -1,10 +1,8 @@
 "use client"
 import Link from "next/link"
-import { useLanguage } from "@/components/language-provider"
 import { useSiteSettings } from "@/components/site-settings-provider"
 
 export function Footer() {
-  const { t } = useLanguage()
   const { settings } = useSiteSettings()
 
   const primaryColor = settings?.primaryColor || "#3B82F6"
@@ -25,8 +23,8 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">{t("footer.about")}</h3>
-            <p className="mb-4">{t("footer.aboutDescription")}</p>
+            <h3 className="text-xl font-bold mb-4">About</h3>
+            <p className="mb-4">About Description</p>
             <div className="flex space-x-4">
               <a href="#" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-facebook-f"></i>
@@ -44,59 +42,59 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">{t("footer.quickLinks")}</h3>
+            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/" style={linkStyle} className="hover:text-primary-custom">
-                  {t("nav.home")}
+                  Home
                 </Link>
               </li>
               <li>
                 <Link href="/products" style={linkStyle} className="hover:text-primary-custom">
-                  {t("nav.products")}
+                  Products
                 </Link>
               </li>
               <li>
                 <Link href="/about" style={linkStyle} className="hover:text-primary-custom">
-                  {t("nav.about")}
+                  About
                 </Link>
               </li>
               <li>
                 <Link href="/contact" style={linkStyle} className="hover:text-primary-custom">
-                  {t("nav.contact")}
+                  Contact
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">{t("footer.categories")}</h3>
+            <h3 className="text-xl font-bold mb-4">Categories</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/category/electronics" style={linkStyle} className="hover:text-primary-custom">
-                  {t("categories.electronics")}
+                  Electronics
                 </Link>
               </li>
               <li>
                 <Link href="/category/clothing" style={linkStyle} className="hover:text-primary-custom">
-                  {t("categories.clothing")}
+                  Clothing
                 </Link>
               </li>
               <li>
                 <Link href="/category/home" style={linkStyle} className="hover:text-primary-custom">
-                  {t("categories.home")}
+                  Home
                 </Link>
               </li>
               <li>
                 <Link href="/category/beauty" style={linkStyle} className="hover:text-primary-custom">
-                  {t("categories.beauty")}
+                  Beauty
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">{t("footer.contact")}</h3>
+            <h3 className="text-xl font-bold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-2"></i>
@@ -112,7 +110,7 @@ export function Footer() {
               </li>
               <li className="flex items-start">
                 <i className="fas fa-clock mt-1 mr-2"></i>
-                <span>{t("footer.workingHours")}</span>
+                <span>Working Hours</span>
               </li>
             </ul>
           </div>
@@ -122,23 +120,23 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p>
-            &copy; {new Date().getFullYear()} {settings?.siteName || "E-Commerce"}. {t("footer.copyright")}
+            &copy; {new Date().getFullYear()} {settings?.siteName || "E-Commerce"}. Copyright
           </p>
           <div className="mt-4 md:mt-0">
             <ul className="flex space-x-4">
               <li>
                 <Link href="/terms" style={linkStyle} className="hover:text-primary-custom">
-                  {t("footer.terms")}
+                  Terms
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" style={linkStyle} className="hover:text-primary-custom">
-                  {t("footer.privacy")}
+                  Privacy
                 </Link>
               </li>
               <li>
                 <Link href="/faq" style={linkStyle} className="hover:text-primary-custom">
-                  {t("footer.faq")}
+                  FAQ
                 </Link>
               </li>
             </ul>

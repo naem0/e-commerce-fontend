@@ -2,7 +2,6 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
-import { LanguageProvider } from "@/components/language-provider"
 import { SiteSettingsProvider } from "@/components/site-settings-provider"
 import { CartProvider } from "@/components/cart-provider"
 import { WishlistProvider } from "@/components/wishlist-provider"
@@ -38,7 +37,6 @@ export default async function RootLayout({ children }) {
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <AuthProvider>
-            <LanguageProvider>
               <SiteSettingsProvider>
                 <CartProvider>
                   <WishlistProvider>
@@ -52,7 +50,6 @@ export default async function RootLayout({ children }) {
                   </WishlistProvider>
                 </CartProvider>
               </SiteSettingsProvider>
-            </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

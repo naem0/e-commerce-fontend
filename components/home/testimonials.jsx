@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { useLanguage } from "@/components/language-provider"
 import { Card, CardContent } from "@/components/ui/card"
 import { Star } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -25,16 +24,15 @@ const testimonialService = {
 const testimonialDesigns = [
   {
     id: "testimonials-1",
-    component: ({ t, testimonials }) => (
+    component: ({ testimonials }) => (
       <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-              {t("testimonials.title") || "What Our Customers Say"}
+              What Our Customers Say
             </h2>
             <p className="max-w-[700px] text-muted-foreground md:text-xl">
-              {t("testimonials.subtitle") ||
-                "Don't just take our word for it. Read reviews from our satisfied customers."}
+              Don't just take our word for it. Read reviews from our satisfied customers.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-8">
@@ -74,15 +72,15 @@ const testimonialDesigns = [
   },
   {
     id: "testimonials-2",
-    component: ({ t, testimonials }) => (
+    component: ({ testimonials }) => (
       <section className="w-full py-12 md:py-24 lg:py-32">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-              {t("testimonials.title") || "Customer Testimonials"}
+              Customer Testimonials
             </h2>
             <p className="max-w-[700px] text-muted-foreground md:text-xl">
-              {t("testimonials.subtitle") || "Hear from our happy customers"}
+              Hear from our happy customers
             </p>
           </div>
           <div className="relative px-4 sm:px-6 lg:px-8">
@@ -130,7 +128,6 @@ const testimonialDesigns = [
 ]
 
 export function Testimonials() {
-  const { t } = useLanguage()
   const [testimonials, setTestimonials] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -231,5 +228,5 @@ export function Testimonials() {
   const ActiveTestimonialsComponent =
     testimonialDesigns.find((design) => design.id === activeDesign)?.component || testimonialDesigns[0].component
 
-  return <ActiveTestimonialsComponent t={t} testimonials={testimonials} />
+  return <ActiveTestimonialsComponent testimonials={testimonials} />
 }

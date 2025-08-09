@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,7 +14,6 @@ import { getOrders } from "@/services/order.service"
 export default function OrdersPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { t } = useLanguage()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -81,11 +79,11 @@ export default function OrdersPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8">{t("orders.title") || "My Orders"}</h1>
+        <h1 className="text-3xl font-bold mb-8">My Orders</h1>
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-red-500 mb-4">{error}</p>
-            <Button onClick={fetchOrders}>{t("orders.tryAgain") || "Try Again"}</Button>
+            <Button onClick={fetchOrders}>Try Again</Button>
           </CardContent>
         </Card>
       </div>
@@ -94,7 +92,7 @@ export default function OrdersPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">{t("orders.title") || "My Orders"}</h1>
+      <h1 className="text-3xl font-bold mb-8">My Orders</h1>
 
       {loading ? (
         <div className="grid grid-cols-1 gap-6">
@@ -106,12 +104,12 @@ export default function OrdersPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-medium mb-2">{t("orders.noOrders") || "No orders yet"}</h3>
+            <h3 className="text-xl font-medium mb-2">No orders yet</h3>
             <p className="text-muted-foreground mb-6">
-              {t("orders.noOrdersMessage") || "You haven't placed any orders yet."}
+              You haven't placed any orders yet.
             </p>
             <Link href="/products">
-              <Button>{t("orders.startShopping") || "Start Shopping"}</Button>
+              <Button>Start Shopping</Button>
             </Link>
           </CardContent>
         </Card>
@@ -122,10 +120,10 @@ export default function OrdersPage() {
               <CardHeader className="flex flex-row items-start justify-between">
                 <div>
                   <CardTitle>
-                    {t("orders.order") || "Order"} #{order._id}
+                    Order #{order._id}
                   </CardTitle>
                   <CardDescription>
-                    {t("orders.placed") || "Placed on"} {new Date(order.createdAt).toLocaleDateString()}
+                    Placed on {new Date(order.createdAt).toLocaleDateString()}
                   </CardDescription>
                 </div>
                 <Badge className={getStatusColor(order.status)}>
@@ -135,7 +133,7 @@ export default function OrdersPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h3 className="font-medium mb-2">{t("orders.items") || "Items"}</h3>
+                    <h3 className="font-medium mb-2">Items</h3>
                     <div className="space-y-2">
                       {order.items.map((item) => (
                         <div key={item._id} className="flex justify-between">
@@ -151,12 +149,12 @@ export default function OrdersPage() {
                     </div>
                   </div>
                   <div className="flex justify-between font-medium">
-                    <span>{t("orders.total") || "Total"}</span>
+                    <span>Total</span>
                     <span>${order.total.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-end">
                     <Link href={`/orders/${order._id}`}>
-                      <Button variant="outline">{t("orders.viewDetails") || "View Details"}</Button>
+                      <Button variant="outline">View Details</Button>
                     </Link>
                   </div>
                 </div>

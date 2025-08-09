@@ -10,14 +10,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useWishlist } from "@/components/wishlist-provider"
 import { useCart } from "@/components/cart-provider"
-import { useLanguage } from "@/components/language-provider"
 import { formatPrice } from "@/services/utils"
 import { Loader2, Heart, ShoppingCart, Trash2 } from "lucide-react"
 
 export default function WishlistPage() {
   const { data: session } = useSession()
   const router = useRouter()
-  const { t } = useLanguage()
   const { wishlist, loading, removeFromWishlist } = useWishlist()
   const { addToCart } = useCart()
   const [addingToCart, setAddingToCart] = useState({})
@@ -63,21 +61,21 @@ export default function WishlistPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Heart className="h-8 w-8 text-red-500" />
-          {t("wishlist.title") || "My Wishlist"}
+          My Wishlist
         </h1>
         <p className="text-gray-600 mt-2">
-          {wishlist.products.length} {t("wishlist.items") || "items in your wishlist"}
+          {wishlist.products.length} items in your wishlist
         </p>
       </div>
 
       {wishlist.products.length === 0 ? (
         <div className="text-center py-16">
           <Heart className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("wishlist.empty") || "Your wishlist is empty"}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Your wishlist is empty</h2>
           <p className="text-gray-600 mb-6">
-            {t("wishlist.emptyDesc") || "Start adding products you love to your wishlist"}
+            Start adding products you love to your wishlist
           </p>
-          <Button onClick={() => router.push("/products")}>{t("wishlist.startShopping") || "Start Shopping"}</Button>
+          <Button onClick={() => router.push("/products")}>Start Shopping</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import { useLanguage } from "@/components/language-provider"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,7 +16,6 @@ import { useCart } from "@/components/cart-provider"
 import { useToast } from "@/components/ui/use-toast"
 
 export default function ProductsPage() {
-  const { t } = useLanguage()
   const { addToCart } = useCart()
   const { toast } = useToast()
   const searchParams = useSearchParams()
@@ -133,12 +131,12 @@ export default function ProductsPage() {
     try {
       await addToCart(product._id, 1)
       toast({
-        title: t("cart.added") || "Added to cart",
-        description: `${product.name} ${t("cart.addedToCart") || "has been added to your cart"}`,
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart`,
       })
     } catch (err) {
       toast({
-        title: t("cart.error") || "Error",
+        title: "Error",
         description: err.message || "Failed to add product to cart",
         variant: "destructive",
       })
@@ -167,7 +165,7 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">{t("products.allProducts") || "All Products"}</h1>
+      <h1 className="text-3xl font-bold mb-6">All Products</h1>
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4 mb-6">
@@ -176,7 +174,7 @@ export default function ProductsPage() {
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t("products.search") || "Search products..."}
+                placeholder="Search products..."
                 className="pl-8"
                 value={filters.search}
                 onChange={(e) => handleFilterChange("search", e.target.value)}
@@ -187,10 +185,10 @@ export default function ProductsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
               <SelectTrigger>
-                <SelectValue placeholder={t("products.category") || "Category"} />
+                <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("products.allCategories") || "All Categories"}</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category._id} value={category._id}>
                     {category.name}
@@ -201,10 +199,10 @@ export default function ProductsPage() {
 
             <Select value={filters.brand} onValueChange={(value) => handleFilterChange("brand", value)}>
               <SelectTrigger>
-                <SelectValue placeholder={t("products.brand") || "Brand"} />
+                <SelectValue placeholder="Brand" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("products.allBrands") || "All Brands"}</SelectItem>
+                <SelectItem value="all">All Brands</SelectItem>
                 {brands.map((brand) => (
                   <SelectItem key={brand._id} value={brand._id}>
                     {brand.name}
@@ -215,20 +213,20 @@ export default function ProductsPage() {
 
             <Select value={filters.sort} onValueChange={(value) => handleFilterChange("sort", value)}>
               <SelectTrigger>
-                <SelectValue placeholder={t("products.sort") || "Sort By"} />
+                <SelectValue placeholder="Sort By" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="newest">{t("products.newest") || "Newest"}</SelectItem>
-                <SelectItem value="price_asc">{t("products.priceLowToHigh") || "Price: Low to High"}</SelectItem>
-                <SelectItem value="price_desc">{t("products.priceHighToLow") || "Price: High to Low"}</SelectItem>
-                <SelectItem value="name_asc">{t("products.nameAZ") || "Name: A-Z"}</SelectItem>
-                <SelectItem value="name_desc">{t("products.nameZA") || "Name: Z-A"}</SelectItem>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="price_asc">Price: Low to High</SelectItem>
+                <SelectItem value="price_desc">Price: High to Low</SelectItem>
+                <SelectItem value="name_asc">Name: A-Z</SelectItem>
+                <SelectItem value="name_desc">Name: Z-A</SelectItem>
               </SelectContent>
             </Select>
 
             <Button variant="outline" className="flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4" />
-              <span>{t("products.moreFilters") || "More Filters"}</span>
+              <span>More Filters</span>
             </Button>
           </div>
         </div>
@@ -255,9 +253,9 @@ export default function ProductsPage() {
         </div>
       ) : products.length === 0 ? (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium">{t("products.noProducts") || "No products found"}</h3>
+          <h3 className="text-lg font-medium">No products found</h3>
           <p className="text-muted-foreground mt-2">
-            {t("products.tryDifferentFilters") || "Try different filters or search terms"}
+            Try different filters or search terms
           </p>
         </div>
       ) : (
@@ -274,11 +272,11 @@ export default function ProductsPage() {
                   />
                   {product.discount > 0 && (
                     <Badge className="absolute top-2 left-2 bg-red-500">
-                      {product.discount}% {t("products.off") || "OFF"}
+                      {product.discount}% OFF
                     </Badge>
                   )}
                   {product.isNew && (
-                    <Badge className="absolute top-2 right-2 bg-green-500">{t("products.new") || "NEW"}</Badge>
+                    <Badge className="absolute top-2 right-2 bg-green-500">NEW</Badge>
                   )}
                 </div>
               </Link>
@@ -303,11 +301,11 @@ export default function ProductsPage() {
               <CardFooter className="p-4 pt-0">
                 <Button className="w-full" onClick={() => handleAddToCart(product)} disabled={product.stock <= 0}>
                   {product.stock <= 0 ? (
-                    t("products.outOfStock") || "Out of Stock"
+                    "Out of Stock"
                   ) : (
                     <>
                       <ShoppingCart className="mr-2 h-4 w-4" />
-                      {t("product.addToCart") || "Add to Cart"}
+                      Add to Cart
                     </>
                   )}
                 </Button>
@@ -326,7 +324,7 @@ export default function ProductsPage() {
               disabled={pagination.page === 1}
               onClick={() => handlePageChange(pagination.page - 1)}
             >
-              {t("pagination.previous") || "Previous"}
+              Previous
             </Button>
 
             {[...Array(pagination.totalPages)].map((_, i) => {
@@ -363,7 +361,7 @@ export default function ProductsPage() {
               disabled={pagination.page === pagination.totalPages}
               onClick={() => handlePageChange(pagination.page + 1)}
             >
-              {t("pagination.next") || "Next"}
+              Next
             </Button>
           </div>
         </div>

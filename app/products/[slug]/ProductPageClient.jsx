@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
 import { useCart } from "@/components/cart-provider"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -15,7 +14,6 @@ import { formatPrice, getErrorMessage } from "@/services/utils"
 
 export default function ProductPageClient({ product }) {
   const { slug } = useParams()
-  const { t } = useLanguage()
   const { addToCart } = useCart()
   const { toast } = useToast()
   const router = useRouter()
@@ -116,12 +114,12 @@ export default function ProductPageClient({ product }) {
       await addToCart(productId, quantity, variantId)
 
       toast({
-        title: t("product.addedToCart") || "Added to Cart",
-        description: `${product.name} (${quantity}) ${t("product.addedToCartDesc") || "has been added to your cart"}`,
+        title: "Added to Cart",
+        description: `${product.name} (${quantity}) has been added to your cart`,
       })
     } catch (err) {
       toast({
-        title: t("product.addToCartError") || "Error",
+        title: "Error",
         description: getErrorMessage(err),
         variant: "destructive",
       })
@@ -142,7 +140,7 @@ export default function ProductPageClient({ product }) {
       router.push("/checkout")
     } catch (err) {
       toast({
-        title: t("product.buyNowError") || "Error",
+        title: "Error",
         description: getErrorMessage(err),
         variant: "destructive",
       })
@@ -173,7 +171,7 @@ export default function ProductPageClient({ product }) {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded">
-          <p>{t("product.notFound") || "Product not found"}</p>
+          <p>Product not found</p>
         </div>
       </div>
     )
@@ -279,7 +277,7 @@ export default function ProductPageClient({ product }) {
                 ))}
               </div>
               <span className="ml-2 text-sm text-gray-500">
-                {product.rating?.toFixed(1) || "0.0"} ({product.numReviews || 0} {t("product.reviews") || "reviews"})
+                {product.rating?.toFixed(1) || "0.0"} ({product.numReviews || 0} reviews)
               </span>
             </div>
           </div>
@@ -290,7 +288,7 @@ export default function ProductPageClient({ product }) {
                 <span className="text-3xl font-bold">{formatPrice(currentPrice)}</span>
                 <span className="text-lg text-gray-500 line-through">{formatPrice(comparePrice)}</span>
                 <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700">
-                  {discountPercentage}% {t("product.off") || "OFF"}
+                  {discountPercentage}% OFF
                 </span>
               </>
             ) : (
@@ -326,21 +324,21 @@ export default function ProductPageClient({ product }) {
 
           <div className="space-y-2">
             <p className="text-sm text-gray-500">
-              {t("product.availability") || "Availability"}:{" "}
+              Availability:{" "}
               <span className={currentStock > 0 ? "text-green-600" : "text-red-600"}>
                 {currentStock > 0
-                  ? `${t("product.inStock") || "In Stock"} (${currentStock})`
-                  : t("product.outOfStock") || "Out of Stock"}
+                  ? `In Stock (${currentStock})`
+                  : "Out of Stock"}
               </span>
             </p>
             {product.brand && (
               <p className="text-sm text-gray-500">
-                {t("product.brand") || "Brand"}: <span className="font-medium">{product.brand.name}</span>
+                Brand: <span className="font-medium">{product.brand.name}</span>
               </p>
             )}
             {product.category && (
               <p className="text-sm text-gray-500">
-                {t("product.category") || "Category"}: <span className="font-medium">{product.category.name}</span>
+                Category: <span className="font-medium">{product.category.name}</span>
               </p>
             )}
             {selectedVariant && (
@@ -379,12 +377,12 @@ export default function ProductPageClient({ product }) {
                 {addingToCart ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("product.adding") || "Adding..."}
+                    Adding...
                   </>
                 ) : (
                   <>
                     <ShoppingCart className="mr-2 h-4 w-4" />
-                    {t("product.addToCart") || "Add to Cart"}
+                    Add to Cart
                   </>
                 )}
               </Button>
@@ -396,10 +394,10 @@ export default function ProductPageClient({ product }) {
                 {addingToCart ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("product.buying") || "Buying..."}
+                    Buying...
                   </>
                 ) : (
-                  t("product.buyNow") || "Buy Now"
+                  "Buy Now"
                 )}
               </Button>
             </div>
@@ -407,9 +405,9 @@ export default function ProductPageClient({ product }) {
 
           <Tabs defaultValue="description">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="description">{t("product.description") || "Description"}</TabsTrigger>
-              <TabsTrigger value="specifications">{t("product.specifications") || "Specifications"}</TabsTrigger>
-              <TabsTrigger value="reviews">{t("product.reviews") || "Reviews"}</TabsTrigger>
+              <TabsTrigger value="description">Description</TabsTrigger>
+              <TabsTrigger value="specifications">Specifications</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
             </TabsList>
             <TabsContent value="description" className="mt-4">
               <Card>
@@ -430,7 +428,7 @@ export default function ProductPageClient({ product }) {
                         </div>
                       ))
                     ) : (
-                      <p className="text-gray-500">{t("product.noSpecifications") || "No specifications available"}</p>
+                      <p className="text-gray-500">No specifications available</p>
                     )}
                   </div>
                 </CardContent>
@@ -461,7 +459,7 @@ export default function ProductPageClient({ product }) {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500">{t("product.noReviews") || "No reviews yet"}</p>
+                    <p className="text-gray-500">No reviews yet</p>
                   )}
                 </CardContent>
               </Card>

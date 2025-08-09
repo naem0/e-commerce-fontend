@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -18,7 +17,6 @@ export default function PaymentPage() {
   const { orderId } = useParams()
   const router = useRouter()
   const { data: session } = useSession()
-  const { t } = useLanguage()
   const { toast } = useToast()
 
   const [order, setOrder] = useState(null)
@@ -61,7 +59,7 @@ export default function PaymentPage() {
     } catch (error) {
       console.error("Fetch order error:", error)
       toast({
-        title: t("payment.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to load order",
         variant: "destructive",
       })
@@ -120,7 +118,7 @@ export default function PaymentPage() {
 
     if (!amount || amount <= 0) {
       toast({
-        title: t("payment.error") || "Error",
+        title: "Error",
         description: "Please enter a valid payment amount",
         variant: "destructive",
       })
@@ -129,7 +127,7 @@ export default function PaymentPage() {
 
     if (amount > dueAmount) {
       toast({
-        title: t("payment.error") || "Error",
+        title: "Error",
         description: `Payment amount cannot exceed due amount of ${formatPrice(dueAmount)}`,
         variant: "destructive",
       })
@@ -138,7 +136,7 @@ export default function PaymentPage() {
 
     if (!paymentData.accountNumber.trim()) {
       toast({
-        title: t("payment.error") || "Error",
+        title: "Error",
         description: "Account number is required",
         variant: "destructive",
       })
@@ -167,7 +165,7 @@ export default function PaymentPage() {
 
       if (response.success) {
         toast({
-          title: t("payment.success") || "Payment Submitted!",
+          title: "Payment Submitted!",
           description:
             amount >= dueAmount
               ? "Your full payment has been submitted for verification."
@@ -187,7 +185,7 @@ export default function PaymentPage() {
     } catch (error) {
       console.error("Payment error:", error)
       toast({
-        title: t("payment.error") || "Error",
+        title: "Error",
         description: error.message || "Payment submission failed",
         variant: "destructive",
       })
@@ -208,8 +206,8 @@ export default function PaymentPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("payment.orderNotFound") || "Order not found"}</h1>
-          <Button onClick={() => router.push("/orders")}>{t("payment.viewOrders") || "View Orders"}</Button>
+          <h1 className="text-2xl font-bold mb-4">Order not found</h1>
+          <Button onClick={() => router.push("/orders")}>View Orders</Button>
         </div>
       </div>
     )

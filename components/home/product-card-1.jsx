@@ -4,11 +4,9 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart } from "lucide-react"
 import StarRating from "@/components/home/star-rating"
-import { useLanguage } from "../language-provider"
 import { Badge } from "@/app/components/ui/badge"
 
 const ProductCard1 = ({ product, handleAddToCart }) => {
-    const { t } = useLanguage()
     return (
         <Card key={product.id} className="overflow-hidden group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
             <Link href={`/product/${product._id}`}>
@@ -47,7 +45,7 @@ const ProductCard1 = ({ product, handleAddToCart }) => {
                     className="mt-3 w-full "
                 >
                     <ShoppingCart className="h-4 w-4" />
-                    {t("products.addToCart") || "Add to Cart"}
+                    Add to Cart
                 </Button>
             </CardContent>
         </Card>

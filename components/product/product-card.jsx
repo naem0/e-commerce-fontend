@@ -4,14 +4,12 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useCart } from "@/components/cart-provider"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, ShoppingCart, Eye } from "lucide-react"
 
 export function ProductCard({ product,  showDiscount = false, discountPercentage = 0 }) {
-  const { t } = useLanguage()
   const { addToCart } = useCart()
   const [loading, setLoading] = useState(false)
 
@@ -57,7 +55,7 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
           {product.stock <= 0 && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/60">
               <Badge className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-sm">
-                {t("product.outOfStock") || "Out of Stock"}
+                Out of Stock
               </Badge>
             </div>
           )}
@@ -91,7 +89,7 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
         <Button variant="outline" size="sm" className="flex-1" asChild>
           <Link href={`/products/${product.slug}`}>
             <Eye className="mr-2 h-4 w-4" />
-            {t("product.view") || "View"}
+            View
           </Link>
         </Button>
         <Button
@@ -102,7 +100,7 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
           data-testid="add-to-cart-button"
         >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
-          {t("products.add") || "Add"}
+          Add
         </Button>
       </CardFooter>
     </Card>

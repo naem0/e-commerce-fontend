@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -44,7 +43,6 @@ import Image from "next/image"
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { t } = useLanguage()
   const { toast } = useToast()
 
   const [user, setUser] = useState(null)
@@ -105,7 +103,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Fetch user data error:", error)
       toast({
-        title: t("profile.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to load profile",
         variant: "destructive",
       })
@@ -126,8 +124,8 @@ export default function ProfilePage() {
       if (response.success) {
         setUser(response.user)
         toast({
-          title: t("profile.success") || "Success",
-          description: t("profile.updated") || "Profile updated successfully",
+          title: "Success",
+          description: "Profile updated successfully",
         })
       } else {
         throw new Error(response.message || "Update failed")
@@ -135,7 +133,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Profile update error:", error)
       toast({
-        title: t("profile.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to update profile",
         variant: "destructive",
       })
@@ -149,7 +147,7 @@ export default function ProfilePage() {
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       toast({
-        title: t("profile.error") || "Error",
+        title: "Error",
         description: "Passwords do not match",
         variant: "destructive",
       })
@@ -171,7 +169,7 @@ export default function ProfilePage() {
           confirmPassword: "",
         })
         toast({
-          title: t("profile.success") || "Success",
+          title: "Success",
           description: "Password updated successfully",
         })
       } else {
@@ -180,7 +178,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Password update error:", error)
       toast({
-        title: t("profile.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to update password",
         variant: "destructive",
       })
@@ -221,8 +219,8 @@ export default function ProfilePage() {
           isDefault: false,
         })
         toast({
-          title: t("profile.success") || "Success",
-          description: t("profile.addressUpdated") || "Address updated successfully",
+          title: "Success",
+          description: "Address updated successfully",
         })
       } else {
         throw new Error(response.message || "Address update failed")
@@ -230,7 +228,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Address update error:", error)
       toast({
-        title: t("profile.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to update address",
         variant: "destructive",
       })
@@ -247,14 +245,14 @@ export default function ProfilePage() {
       if (response.success) {
         setUser(response.user)
         toast({
-          title: t("profile.success") || "Success",
-          description: t("profile.addressDeleted") || "Address deleted successfully",
+          title: "Success",
+          description: "Address deleted successfully",
         })
       }
     } catch (error) {
       console.error("Delete address error:", error)
       toast({
-        title: t("profile.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to delete address",
         variant: "destructive",
       })

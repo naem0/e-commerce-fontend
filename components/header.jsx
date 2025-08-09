@@ -5,7 +5,6 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "@/components/theme-provider"
-import { useLanguage } from "@/components/language-provider"
 import { useSiteSettings } from "@/components/site-settings-provider"
 import { useCart } from "@/components/cart-provider"
 import { useWishlist } from "@/components/wishlist-provider"
@@ -17,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ShoppingCart, User, Sun, Moon, Globe, Search, Heart, Menu } from "lucide-react"
+import { ShoppingCart, User, Sun, Moon, Search, Heart, Menu } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -27,7 +26,6 @@ export function Header() {
   const pathname = usePathname()
   const { data: session } = useSession()
   const { theme, setTheme, toggleTheme } = useTheme()
-  const { language, setLanguage, t } = useLanguage()
   const { settings } = useSiteSettings()
   const { getCartItemCount } = useCart()
   const { getWishlistCount } = useWishlist()
@@ -77,21 +75,21 @@ export function Header() {
               className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/") ? "text-foreground" : "text-muted-foreground"
                 }`}
             >
-              {t("nav.home") || "Home"}
+              Home
             </Link>
             <Link
               href="/products"
               className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/products") ? "text-foreground" : "text-muted-foreground"
                 }`}
             >
-              {t("nav.products") || "Products"}
+              Products
             </Link>
             <Link
               href="/categories"
               className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"
                 }`}
             >
-              {t("nav.categories") || "Categories"}
+              Categories
             </Link>
           </nav>
 
@@ -100,7 +98,7 @@ export function Header() {
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
-                placeholder={t("nav.searchPlaceholder") || "Search products..."}
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-64 pr-10"
@@ -117,20 +115,6 @@ export function Header() {
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <Menu className="h-5 w-5" />
           </Button>
-
-          {/* Language Toggle */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Globe className="h-5 w-5" />
-                <span className="sr-only">Toggle language</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setLanguage("en")}>English</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage("bn")}>বাংলা</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
           {/* Theme Toggle */}
           <Button variant="ghost" size="icon" onClick={toggleTheme}>
@@ -151,7 +135,7 @@ export function Header() {
                     {wishlistCount}
                   </Badge>
                 )}
-                <span className="sr-only">{t("nav.wishlist") || "Wishlist"}</span>
+                <span className="sr-only">Wishlist</span>
               </Button>
             </Link>
           )}
@@ -168,7 +152,7 @@ export function Header() {
                   {cartItemCount}
                 </Badge>
               )}
-              <span className="sr-only">{t("nav.cart") || "Cart"}</span>
+              <span className="sr-only">Cart</span>
             </Button>
           </Link>
 
@@ -178,32 +162,32 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
-                  <span className="sr-only">{t("nav.account") || "Account"}</span>
+                  <span className="sr-only">Account</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <Link href="/profile">
                   <DropdownMenuItem>
-                    {t("nav.profile") || "Profile"}
+                    Profile
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/orders">
                   <DropdownMenuItem>
-                    {t("nav.orders") || "Orders"}
+                    Orders
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/wishlist">
                   <DropdownMenuItem>
-                    {t("nav.wishlist") || "Wishlist"}
+                    Wishlist
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout") || "Logout"}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Link href="/auth/login">
-              <Button variant="outline">{t("auth.login") || "Login"}</Button>
+              <Button variant="outline">Login</Button>
             </Link>
           )}
         </div>
@@ -217,7 +201,7 @@ export function Header() {
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
-                placeholder={t("nav.searchPlaceholder") || "Search products..."}
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pr-10"
@@ -229,13 +213,13 @@ export function Header() {
             {/* Mobile Navigation */}
             <nav className="flex flex-col space-y-2">
               <Link href="/" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
-                {t("nav.home") || "Home"}
+                Home
               </Link>
               <Link href="/products" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
-                {t("nav.products") || "Products"}
+                Products
               </Link>
               <Link href="/categories" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
-                {t("nav.categories") || "Categories"}
+                Categories
               </Link>
             </nav>
           </div>

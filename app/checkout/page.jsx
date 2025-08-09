@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSession, signIn } from "next-auth/react"
 import { useCart } from "@/components/cart-provider"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -23,7 +22,6 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
   const { cart, clearCart } = useCart()
-  const { t } = useLanguage()
   const { toast } = useToast()
 
   const [loading, setLoading] = useState(false)
@@ -251,8 +249,8 @@ export default function CheckoutPage() {
       if (response.success) {
         clearCart()
         toast({
-          title: t("checkout.orderPlaced") || "Order Placed Successfully!",
-          description: t("checkout.orderPlacedDesc") || "Your order has been placed successfully.",
+          title: "Order Placed Successfully!",
+          description: "Your order has been placed successfully.",
         })
 
         // Redirect based on payment method
@@ -267,7 +265,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error("Checkout error:", error)
       toast({
-        title: t("checkout.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to place order",
         variant: "destructive",
       })
@@ -280,9 +278,9 @@ export default function CheckoutPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("checkout.emptyCart") || "Your cart is empty"}</h1>
+          <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
           <Button onClick={() => router.push("/products")}>
-            {t("checkout.continueShopping") || "Continue Shopping"}
+            Continue Shopping
           </Button>
         </div>
       </div>
@@ -293,7 +291,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">{t("checkout.title") || "Checkout"}</h1>
+      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Checkout Form */}
@@ -304,13 +302,13 @@ export default function CheckoutPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <User className="mr-2 h-5 w-5" />
-                  {t("checkout.customerInfo") || "Customer Information"}
+                  Customer Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="name">{t("checkout.fullName") || "Full Name"} *</Label>
+                    <Label htmlFor="name">Full Name *</Label>
                     <Input
                       id="name"
                       name="name"
@@ -321,7 +319,7 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email">{t("checkout.email") || "Email"} *</Label>
+                    <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -335,7 +333,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="phone">{t("checkout.phone") || "Phone Number"} *</Label>
+                  <Label htmlFor="phone">Phone Number *</Label>
                   <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} required />
                 </div>
 
@@ -345,13 +343,13 @@ export default function CheckoutPage() {
                     <div className="flex items-center space-x-2">
                       <Checkbox id="createAccount" checked={createAccount} onCheckedChange={setCreateAccount} />
                       <Label htmlFor="createAccount">
-                        {t("checkout.createAccount") || "Create an account for faster checkout next time"}
+                        Create an account for faster checkout next time
                       </Label>
                     </div>
 
                     {createAccount && (
                       <div>
-                        <Label htmlFor="password">{t("checkout.password") || "Password"} *</Label>
+                        <Label htmlFor="password">Password *</Label>
                         <Input
                           id="password"
                           name="password"
@@ -373,7 +371,7 @@ export default function CheckoutPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <MapPin className="mr-2 h-5 w-5" />
-                  {t("checkout.shippingAddress") || "Shipping Address"}
+                  Shipping Address
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -381,7 +379,7 @@ export default function CheckoutPage() {
                 {session && addresses.length > 0 && (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <Label>{t("checkout.savedAddresses") || "Saved Addresses"}</Label>
+                      <Label>Saved Addresses</Label>
                       <Button
                         type="button"
                         variant="outline"
@@ -423,21 +421,21 @@ export default function CheckoutPage() {
                 {(showNewAddressForm || !session || addresses.length === 0) && (
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="street">{t("checkout.address") || "Street Address"} *</Label>
+                      <Label htmlFor="street">Street Address *</Label>
                       <Input id="street" name="street" value={formData.street} onChange={handleInputChange} required />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <Label htmlFor="city">{t("checkout.city") || "City"} *</Label>
+                        <Label htmlFor="city">City *</Label>
                         <Input id="city" name="city" value={formData.city} onChange={handleInputChange} required />
                       </div>
                       <div>
-                        <Label htmlFor="state">{t("checkout.state") || "State/Division"}</Label>
+                        <Label htmlFor="state">State/Division</Label>
                         <Input id="state" name="state" value={formData.state} onChange={handleInputChange} />
                       </div>
                       <div>
-                        <Label htmlFor="zipCode">{t("checkout.zipCode") || "ZIP Code"}</Label>
+                        <Label htmlFor="zipCode">ZIP Code</Label>
                         <Input id="zipCode" name="zipCode" value={formData.zipCode} onChange={handleInputChange} />
                       </div>
                     </div>
@@ -451,7 +449,7 @@ export default function CheckoutPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <CreditCard className="mr-2 h-5 w-5" />
-                  {t("checkout.paymentMethod") || "Payment Method"}
+                  Payment Method
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -460,7 +458,7 @@ export default function CheckoutPage() {
                     <RadioGroupItem value="cash_on_delivery" id="cod" />
                     <Label htmlFor="cod" className="flex items-center cursor-pointer">
                       <Truck className="mr-2 h-4 w-4" />
-                      {t("checkout.cashOnDelivery") || "Cash on Delivery"}
+                      Cash on Delivery
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -484,14 +482,14 @@ export default function CheckoutPage() {
             {/* Order Notes */}
             <Card>
               <CardHeader>
-                <CardTitle>{t("checkout.orderNotes") || "Order Notes"}</CardTitle>
+                <CardTitle>Order Notes</CardTitle>
               </CardHeader>
               <CardContent>
                 <Textarea
                   name="notes"
                   value={formData.notes}
                   onChange={handleInputChange}
-                  placeholder={t("checkout.orderNotesPlaceholder") || "Any special instructions for your order..."}
+                  placeholder="Any special instructions for your order..."
                   rows={3}
                 />
               </CardContent>
@@ -503,7 +501,7 @@ export default function CheckoutPage() {
         <div>
           <Card className="sticky top-4">
             <CardHeader>
-              <CardTitle>{t("checkout.orderSummary") || "Order Summary"}</CardTitle>
+              <CardTitle>Order Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Cart Items */}
@@ -528,20 +526,20 @@ export default function CheckoutPage() {
               {/* Totals */}
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span>{t("checkout.subtotal") || "Subtotal"}</span>
+                  <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{t("checkout.tax") || "Tax (5%)"}</span>
+                  <span>Tax (5%)</span>
                   <span>{formatPrice(tax)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{t("checkout.shipping") || "Shipping"}</span>
-                  <span>{shipping === 0 ? t("checkout.free") || "Free" : formatPrice(shipping)}</span>
+                  <span>Shipping</span>
+                  <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
                 </div>
                 <hr />
                 <div className="flex justify-between font-bold text-lg">
-                  <span>{t("checkout.total") || "Total"}</span>
+                  <span>Total</span>
                   <span>{formatPrice(total)}</span>
                 </div>
               </div>
@@ -550,10 +548,10 @@ export default function CheckoutPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("checkout.placing") || "Placing Order..."}
+                    Placing Order...
                   </>
                 ) : (
-                  t("checkout.placeOrder") || "Place Order"
+                  "Place Order"
                 )}
               </Button>
             </CardContent>

@@ -2,11 +2,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { useLanguage } from "../language-provider"
 import { ShoppingCart } from "lucide-react"
 
 const ProductCard2 = ({ product, handleAddToCart }) => {
-  const { t } = useLanguage();
   return (
     <Card key={product._id} className="overflow-hidden">
       <Link href={`/products/${product.slug}`}>
@@ -29,7 +27,7 @@ const ProductCard2 = ({ product, handleAddToCart }) => {
           className="w-full"
         >
           <ShoppingCart className="h-4 w-4" />
-          {t("products.addToCart") || "Add to Cart"}
+          Add to Cart
         </Button>
       </CardContent>
     </Card>

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -29,7 +28,6 @@ export default function OrderDetailsPage() {
   const { id } = useParams()
   const router = useRouter()
   const { data: session, status } = useSession()
-  const { t } = useLanguage()
   const { toast } = useToast()
 
   const [order, setOrder] = useState(null)
@@ -54,7 +52,7 @@ export default function OrderDetailsPage() {
     } catch (error) {
       console.error("Fetch order error:", error)
       toast({
-        title: t("order.error") || "Error",
+        title: "Error",
         description: error.message || "Failed to load order",
         variant: "destructive",
       })
@@ -124,25 +122,25 @@ export default function OrderDetailsPage() {
     const timeline = [
       {
         status: "pending",
-        label: t("order.pending") || "Order Placed",
+        label: "Order Placed",
         date: order.createdAt,
         completed: true,
       },
       {
         status: "processing",
-        label: t("order.processing") || "Processing",
+        label: "Processing",
         date: order.status === "processing" ? new Date() : null,
         completed: ["processing", "shipped", "delivered"].includes(order.status),
       },
       {
         status: "shipped",
-        label: t("order.shipped") || "Shipped",
+        label: "Shipped",
         date: order.status === "shipped" ? new Date() : null,
         completed: ["shipped", "delivered"].includes(order.status),
       },
       {
         status: "delivered",
-        label: t("order.delivered") || "Delivered",
+        label: "Delivered",
         date: order.status === "delivered" ? new Date() : null,
         completed: order.status === "delivered",
       },
@@ -153,7 +151,7 @@ export default function OrderDetailsPage() {
         timeline[0],
         {
           status: "cancelled",
-          label: t("order.cancelled") || "Cancelled",
+          label: "Cancelled",
           date: new Date(),
           completed: true,
         },
@@ -175,8 +173,8 @@ export default function OrderDetailsPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("order.notFound") || "Order not found"}</h1>
-          <Button onClick={() => router.push("/orders")}>{t("order.viewOrders") || "View All Orders"}</Button>
+          <h1 className="text-2xl font-bold mb-4">Order not found</h1>
+          <Button onClick={() => router.push("/orders")}>View All Orders</Button>
         </div>
       </div>
     )
@@ -188,7 +186,7 @@ export default function OrderDetailsPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
         <Button variant="outline" onClick={() => router.push("/orders")}>
-          ← {t("order.backToOrders") || "Back to Orders"}
+          ← Back to Orders
         </Button>
       </div>
 
@@ -201,10 +199,10 @@ export default function OrderDetailsPage() {
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="text-2xl">
-                    {t("order.orderNumber") || "Order"} #{order._id.slice(-8).toUpperCase()}
+                    Order #{order._id.slice(-8).toUpperCase()}
                   </CardTitle>
                   <p className="text-gray-600 mt-1">
-                    {t("order.placedOn") || "Placed on"} {formatDate(order.createdAt)}
+                    Placed on {formatDate(order.createdAt)}
                   </p>
                 </div>
                 <div className="text-right">
@@ -225,7 +223,7 @@ export default function OrderDetailsPage() {
           {/* Order Timeline */}
           <Card>
             <CardHeader>
-              <CardTitle>{t("order.orderTimeline") || "Order Timeline"}</CardTitle>
+              <CardTitle>Order Timeline</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -258,7 +256,7 @@ export default function OrderDetailsPage() {
           {/* Order Items */}
           <Card>
             <CardHeader>
-              <CardTitle>{t("order.orderItems") || "Order Items"}</CardTitle>
+              <CardTitle>Order Items</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -279,10 +277,10 @@ export default function OrderDetailsPage() {
                     <div className="flex-1">
                       <h3 className="font-medium">{item.name}</h3>
                       <p className="text-sm text-gray-600">
-                        {t("order.quantity") || "Quantity"}: {item.quantity}
+                        Quantity: {item.quantity}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {t("order.price") || "Price"}: {formatPrice(item.price)}
+                        Price: {formatPrice(item.price)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -290,7 +288,7 @@ export default function OrderDetailsPage() {
                       {canReview(order) && (
                         <Button size="sm" variant="outline" onClick={() => handleReview(item.product)} className="mt-2">
                           <Star className="h-3 w-3 mr-1" />
-                          {t("order.review") || "Review"}
+                          Review
                         </Button>
                       )}
                     </div>
@@ -306,24 +304,24 @@ export default function OrderDetailsPage() {
           {/* Order Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>{t("order.orderSummary") || "Order Summary"}</CardTitle>
+              <CardTitle>Order Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex justify-between">
-                <span>{t("order.subtotal") || "Subtotal"}</span>
+                <span>Subtotal</span>
                 <span>{formatPrice(order.subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>{t("order.tax") || "Tax"}</span>
+                <span>Tax</span>
                 <span>{formatPrice(order.tax)}</span>
               </div>
               <div className="flex justify-between">
-                <span>{t("order.shipping") || "Shipping"}</span>
+                <span>Shipping</span>
                 <span>{formatPrice(order.shippingCost)}</span>
               </div>
               <hr />
               <div className="flex justify-between font-bold text-lg">
-                <span>{t("order.total") || "Total"}</span>
+                <span>Total</span>
                 <span>{formatPrice(order.total)}</span>
               </div>
             </CardContent>
@@ -334,7 +332,7 @@ export default function OrderDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <MapPin className="mr-2 h-5 w-5" />
-                {t("order.shippingAddress") || "Shipping Address"}
+                Shipping Address
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -356,22 +354,22 @@ export default function OrderDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <CreditCard className="mr-2 h-5 w-5" />
-                {t("order.paymentInfo") || "Payment Information"}
+                Payment Information
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span>{t("order.paymentMethod") || "Payment Method"}</span>
+                  <span>Payment Method</span>
                   <span className="capitalize">{order.paymentMethod.replace("_", " ")}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{t("order.paymentStatus") || "Payment Status"}</span>
+                  <span>Payment Status</span>
                   <Badge className={getPaymentStatusColor(order.paymentStatus)}>{order.paymentStatus}</Badge>
                 </div>
                 {order.paymentDetails?.transactionId && (
                   <div className="flex justify-between">
-                    <span>{t("order.transactionId") || "Transaction ID"}</span>
+                    <span>Transaction ID</span>
                     <span className="font-mono text-sm">{order.paymentDetails.transactionId}</span>
                   </div>
                 )}
@@ -379,7 +377,7 @@ export default function OrderDetailsPage() {
 
               {order.paymentStatus === "pending" && order.paymentMethod !== "cash_on_delivery" && (
                 <Button className="w-full mt-4" onClick={() => router.push(`/payment/${order._id}`)}>
-                  {t("order.completePayment") || "Complete Payment"}
+                  Complete Payment
                 </Button>
               )}
             </CardContent>
@@ -391,7 +389,7 @@ export default function OrderDetailsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <MessageSquare className="mr-2 h-5 w-5" />
-                  {t("order.notes") || "Order Notes"}
+                  Order Notes
                 </CardTitle>
               </CardHeader>
               <CardContent>
