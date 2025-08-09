@@ -81,8 +81,39 @@ exports.getCategories = async (req, res) => {
   }
 }
 
-// @desc    Get single category by slug
-// @route   GET /api/categories/slug/:slug
+exports.getCategoryBySlug = async (req, res) => {
+  try {
+    const category = await Category.findOne({ slug: req.params.slug }).populate("parent", "name slug")
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      })
+    }
+
+    // Get subcategories
+    const subcategories = await Category.find({ parent: category._id })
+
+    res.json({
+      success: true,
+      category: {
+        ...category.toObject(),
+        subcategories,
+      },
+    })
+  } catch (error) {
+    console.error("Get category error:", error)
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch category",
+      error: error.message,
+    })
+  }
+}
+
+// @desc    Get single category by ID
+// @route   GET /api/categories/:id
 // @access  Public
 exports.getCategoryBySlug = async (req, res) => {
   try {
@@ -96,21 +127,17 @@ exports.getCategoryBySlug = async (req, res) => {
     }
 
     // Get subcategories
-    const subcategories = await Category.find({ parent: category._id, status: "active" })
-
-    // Get products count
-    const productsCount = await Product.countDocuments({ category: category._id, status: "published" })
+    const subcategories = await Category.find({ parent: category._id })
 
     res.json({
       success: true,
       category: {
         ...category.toObject(),
         subcategories,
-        productsCount,
       },
     })
   } catch (error) {
-    console.error("Get category by slug error:", error)
+    console.error("Get category error:", error)
     res.status(500).json({
       success: false,
       message: "Failed to fetch category",
@@ -119,9 +146,6 @@ exports.getCategoryBySlug = async (req, res) => {
   }
 }
 
-// @desc    Get single category by ID
-// @route   GET /api/categories/:id
-// @access  Public
 exports.getCategory = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id).populate("parent", "name slug")
@@ -152,6 +176,7 @@ exports.getCategory = async (req, res) => {
     })
   }
 }
+
 
 // @desc    Create a category
 // @route   POST /api/categories

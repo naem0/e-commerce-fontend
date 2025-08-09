@@ -64,7 +64,7 @@ export default async function Categories() {
                     key={category._id}
                     className="basis-1/3 sm:basis-1/4 md:basis-1/6 lg:basis-1/8 pl-2"
                   >
-                    <Link href={`/products?category=${category._id}`}>
+                    <Link href={`/categories/${category.slug}`}>
                       <Card className="border-0 shadow-none hover:shadow-md transition-all hover:-translate-y-1 h-full py-4">
                         <CardContent className="p-2 flex flex-col items-center justify-center h-full">
                           <div className="my-4 mx-auto">

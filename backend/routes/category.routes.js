@@ -3,6 +3,7 @@ const router = express.Router()
 const {
   getCategories,
   getCategory,
+  getCategoryBySlug,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -12,6 +13,7 @@ const upload = require("../middleware/upload.middleware")
 
 // Public routes
 router.get("/", getCategories)
+router.get("/slug/:slug", getCategoryBySlug)
 router.get("/:id", getCategory)
 
 // Protected routes

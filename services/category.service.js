@@ -88,6 +88,31 @@ export const getCategories = async (params = {}) => {
   }
 }
 
+export const getCategoryBySlug = async (slug) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/api/categories/slug/${slug}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
 // Get single category
 export const getCategoryById = async (id) => {
   try {
