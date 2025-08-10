@@ -45,6 +45,7 @@ export default function CreateProductPage() {
       description: "",
       keywords: "",
     },
+    specification: "",
     shipping: {
       weight: "",
       dimensions: {
@@ -109,19 +110,22 @@ export default function CreateProductPage() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
 
+    // Convert empty strings from number inputs to null
+    const processedValue = type === "number" && value === "" ? null : value;
+
     if (name.includes(".")) {
       const [parent, child] = name.split(".")
       setFormData((prev) => ({
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: type === "checkbox" ? checked : value,
+          [child]: type === "checkbox" ? checked : processedValue,
         },
       }))
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: type === "checkbox" ? checked : processedValue,
       }))
     }
   }
@@ -380,8 +384,11 @@ export default function CreateProductPage() {
         })
       }
 
-      await createProduct(productData)
-
+      const response = await createProduct(productData)
+      
+      if (!response.success) {
+        throw new Error(response.message)
+      }
       toast({
         title: "Success",
         description: "Product created successfully",
@@ -391,6 +398,7 @@ export default function CreateProductPage() {
     } catch (error) {
       console.error("Error creating product:", error)
       setError(error.response?.data?.message || "Failed to create product. Please try again.")
+    } finally {
       setLoading(false)
     }
   }
@@ -457,6 +465,15 @@ export default function CreateProductPage() {
                       value={formData.description}
                       onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
                       placeholder="Enter detailed product description..."
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="specification">Specification</Label>
+                    <RichTextEditor
+                      value={formData.specification}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, specification: value }))}
+                      placeholder="Enter product specifications..."
                     />
                   </div>
                 </div>

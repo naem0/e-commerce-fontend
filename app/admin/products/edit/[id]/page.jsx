@@ -18,6 +18,7 @@ export default function EditProductPage({ params }) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    specification: "",
     price: "",
     comparePrice: "",
     category: "",
@@ -51,6 +52,7 @@ export default function EditProductPage({ params }) {
         setFormData({
           name: product.name,
           description: product.description,
+          specification: product.specification || "",
           price: product.price.toString(),
           comparePrice: product.comparePrice ? product.comparePrice.toString() : "",
           category: product.category?._id,
@@ -108,19 +110,22 @@ export default function EditProductPage({ params }) {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
 
+    // Convert empty strings from number inputs to null
+    const processedValue = type === "number" && value === "" ? null : value;
+
     if (name.includes(".")) {
       const [parent, child] = name.split(".")
       setFormData((prev) => ({
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: value,
+          [child]: type === "checkbox" ? checked : processedValue,
         },
       }))
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: type === "checkbox" ? checked : processedValue,
       }))
     }
   }
@@ -228,6 +233,15 @@ export default function EditProductPage({ params }) {
                   required
                   placeholder="Enter product description"
                   rows={4}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="specification">Specification</Label>
+                <RichTextEditor
+                  value={formData.specification}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, specification: value }))}
+                  placeholder="Enter product specifications..."
                 />
               </div>
 

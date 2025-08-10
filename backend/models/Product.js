@@ -160,6 +160,8 @@ const productSchema = new mongoose.Schema(
       description: { type: String },
       keywords: [{ type: String }],
     },
+    // New field for product specification
+    specification: { type: String },
     // Shipping information
     shipping: {
       free: {

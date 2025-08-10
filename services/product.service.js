@@ -163,6 +163,7 @@ export const createProduct = async (productData) => {
     formData.append("sku", productData.sku || "")
     formData.append("weight", productData.weight || "")
     formData.append("hasVariations", productData.hasVariations || false)
+    formData.append("specification", productData.specification || "")
 
     // Add dimensions
     if (productData.dimensions) {
@@ -260,6 +261,7 @@ export const updateProduct = async (id, productData) => {
     formData.append("sku", productData.sku || "")
     formData.append("weight", productData.weight || "")
     formData.append("hasVariations", productData.hasVariations || false)
+    formData.append("specification", productData.specification || "")
 
     // Add dimensions
     if (productData.dimensions) {
