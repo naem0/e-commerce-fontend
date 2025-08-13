@@ -184,7 +184,7 @@ export const updateCartItem = async (itemId, quantity) => {
       const localCart = getLocalCart()
 
       // Find item in cart
-      const itemIndex = localCart.items.findIndex((item) => item.id === itemId)
+      const itemIndex = localCart.items.findIndex((item) => item.product._id === itemId)
 
       if (itemIndex === -1) {
         throw {
@@ -247,7 +247,7 @@ export const removeFromCart = async (itemId) => {
       const localCart = getLocalCart()
 
       // Remove item from cart
-      localCart.items = localCart.items.filter((item) => item.id !== itemId)
+      localCart.items = localCart.items.filter((item) => item.product._id !== itemId)
 
       // Save to local storage
       saveLocalCart(localCart)
