@@ -108,27 +108,23 @@ export default function EditProductPage({ params }) {
   }, [id])
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
 
-    // Convert empty strings from number inputs to null
-    const processedValue = type === "number" && value === "" ? null : value;
+    const processedValue = type === "checkbox" ? checked : value;
 
-    if (name.includes(".")) {
-      const [parent, child] = name.split(".")
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: type === "checkbox" ? checked : processedValue,
-        },
-      }))
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : processedValue,
-      }))
-    }
-  }
+    setFormData((prev) => {
+      const newFormData = { ...prev };
+      const keys = name.split('.');
+      let temp = newFormData;
+
+      for (let i = 0; i < keys.length - 1; i++) {
+        temp = temp[keys[i]];
+      }
+
+      temp[keys[keys.length - 1]] = processedValue;
+      return newFormData;
+    });
+  };
 
   const handleNewImagesChange = (e) => {
     const files = Array.from(e.target.files)
