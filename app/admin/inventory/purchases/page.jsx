@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/components/ui/use-toast"
 import { Plus, Search, Eye, Edit, Trash2, Package, DollarSign, Calendar, User } from "lucide-react"
 import { formatPrice, formatDate } from "@/services/utils"
+import { productService } from "@/services/api"
+import { getPurchases, createPurchase } from "@/services/purchase.service"
 
 export default function PurchasesPage() {
   const router = useRouter()
@@ -49,23 +51,10 @@ export default function PurchasesPage() {
   const fetchPurchases = async () => {
     try {
       setLoading(true)
-      // Mock data - replace with actual API call
-      const mockPurchases = [
-        {
-          _id: "1",
-          invoiceNumber: "PUR-001",
-          supplier: { _id: "1", name: "ABC Suppliers", email: "abc@supplier.com" },
-          purchaseDate: new Date(),
-          items: [{ product: { _id: "1", name: "Product A" }, quantity: 100, unitCost: 10, totalCost: 1000 }],
-          totalAmount: 1000,
-          paidAmount: 1000,
-          paymentStatus: "paid",
-          paymentMethod: "bank_transfer",
-          status: "completed",
-          createdAt: new Date(),
-        },
-      ]
-      setPurchases(mockPurchases)
+      const response = await getPurchases()
+      if (response.success) {
+        setPurchases(response.purchases)
+      }
     } catch (error) {
       console.error("Error fetching purchases:", error)
       toast({
@@ -80,12 +69,10 @@ export default function PurchasesPage() {
 
   const fetchProducts = async () => {
     try {
-      // Mock data - replace with actual API call
-      const mockProducts = [
-        { _id: "1", name: "Product A", price: 15, stock: 50 },
-        { _id: "2", name: "Product B", price: 25, stock: 30 },
-      ]
-      setProducts(mockProducts)
+      const response = await productService.getProducts({ limit: 1000, status: "published" })
+      if (response.success) {
+        setProducts(response.products)
+      }
     } catch (error) {
       console.error("Error fetching products:", error)
     }
@@ -93,12 +80,11 @@ export default function PurchasesPage() {
 
   const fetchSuppliers = async () => {
     try {
-      // Mock data - replace with actual API call
-      const mockSuppliers = [
-        { _id: "1", name: "ABC Suppliers", email: "abc@supplier.com", phone: "01234567890" },
-        { _id: "2", name: "XYZ Trading", email: "xyz@trading.com", phone: "01987654321" },
-      ]
-      setSuppliers(mockSuppliers)
+      const response = await fetch("/api/suppliers")
+      if (response.ok) {
+        const data = await response.json()
+        setSuppliers(data.suppliers || [])
+      }
     } catch (error) {
       console.error("Error fetching suppliers:", error)
     }
@@ -162,33 +148,36 @@ export default function PurchasesPage() {
         return
       }
 
-      // Mock API call - replace with actual API
-      console.log("Creating purchase:", purchaseForm)
+      const response = await createPurchase(purchaseForm)
 
-      toast({
-        title: "Success",
-        description: "Purchase created successfully",
-      })
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: "Purchase created successfully",
+        })
 
-      setShowAddModal(false)
-      setPurchaseForm({
-        supplier: "",
-        invoiceNumber: "",
-        purchaseDate: new Date().toISOString().split("T")[0],
-        items: [{ product: "", quantity: "", unitCost: "", totalCost: "" }],
-        totalAmount: 0,
-        paidAmount: 0,
-        paymentStatus: "pending",
-        paymentMethod: "cash",
-        notes: "",
-      })
+        setShowAddModal(false)
+        setPurchaseForm({
+          supplier: "",
+          invoiceNumber: "",
+          purchaseDate: new Date().toISOString().split("T")[0],
+          items: [{ product: "", quantity: "", unitCost: "", totalCost: "" }],
+          totalAmount: 0,
+          paidAmount: 0,
+          paymentStatus: "pending",
+          paymentMethod: "cash",
+          notes: "",
+        })
 
-      fetchPurchases()
+        fetchPurchases()
+      } else {
+        throw new Error(response.message)
+      }
     } catch (error) {
       console.error("Error creating purchase:", error)
       toast({
         title: "Error",
-        description: "Failed to create purchase",
+        description: error.message || "Failed to create purchase",
         variant: "destructive",
       })
     }
@@ -223,7 +212,7 @@ export default function PurchasesPage() {
   const filteredPurchases = purchases.filter((purchase) => {
     const matchesSearch =
       purchase.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      purchase.supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
+      purchase.supplier?.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "all" || purchase.status === statusFilter
     return matchesSearch && matchesStatus
   })
@@ -267,7 +256,7 @@ export default function PurchasesPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Amount</p>
                 <p className="text-2xl font-bold">
-                  {formatPrice(purchases.reduce((sum, p) => sum + p.totalAmount, 0))}
+                  {formatPrice(purchases.reduce((sum, p) => sum + (p.totalAmount || 0), 0))}
                 </p>
               </div>
             </div>
@@ -355,10 +344,10 @@ export default function PurchasesPage() {
                 {filteredPurchases.map((purchase) => (
                   <TableRow key={purchase._id}>
                     <TableCell className="font-medium">{purchase.invoiceNumber}</TableCell>
-                    <TableCell>{purchase.supplier.name}</TableCell>
+                    <TableCell>{purchase.supplier?.name || "Unknown"}</TableCell>
                     <TableCell>{formatDate(purchase.purchaseDate)}</TableCell>
-                    <TableCell>{purchase.items.length} items</TableCell>
-                    <TableCell className="font-medium">{formatPrice(purchase.totalAmount)}</TableCell>
+                    <TableCell>{purchase.items?.length || 0} items</TableCell>
+                    <TableCell className="font-medium">{formatPrice(purchase.totalAmount || 0)}</TableCell>
                     <TableCell>
                       <Badge className={getPaymentStatusColor(purchase.paymentStatus)}>{purchase.paymentStatus}</Badge>
                     </TableCell>
@@ -593,7 +582,7 @@ export default function PurchasesPage() {
                 </div>
                 <div>
                   <Label>Supplier</Label>
-                  <p className="font-medium">{selectedPurchase.supplier.name}</p>
+                  <p className="font-medium">{selectedPurchase.supplier?.name || "Unknown"}</p>
                 </div>
                 <div>
                   <Label>Purchase Date</Label>
@@ -601,18 +590,18 @@ export default function PurchasesPage() {
                 </div>
                 <div>
                   <Label>Payment Method</Label>
-                  <p className="font-medium capitalize">{selectedPurchase.paymentMethod.replace("_", " ")}</p>
+                  <p className="font-medium capitalize">{selectedPurchase.paymentMethod?.replace("_", " ")}</p>
                 </div>
               </div>
 
               <div>
                 <Label>Items</Label>
                 <div className="mt-2 space-y-2">
-                  {selectedPurchase.items.map((item, index) => (
+                  {selectedPurchase.items?.map((item, index) => (
                     <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                      <span>{item.product.name}</span>
+                      <span>{item.product?.name || "Unknown Product"}</span>
                       <span>
-                        {item.quantity} × {formatPrice(item.unitCost)} = {formatPrice(item.totalCost)}
+                        {item.quantity} × {formatPrice(item.unitCost || 0)} = {formatPrice(item.totalCost || 0)}
                       </span>
                     </div>
                   ))}
@@ -622,7 +611,7 @@ export default function PurchasesPage() {
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center font-bold text-lg">
                   <span>Total Amount:</span>
-                  <span>{formatPrice(selectedPurchase.totalAmount)}</span>
+                  <span>{formatPrice(selectedPurchase.totalAmount || 0)}</span>
                 </div>
               </div>
             </div>
