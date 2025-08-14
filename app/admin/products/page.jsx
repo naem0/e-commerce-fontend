@@ -226,17 +226,17 @@ export default function ProductsPage() {
   return (
     <>
       <div className="flex-1 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Products</h2>
-          <Button onClick={() => router.push("/admin/products/create")}>
-            <Plus className="mr-2 h-4 w-4" /> Add Product
-          </Button>
-        </div>
-
         <Card>
           <CardHeader>
-            <CardTitle>Product Management</CardTitle>
-            <CardDescription>Manage your products, update status, or remove products.</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Product Management</CardTitle>
+                <CardDescription>Manage your products, update status, or remove products.</CardDescription>
+              </div>
+              <Button onClick={() => router.push("/admin/products/create")}>
+                <Plus className="mr-2 h-4 w-4" /> Add Product
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {/* Filters */}
@@ -335,8 +335,8 @@ export default function ProductsPage() {
                                 src="/placeholder.svg?height=48&width=48"
                                 alt={product.name}
                                 fill
-                              className="object-cover"
-                            />
+                                className="object-cover"
+                              />
                             )}
                           </div>
                         </TableCell>

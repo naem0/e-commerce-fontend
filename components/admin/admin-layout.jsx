@@ -66,6 +66,12 @@ export function AdminLayout({ children }) {
       current: isActive("/admin/inventory"),
     },
     {
+      name: "Suppliers",
+      href: "/admin/suppliers",
+      icon: Users,
+      current: isActive("/admin/suppliers"),
+    },
+    {
       name: "POS",
       href: "/admin/pos",
       icon: Barcode,

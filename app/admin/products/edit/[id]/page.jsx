@@ -281,7 +281,7 @@ export default function EditProductPage({ params }) {
                     value={formData.category}
                     onChange={handleChange}
                     required
-                    className="w-full border rounded-md px-3 py-2"
+                    className="w-full border rounded-md px-3 py-2 bg-background"
                   >
                     <option value="">Select Category</option>
                     {categories.map((category) => (
@@ -298,7 +298,7 @@ export default function EditProductPage({ params }) {
                     name="brand"
                     value={formData.brand}
                     onChange={handleChange}
-                    className="w-full border rounded-md px-3 py-2"
+                    className="w-full border rounded-md px-3 py-2 bg-background"
                   >
                     <option value="">Select Brand</option>
                     {brands.map((brand) => (
@@ -338,7 +338,7 @@ export default function EditProductPage({ params }) {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full border rounded-md px-3 py-2"
+                    className="w-full border rounded-md px-3 py-2 bg-background"
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>

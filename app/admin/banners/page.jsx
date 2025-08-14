@@ -241,7 +241,7 @@ export default function BannersPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="p-6 bg-background">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
@@ -259,7 +259,7 @@ export default function BannersPage() {
         </Alert>
       )}
 
-      <Tabs defaultValue="all" className="space-y-4" onValueChange={setActiveTab}>
+      <Tabs defaultValue="all" className="space-y-4 pt-3" onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="all">All Banners</TabsTrigger>
           <TabsTrigger value="active">Active</TabsTrigger>

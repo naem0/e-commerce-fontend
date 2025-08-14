@@ -9,10 +9,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { Badge } from "@/components/ui/badge"
-import { Search, Plus, Minus, Trash2, ShoppingCart, User, CreditCard, Calculator, Receipt, Package } from "lucide-react"
+import {
+  Search,
+  Plus,
+  Minus,
+  Trash2,
+  ShoppingCart,
+  User,
+  CreditCard,
+  Calculator,
+  Receipt,
+  Package,
+  Scan,
+} from "lucide-react"
 import { formatPrice } from "@/services/utils"
 import { productService } from "@/services/api"
 import { createSale } from "@/services/sale.service"
+import BarcodeScanner from "@/components/barcode-scanner"
 import Image from "next/image"
 
 export default function POSPage() {
@@ -30,6 +43,7 @@ export default function POSPage() {
   const [amountReceived, setAmountReceived] = useState(0)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [showReceiptModal, setShowReceiptModal] = useState(false)
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false)
   const [currentSale, setCurrentSale] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -44,6 +58,7 @@ export default function POSPage() {
       const matchesSearch =
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.barcode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.category?.name.toLowerCase().includes(searchTerm.toLowerCase())
 
       const matchesCategory = categoryFilter === "all" || product.category?._id === categoryFilter
@@ -88,6 +103,34 @@ export default function POSPage() {
       }
     } catch (error) {
       console.error("Error fetching categories:", error)
+    }
+  }
+
+  const handleBarcodeScanned = async (barcode) => {
+    try {
+      const response = await productService.getProductByBarcode(barcode)
+
+      if (response.success) {
+        const { product, variant } = response
+        addToCart(product, variant)
+        toast({
+          title: "Product Found",
+          description: `Added ${product.name} to cart`,
+        })
+      } else {
+        toast({
+          title: "Product Not Found",
+          description: "No product found with this barcode",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error scanning barcode:", error)
+      toast({
+        title: "Scan Error",
+        description: "Failed to scan barcode",
+        variant: "destructive",
+      })
     }
   }
 
@@ -140,6 +183,7 @@ export default function POSPage() {
         _id: product._id,
         name: product.name,
         sku: selectedVariant ? selectedVariant.sku : product.sku,
+        barcode: selectedVariant ? selectedVariant.barcode : product.barcode,
         price: productPrice,
         quantity: 1,
         stock: productStock,
@@ -296,14 +340,19 @@ export default function POSPage() {
 
           {/* Search and Category Filter */}
           <div className="space-y-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search products by name, SKU, or category..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+            <div className="flex space-x-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search by name, SKU, barcode, or category..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button onClick={() => setShowBarcodeScanner(true)} variant="outline" size="icon" title="Scan Barcode">
+                <Scan className="h-4 w-4" />
+              </Button>
             </div>
 
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
@@ -346,6 +395,7 @@ export default function POSPage() {
                       <div className="flex-1">
                         <h3 className="font-medium text-sm line-clamp-1">{product.name}</h3>
                         <p className="text-xs text-gray-500">SKU: {product.sku || "No SKU"}</p>
+                        {product.barcode && <p className="text-xs text-gray-500">Barcode: {product.barcode}</p>}
                         <p className="text-xs text-gray-500">Stock: {stock}</p>
                         <p className="font-bold text-primary">{formatPrice(price)}</p>
                         {product.hasVariations && (
@@ -368,6 +418,7 @@ export default function POSPage() {
                                 onClick={() => addToCart(product, variant)}
                                 disabled={variant.stock === 0}
                                 className="text-xs p-1 h-6"
+                                title={`${variant.options?.map((opt) => `${opt.type}: ${opt.value}`).join(", ")} - ${variant.barcode ? `Barcode: ${variant.barcode}` : "No barcode"}`}
                               >
                                 {variant.options?.map((opt) => opt.value).join(", ")}
                               </Button>
@@ -440,6 +491,7 @@ export default function POSPage() {
               <div className="text-center text-gray-500 py-8">
                 <Package className="mx-auto h-12 w-12 mb-2" />
                 <p>No items in cart</p>
+                <p className="text-sm">Scan barcode or add products manually</p>
               </div>
             ) : (
               <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -449,12 +501,14 @@ export default function POSPage() {
                       <p className="font-medium text-sm">{item.name}</p>
                       <p className="text-xs text-gray-500">
                         {formatPrice(item.price)} each
-                        {item.variant && (
-                          <span className="ml-2">
-                            ({item.variant.options?.map((opt) => `${opt.type}: ${opt.value}`).join(", ")})
-                          </span>
-                        )}
+                        {item.sku && <span className="ml-2">SKU: {item.sku}</span>}
+                        {item.barcode && <span className="ml-2">Barcode: {item.barcode}</span>}
                       </p>
+                      {item.variant && (
+                        <p className="text-xs text-gray-500">
+                          ({item.variant.options?.map((opt) => `${opt.type}: ${opt.value}`).join(", ")})
+                        </p>
+                      )}
                     </div>
                     <div className="flex items-center space-x-2">
                       <Button
@@ -538,6 +592,13 @@ export default function POSPage() {
           Checkout
         </Button>
       </div>
+
+      {/* Barcode Scanner Modal */}
+      <BarcodeScanner
+        isOpen={showBarcodeScanner}
+        onClose={() => setShowBarcodeScanner(false)}
+        onScan={handleBarcodeScanned}
+      />
 
       {/* Payment Modal */}
       <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>

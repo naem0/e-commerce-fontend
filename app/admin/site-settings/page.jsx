@@ -155,7 +155,7 @@ export default function SiteSettingsPage() {
   }
 
   return (
-    <div className="container mx-auto">
+    <div>
       <h1 className="text-3xl font-bold mb-8">Site Settings</h1>
 
       <form onSubmit={handleSubmit}>
