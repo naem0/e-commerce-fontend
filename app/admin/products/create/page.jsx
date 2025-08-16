@@ -32,6 +32,7 @@ export default function CreateProductPage() {
     featured: false,
     status: "draft",
     sku: "",
+    barcode: "", // Allow manual barcode input
     weight: "",
     dimensions: {
       length: "",
@@ -108,23 +109,23 @@ export default function CreateProductPage() {
   }, [])
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target
 
-    const processedValue = type === "checkbox" ? checked : value;
+    const processedValue = type === "checkbox" ? checked : value
 
     setFormData((prev) => {
-      const newFormData = { ...prev };
-      const keys = name.split('.');
-      let temp = newFormData;
+      const newFormData = { ...prev }
+      const keys = name.split(".")
+      let temp = newFormData
 
       for (let i = 0; i < keys.length - 1; i++) {
-        temp = temp[keys[i]];
+        temp = temp[keys[i]]
       }
 
-      temp[keys[keys.length - 1]] = processedValue;
-      return newFormData;
-    });
-  };
+      temp[keys[keys.length - 1]] = processedValue
+      return newFormData
+    })
+  }
 
   const handleImagesChange = (e) => {
     const files = Array.from(e.target.files)
@@ -381,7 +382,7 @@ export default function CreateProductPage() {
       }
 
       const response = await createProduct(productData)
-      
+
       if (!response.success) {
         throw new Error(response.message)
       }
@@ -980,6 +981,17 @@ export default function CreateProductPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
+                  <Label htmlFor="barcode">Barcode (Optional)</Label>
+                  <Input
+                    id="barcode"
+                    name="barcode"
+                    value={formData.barcode}
+                    onChange={handleChange}
+                    placeholder="Leave empty for auto-generation"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">If left empty, a barcode will be automatically generated</p>
+                </div>
+                <div>
                   <Label htmlFor="weight">Weight (kg)</Label>
                   <Input
                     id="weight"
@@ -992,43 +1004,43 @@ export default function CreateProductPage() {
                     placeholder="0.00"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <Label>Dimensions (cm)</Label>
-                  <div className="grid grid-cols-3 gap-2 mt-1">
-                    <div>
-                      <Input
-                        name="dimensions.length"
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        value={formData.dimensions.length}
-                        onChange={handleChange}
-                        placeholder="Length"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        name="dimensions.width"
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        value={formData.dimensions.width}
-                        onChange={handleChange}
-                        placeholder="Width"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        name="dimensions.height"
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        value={formData.dimensions.height}
-                        onChange={handleChange}
-                        placeholder="Height"
-                      />
-                    </div>
+              <div>
+                <Label>Dimensions (cm)</Label>
+                <div className="grid grid-cols-3 gap-2 mt-1">
+                  <div>
+                    <Input
+                      name="dimensions.length"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.dimensions.length}
+                      onChange={handleChange}
+                      placeholder="Length"
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      name="dimensions.width"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.dimensions.width}
+                      onChange={handleChange}
+                      placeholder="Width"
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      name="dimensions.height"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.dimensions.height}
+                      onChange={handleChange}
+                      placeholder="Height"
+                    />
                   </div>
                 </div>
               </div>

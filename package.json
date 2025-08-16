@@ -51,6 +51,7 @@
     "express": "latest",
     "fs": "latest",
     "input-otp": "1.4.1",
+    "jsbarcode": "^3.12.1",
     "jsonwebtoken": "latest",
     "lucide-react": "^0.454.0",
     "mongoose": "latest",

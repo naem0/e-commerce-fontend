@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { AlertCircle, ArrowLeft, Loader2, X } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { AlertCircle, ArrowLeft, Loader2, X, Printer } from "lucide-react"
 import { getProductById, updateProduct } from "@/services/product.service"
 import { getCategories } from "@/services/category.service"
 import { getBrands } from "@/services/brand.service"
 import RichTextEditor from "@/components/ui/rich-text-editor"
+import BarcodePrinter from "@/components/barcode-printer"
 
 export default function EditProductPage({ params }) {
   const router = useRouter()
@@ -28,6 +29,7 @@ export default function EditProductPage({ params }) {
     featured: false,
     status: "draft",
     sku: "",
+    barcode: "",
     weight: "",
     dimensions: {
       length: "",
@@ -43,6 +45,7 @@ export default function EditProductPage({ params }) {
   const [error, setError] = useState("")
   const [categories, setCategories] = useState([])
   const [brands, setBrands] = useState([])
+  const [barcodeDialogOpen, setBarcodeDialogOpen] = useState(false)
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -62,6 +65,7 @@ export default function EditProductPage({ params }) {
           featured: product.featured,
           status: product.status,
           sku: product.sku || "",
+          barcode: product.barcode || "",
           weight: product.weight ? product.weight.toString() : "",
           dimensions: {
             length: product.dimensions?.length ? product.dimensions.length.toString() : "",
@@ -109,23 +113,23 @@ export default function EditProductPage({ params }) {
   }, [id])
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target
 
-    const processedValue = type === "checkbox" ? checked : value;
+    const processedValue = type === "checkbox" ? checked : value
 
     setFormData((prev) => {
-      const newFormData = { ...prev };
-      const keys = name.split('.');
-      let temp = newFormData;
+      const newFormData = { ...prev }
+      const keys = name.split(".")
+      let temp = newFormData
 
       for (let i = 0; i < keys.length - 1; i++) {
-        temp = temp[keys[i]];
+        temp = temp[keys[i]]
       }
 
-      temp[keys[keys.length - 1]] = processedValue;
-      return newFormData;
-    });
-  };
+      temp[keys[keys.length - 1]] = processedValue
+      return newFormData
+    })
+  }
 
   const handleNewImagesChange = (e) => {
     const files = Array.from(e.target.files)
@@ -148,6 +152,28 @@ export default function EditProductPage({ params }) {
   const removeNewImage = (index) => {
     setNewImages((prevImages) => prevImages.filter((_, i) => i !== index))
     setNewImagesPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index))
+  }
+
+  const handlePrintBarcode = () => {
+    if (!formData.barcode) {
+      alert("Please add a barcode first")
+      return
+    }
+    setBarcodeDialogOpen(true)
+  }
+
+  const generateBarcode = () => {
+    // Generate a simple barcode based on timestamp and random number
+    const timestamp = Date.now().toString().slice(-8)
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, "0")
+    const generatedBarcode = `${timestamp}${random}`
+
+    setFormData((prev) => ({
+      ...prev,
+      barcode: generatedBarcode,
+    }))
   }
 
   const handleSubmit = async (e) => {
@@ -222,14 +248,10 @@ export default function EditProductPage({ params }) {
 
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
+                <RichTextEditor
                   value={formData.description}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter product description"
-                  rows={4}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
+                  placeholder="Enter product description..."
                 />
               </div>
 
@@ -328,6 +350,34 @@ export default function EditProductPage({ params }) {
                   <Label htmlFor="sku">SKU (Optional)</Label>
                   <Input id="sku" name="sku" value={formData.sku} onChange={handleChange} placeholder="SKU-123" />
                 </div>
+              </div>
+
+              {/* Barcode Section */}
+              <div>
+                <Label htmlFor="barcode">Barcode</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="barcode"
+                    name="barcode"
+                    value={formData.barcode}
+                    onChange={handleChange}
+                    placeholder="Enter barcode or generate automatically"
+                    className="flex-1"
+                  />
+                  <Button type="button" variant="outline" onClick={generateBarcode}>
+                    Generate
+                  </Button>
+                  {formData.barcode && (
+                    <Button type="button" variant="outline" onClick={handlePrintBarcode}>
+                      <Printer className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                {formData.barcode && (
+                  <div className="mt-2 p-2 bg-gray-50 rounded border text-center">
+                    <div className="font-mono text-lg font-bold">{formData.barcode}</div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -526,6 +576,22 @@ export default function EditProductPage({ params }) {
           </div>
         </form>
       </div>
+
+      {/* Barcode Print Dialog */}
+      <Dialog open={barcodeDialogOpen} onOpenChange={setBarcodeDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Print Barcode - {formData.name}</DialogTitle>
+          </DialogHeader>
+          <BarcodePrinter
+            product={{
+              ...formData,
+              price: Number.parseFloat(formData.price) || 0,
+            }}
+            onClose={() => setBarcodeDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

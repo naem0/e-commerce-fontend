@@ -10,11 +10,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Plus, Search, Eye, Edit, Trash2, Package, DollarSign, Calendar, User } from "lucide-react"
 import { formatPrice, formatDate } from "@/services/utils"
 import { productService } from "@/services/api"
 import { getPurchases, createPurchase } from "@/services/purchase.service"
+import { getSuppliers } from "@/services/supplier.service"
 
 export default function PurchasesPage() {
   const router = useRouter()
@@ -80,10 +81,9 @@ export default function PurchasesPage() {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await fetch("/api/suppliers")
-      if (response.ok) {
-        const data = await response.json()
-        setSuppliers(data.suppliers || [])
+      const response = await getSuppliers()
+      if (response.success) {
+        setSuppliers(response.data || [])
       }
     } catch (error) {
       console.error("Error fetching suppliers:", error)
