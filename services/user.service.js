@@ -31,7 +31,7 @@ const userAPI = createAPI("users")
 // Get all users (admin only)
 export const getUsers = async (params = {}) => {
   try {
-    const response = await userAPI.get("/", { params })
+    const response = await userAPI.get(`/${ params }`)
     return response
   } catch (error) {
     throw handleError(error)
@@ -170,5 +170,44 @@ export const getUserAddresses = async () => {
       message: error.message,
       addresses: [],
     }
+  }
+}
+// Assign role to user
+export const assignUserRole = async (userId, role) => {
+  try {
+    const response = await userAPI.put(`/${userId}/role`, { role })
+    return response
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Get user roles
+export const getUserRoles = async (userId) => {
+  try {
+    const response = await userAPI.get(`/${userId}/roles`)
+    return response
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Update user permissions
+export const updateUserPermissions = async (userId, permissions) => {
+  try {
+    const response = await userAPI.put(`/${userId}/permissions`, { permissions })
+    return response
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Bulk assign roles
+export const bulkAssignRoles = async (userIds, role) => {
+  try {
+    const response = await userAPI.post("/bulk-assign-roles", { userIds, role })
+    return response
+  } catch (error) {
+    throw handleError(error)
   }
 }

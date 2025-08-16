@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ShoppingBag, Users, Package, Settings, BarChart, LogOut, Menu, X, Tag, Tags, GalleryHorizontal, Layers, MonitorCog, Barcode } from "lucide-react"
+import { LayoutDashboard, ShoppingBag, Users, Package, Settings, BarChart, LogOut, Menu, X, Tag, Tags, GalleryHorizontal, Layers, MonitorCog, Barcode, Shield, ShieldPlus } from "lucide-react"
 
 export function AdminLayout({ children }) {
   const pathname = usePathname()
@@ -82,6 +82,12 @@ export function AdminLayout({ children }) {
       href: "/admin/users",
       icon: Users,
       current: isActive("/admin/users"),
+    },
+    {
+      name: "Roles",
+      href: "/admin/roles",
+      icon: ShieldPlus,
+      current: isActive("/admin/roles"),
     },
     {
       name: "Banners",
