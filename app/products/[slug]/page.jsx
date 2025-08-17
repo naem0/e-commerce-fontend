@@ -4,7 +4,7 @@ import { getProductBySlug } from "@/services/product.service";
 // SEO metadata
 export async function generateMetadata({ params }) {
   try {
-    const response = await getProductBySlug(params.slug);
+    const response = await getProductBySlug(params?.slug);
     const product = response.product;
 
     return {
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   try {
-    const response = await getProductBySlug(params.slug);
+    const response = await getProductBySlug(params?.slug);
     const product = response.product;
 
     return <ProductPageClient product={product} />;

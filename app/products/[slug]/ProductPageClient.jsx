@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react"
-import { getProductBySlug } from "@/services/product.service"
 import { formatPrice, getErrorMessage } from "@/services/utils"
 
 export default function ProductPageClient({ product }) {
@@ -25,38 +24,6 @@ export default function ProductPageClient({ product }) {
   const [addingToCart, setAddingToCart] = useState(false)
   const [selectedVariant, setSelectedVariant] = useState(null)
   const [selectedOptions, setSelectedOptions] = useState({})
-
-  // useEffect(() => {
-  //   const fetchProduct = async () => {
-  //     try {
-  //       setLoading(true)
-  //       const response = await getProductBySlug(slug)
-  //       setProduct(response.product)
-
-  //       // Set default variant if product has variations
-  //       if (response.product?.hasVariations && response.product.variants?.length > 0) {
-  //         const defaultVariant = response.product.variants.find((v) => v.isDefault) || response.product.variants[0]
-  //         setSelectedVariant(defaultVariant)
-
-  //         // Set default options
-  //         const defaultOptions = {}
-  //         defaultVariant.options.forEach((option) => {
-  //           defaultOptions[option.type] = option.value
-  //         })
-  //         setSelectedOptions(defaultOptions)
-  //       }
-  //     } catch (err) {
-  //       console.error("Error fetching product:", err)
-  //       setError(getErrorMessage(err))
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-
-  //   if (slug) {
-  //     fetchProduct()
-  //   }
-  // }, [slug])
 
   const handleQuantityChange = (amount) => {
     const maxStock = selectedVariant ? selectedVariant.stock : product?.stock || 0
@@ -372,7 +339,7 @@ export default function ProductPageClient({ product }) {
               <Button
                 variant="default"
                 onClick={handleAddToCart}
-                disabled={currentStock <= 0 || addingToCart}
+                disabled={currentStock <= 0 || addingToCart || (product.hasVariations && !selectedVariant)}
               >
                 {addingToCart ? (
                   <>
@@ -389,7 +356,7 @@ export default function ProductPageClient({ product }) {
               <Button
                 variant="default"
                 onClick={handleBuyNow}
-                disabled={currentStock <= 0 || addingToCart}
+                disabled={currentStock <= 0 || addingToCart || (product.hasVariations && !selectedVariant)}
               >
                 {addingToCart ? (
                   <>

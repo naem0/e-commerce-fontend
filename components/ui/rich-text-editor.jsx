@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -17,23 +17,20 @@ import {
 } from "lucide-react"
 
 export default function RichTextEditor({ value = "", onChange, placeholder = "Enter description..." }) {
-  const [content, setContent] = useState(value)
   const editorRef = useRef(null)
 
   useEffect(() => {
-    if (value !== content) {
-      setContent(value)
-      if (editorRef.current) {
-        editorRef.current.innerHTML = value
-      }
+    if (editorRef.current && value !== editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = value
     }
   }, [value])
 
   const handleContentChange = () => {
     if (editorRef.current) {
       const newContent = editorRef.current.innerHTML
-      setContent(newContent)
-      onChange?.(newContent)
+      if (onChange) {
+        onChange(newContent)
+      }
     }
   }
 
@@ -199,7 +196,6 @@ export default function RichTextEditor({ value = "", onChange, placeholder = "En
           onBlur={handleContentChange}
           className="min-h-[200px] p-4 focus:outline-none"
           style={{ wordWrap: "break-word" }}
-          dangerouslySetInnerHTML={{ __html: content }}
           data-placeholder={placeholder}
         />
       </CardContent>

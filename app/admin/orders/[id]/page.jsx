@@ -381,6 +381,13 @@ export default function AdminOrderDetailsPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-medium">{item.name}</h3>
+                      {item.variation && item.variation.options && (
+                        <p className="text-xs text-muted-foreground">
+                          {item.variation.options
+                            .map((option) => `${option.type}: ${option.value}`)
+                            .join(", ")}
+                        </p>
+                      )}
                       <p className="text-sm text-gray-600">SKU: {item.product?.sku || "N/A"}</p>
                       <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                       <p className="text-sm text-gray-600">Unit Price: {formatPrice(item.price)}</p>

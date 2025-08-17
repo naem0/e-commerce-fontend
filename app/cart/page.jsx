@@ -198,7 +198,7 @@ export default function CartPage() {
                           </Button>
                         </div>
                         <div className="ml-auto font-medium">
-                          {formatPrice((item.product.salePrice || item.product.price) * item.quantity)}
+                          {formatPrice((item.price || item.product.price) * item.quantity)}
                         </div>
                       </div>
                     </div>

@@ -53,7 +53,7 @@ export default async function RootLayout({ children }) {
                   </div>
                   <Toaster />
                   <WhatsAppButton />
-                  <Chatbot user={user} /> {/* Chatbot UI এখানে যোগ */}
+                  {/* <Chatbot user={user} /> */}
                 </WishlistProvider>
               </CartProvider>
             </SiteSettingsProvider>
