@@ -373,7 +373,7 @@ export default function AdminOrderDetailsPage() {
                   <div key={index} className="flex items-center space-x-4 p-4 border rounded-lg">
                     <div className="relative h-16 w-16 flex-shrink-0">
                       <Image
-                        src={item.product?.images?.[0] || "/placeholder.svg?height=64&width=64"}
+                        src={item.variation?.image ? process.env.NEXT_PUBLIC_API_URL + item.variation.image : (item.product?.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=64&width=64")}
                         alt={item.name}
                         fill
                         className="object-cover rounded"

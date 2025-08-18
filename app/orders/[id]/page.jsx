@@ -265,9 +265,9 @@ export default function OrderDetailsPage() {
                     <div className="relative h-16 w-16 flex-shrink-0">
                       <Image
                         src={
-                          item.product?.images?.[0]
+                          item.variation?.image ? process.env.NEXT_PUBLIC_API_URL + item.variation.image : (item.product?.images?.[0]
                             ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0]
-                            : "/placeholder.svg?height=64&width=64"
+                            : "/placeholder.svg?height=64&width=64")
                         }
                         alt={item.name}
                         fill
@@ -276,6 +276,15 @@ export default function OrderDetailsPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-medium">{item.name}</h3>
+                      {item.variation && (
+                        <div className="text-sm text-gray-500">
+                          {item.variation.options.map((opt) => (
+                            <span key={opt.type} className="mr-2">
+                              {opt.type}: {opt.value}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       <p className="text-sm text-gray-600">
                         Quantity: {item.quantity}
                       </p>
