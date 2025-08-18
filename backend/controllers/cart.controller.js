@@ -167,8 +167,7 @@ exports.addToCart = async (req, res) => {
 exports.updateCartItem = async (req, res) => {
   try {
     const userId = req.user.id
-    const { itemId } = req.params
-    const { quantity } = req.body
+    const { productId, quantity, variationId } = req.body
 
     // Validate quantity
     if (!Number.isInteger(quantity) || quantity < 1) {
@@ -188,13 +187,20 @@ exports.updateCartItem = async (req, res) => {
     }
 
     // Find item in cart
-    const item = cart.items.id(itemId)
-    if (!item) {
+    const itemIndex = cart.items.findIndex(
+      (item) =>
+        item.product.toString() === productId &&
+        (item.variation ? item.variation._id.toString() : null) === variationId
+    )
+
+    if (itemIndex === -1) {
       return res.status(404).json({
         success: false,
         message: "Item not found in cart",
       })
     }
+
+    const item = cart.items[itemIndex]
 
     // Check if product is in stock
     const product = await Product.findById(item.product)
@@ -205,7 +211,15 @@ exports.updateCartItem = async (req, res) => {
       })
     }
 
-    if (product.stock < quantity) {
+    let stock = product.stock
+    if (variationId) {
+      const variation = product.variants.id(variationId)
+      if (variation) {
+        stock = variation.stock
+      }
+    }
+
+    if (stock < quantity) {
       return res.status(400).json({
         success: false,
         message: "Not enough stock available",
@@ -221,18 +235,11 @@ exports.updateCartItem = async (req, res) => {
     // Populate product details
     await cart.populate({
       path: "items.product",
-      select: "name price salePrice images stock",
+      select: "name price salePrice images stock variants",
     })
 
     // Calculate totals
-    let subtotal = 0
-    let totalItems = 0
-
-    cart.items.forEach((item) => {
-      const price = item.product.salePrice || item.product.price
-      subtotal += price * item.quantity
-      totalItems += item.quantity
-    })
+    const totals = await cart.calculateTotals()
 
     return res.status(200).json({
       success: true,
@@ -240,9 +247,9 @@ exports.updateCartItem = async (req, res) => {
       cart: {
         _id: cart._id,
         items: cart.items,
-        subtotal,
-        total: subtotal,
-        totalItems,
+        subtotal: totals.subtotal,
+        total: totals.total,
+        totalItems: totals.totalItems,
       },
     })
   } catch (error) {
@@ -259,7 +266,7 @@ exports.updateCartItem = async (req, res) => {
 exports.removeFromCart = async (req, res) => {
   try {
     const userId = req.user.id
-    const { itemId } = req.params
+    const { productId, variationId } = req.body
 
     // Find cart
     const cart = await Cart.findOne({ user: userId })
@@ -270,8 +277,22 @@ exports.removeFromCart = async (req, res) => {
       })
     }
 
+    // Find item index in cart
+    const itemIndex = cart.items.findIndex(
+      (item) =>
+        item.product.toString() === productId &&
+        (item.variation ? item.variation._id.toString() : null) === variationId
+    )
+
+    if (itemIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found in cart",
+      })
+    }
+
     // Remove item from cart
-    cart.items = cart.items.filter((item) => item._id.toString() !== itemId)
+    cart.items.splice(itemIndex, 1)
 
     // Save cart
     await cart.save()
@@ -279,18 +300,11 @@ exports.removeFromCart = async (req, res) => {
     // Populate product details
     await cart.populate({
       path: "items.product",
-      select: "name price salePrice images stock",
+      select: "name price salePrice images stock variants",
     })
 
     // Calculate totals
-    let subtotal = 0
-    let totalItems = 0
-
-    cart.items.forEach((item) => {
-      const price = item.product.salePrice || item.product.price
-      subtotal += price * item.quantity
-      totalItems += item.quantity
-    })
+    const totals = await cart.calculateTotals()
 
     return res.status(200).json({
       success: true,
@@ -298,9 +312,9 @@ exports.removeFromCart = async (req, res) => {
       cart: {
         _id: cart._id,
         items: cart.items,
-        subtotal,
-        total: subtotal,
-        totalItems,
+        subtotal: totals.subtotal,
+        total: totals.total,
+        totalItems: totals.totalItems,
       },
     })
   } catch (error) {
@@ -388,11 +402,13 @@ exports.syncCart = async (req, res) => {
         continue
       }
 
+      const variationId = variation ? variation._id : null
+
       // Check if product already exists in cart
       const existingItemIndex = cart.items.findIndex(
         (cartItem) =>
           cartItem.product.toString() === product._id &&
-          JSON.stringify(cartItem.variation) === JSON.stringify(variation),
+          (cartItem.variation ? cartItem.variation._id.toString() : null) === variationId
       )
 
       if (existingItemIndex !== -1) {
@@ -418,14 +434,7 @@ exports.syncCart = async (req, res) => {
     })
 
     // Calculate totals
-    let subtotal = 0
-    let totalItems = 0
-
-    cart.items.forEach((item) => {
-      const price = item.product.salePrice || item.product.price
-      subtotal += price * item.quantity
-      totalItems += item.quantity
-    })
+    const totals = await cart.calculateTotals()
 
     return res.status(200).json({
       success: true,
@@ -433,9 +442,9 @@ exports.syncCart = async (req, res) => {
       cart: {
         _id: cart._id,
         items: cart.items,
-        subtotal,
-        total: subtotal,
-        totalItems,
+        subtotal: totals.subtotal,
+        total: totals.total,
+        totalItems: totals.totalItems,
       },
     })
   } catch (error) {

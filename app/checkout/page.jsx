@@ -21,7 +21,7 @@ import { getUserAddresses } from "@/services/user.service"
 export default function CheckoutPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
-  const { cart, clearCart } = useCart()
+  const { cart, clearCart, getCartTotal } = useCart()
   const { toast } = useToast()
 
   const [loading, setLoading] = useState(false)
@@ -126,10 +126,7 @@ export default function CheckoutPage() {
   }
 
   const calculateTotals = () => {
-    const subtotal = cart.items.reduce((sum, item) => {
-      const price = item.product?.salePrice || item.product?.price || item.price || 0
-      return sum + price * item.quantity
-    }, 0)
+    const subtotal = getCartTotal()
     const tax = subtotal * 0.05 // 5% tax
     const shipping = subtotal > 1000 ? 0 : 60 // Free shipping over 1000 BDT
     const total = subtotal + tax + shipping
@@ -205,19 +202,16 @@ export default function CheckoutPage() {
 
       // Prepare order items with proper product IDs
       const orderItems = cart.items.map((item) => {
-        // Get product ID from different possible sources
-        const productId = item.productId || item.product?._id || item.product?.id || item.id
-
-        if (!productId) {
-          throw new Error(`Product ID missing for item: ${item.product?.name || item.name || "Unknown product"}`)
-        }
+        const price = item.variation ? item.variation.price : (item.product.salePrice || item.product.price)
+        const image = item.variation?.image ? process.env.NEXT_PUBLIC_API_URL + item.variation.image : (item.product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=96&width=96")
 
         return {
-          product: productId,
-          name: item.product?.name || item.name || "Unknown Product",
-          price: item.product?.salePrice || item.product?.price || item.price || 0,
+          product: item.product._id,
+          name: item.product.name,
+          price: price,
           quantity: item.quantity,
-          image: item.product?.images?.[0] || item.image || "",
+          image: image,
+          variation: item.variation,
         }
       })
 
@@ -506,19 +500,29 @@ export default function CheckoutPage() {
             <CardContent className="space-y-4">
               {/* Cart Items */}
               <div className="space-y-2">
-                {cart.items.map((item, index) => (
+                {cart.items.map((item, index) => {
+                  const price = item.variation ? item.variation.price : (item.product.salePrice || item.product.price)
+                  return (
                   <div
                     key={`${item?.product?._id || item?.productId || index}-${item.product?.selectedVariant || "default"}`}
                     className="flex justify-between text-sm"
                   >
-                    <span>
-                      {item.product?.name || item.name || "Unknown Product"} × {item.quantity}
-                    </span>
-                    <span>
-                      {formatPrice((item.product?.salePrice || item.product?.price || item.price || 0) * item.quantity)}
+                    <div className="flex-grow pr-2">
+                      <span className="font-medium">{item.product?.name || item.name || "Unknown Product"}</span>
+                      <span className="text-muted-foreground"> × {item.quantity}</span>
+                      {item.variation && (
+                            <div className="text-xs text-muted-foreground">
+                              {item.variation.options.map(opt => (
+                                <span key={opt.type} className="mr-2">{opt.type}: {opt.value}</span>
+                              ))}
+                            </div>
+                          )}
+                    </div>
+                    <span className="font-medium">
+                      {formatPrice(price * item.quantity)}
                     </span>
                   </div>
-                ))}
+                )})}
               </div>
 
               <hr />

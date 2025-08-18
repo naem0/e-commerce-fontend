@@ -1,10 +1,42 @@
-import axios from "axios"
-import { getAuthHeader } from "./utils"
+import { getSession } from "next-auth/react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 // Local storage key for cart
 const CART_STORAGE_KEY = "e-commerce-cart"
+
+const getAuthHeaders = async (isFormData = false) => {
+  try {
+    const session = await getSession();
+
+    console.log(session?.accessToken)
+
+    let token = null
+
+    if (session?.accessToken) {
+      token = session.accessToken
+    } else if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken")
+    }
+
+    const headers = {}
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`
+    }
+
+    // Don't set Content-Type for FormData, let browser set it
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json"
+    }
+
+    console.log(headers)
+
+    return headers
+  } catch (error) {
+    return isFormData ? {} : { "Content-Type": "application/json" }
+  }
+}
 
 // Get cart from local storage
 const getLocalCart = () => {
@@ -24,39 +56,15 @@ const saveLocalCart = (cart) => {
 export const getCart = async () => {
   try {
     // Try to get authenticated cart
-    const authHeader = getAuthHeader()
-
-    if (authHeader) {
-      const response = await axios.get(`${API_URL}/api/cart`, {
-        headers: {
-          ...authHeader,
-        },
+    const headers = await getAuthHeaders()
+      const response = await fetch(`${API_URL}/api/cart`, {
+        headers,
+        method: "GET",
       })
-      return response.data
-    } else {
-      // Return local cart if not authenticated
-      const localCart = getLocalCart()
-
-      // Calculate totals
-      let subtotal = 0
-      let totalItems = 0
-
-      localCart.items.forEach((item) => {
-        const price = item.product.salePrice || item.product.price
-        subtotal += price * item.quantity
-        totalItems += item.quantity
-      })
-
-      return {
-        success: true,
-        cart: {
-          items: localCart.items,
-          subtotal,
-          total: subtotal,
-          totalItems,
-        },
+      if (!response.ok) {
+        throw new Error("Failed to fetch cart")
       }
-    }
+      return await response.json()
   } catch (error) {
     console.error("Error getting cart:", error)
 
@@ -88,196 +96,75 @@ export const getCart = async () => {
 // Add item to cart
 export const addToCart = async (productId, quantity = 1, variation = null) => {
   try {
-    const authHeader = getAuthHeader()
+    const headers = await getAuthHeaders()
 
-    if (authHeader) {
       // Add to authenticated cart
-      const response = await axios.post(
-        `${API_URL}/api/cart/items`,
-        { productId, quantity, variation },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader,
-          },
-        },
-      )
-      return response.data
-    } else {
-      // Add to local cart
-      const localCart = getLocalCart()
-
-      // Get product details
-      const productResponse = await axios.get(`${API_URL}/api/products/${productId}`)
-      const product = productResponse.data.product
-
-      // Check if product already exists in cart
-      const existingItemIndex = localCart.items.findIndex(
-        (item) => item.product._id === productId && JSON.stringify(item.variation) === JSON.stringify(variation),
-      )
-
-      if (existingItemIndex !== -1) {
-        // Update quantity if product exists
-        localCart.items[existingItemIndex].quantity += quantity
-      } else {
-        // Add new item if product doesn't exist
-        localCart.items.push({
-          product,
-          quantity,
-          variation,
-        })
-      }
-
-      // Save to local storage
-      saveLocalCart(localCart)
-
-      // Calculate totals
-      let subtotal = 0
-      let totalItems = 0
-
-      localCart.items.forEach((item) => {
-        const price = item.product.salePrice || item.product.price
-        subtotal += price * item.quantity
-        totalItems += item.quantity
+      const response = await fetch(`${API_URL}/api/cart/items`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ productId, quantity, variation }),
       })
-
-      return {
-        success: true,
-        message: "Item added to cart",
-        cart: {
-          items: localCart.items,
-          subtotal,
-          total: subtotal,
-          totalItems,
-        },
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || "Failed to add to cart")
       }
-    }
+      return await response.json()
   } catch (error) {
     console.error("Error adding to cart:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to add item to cart",
+      message: error.message || "Failed to add item to cart",
     }
   }
 }
 
 // Update cart item quantity
-export const updateCartItem = async (itemId, quantity) => {
+export const updateCartItem = async (productId, quantity, variationId) => {
   try {
-    const authHeader = getAuthHeader()
+    const headers = await getAuthHeaders()
 
-    if (authHeader) {
       // Update authenticated cart
-      const response = await axios.put(
-        `${API_URL}/api/cart/items/${itemId}`,
-        { quantity },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader,
-          },
-        },
-      )
-      return response.data
-    } else {
-      // Update local cart
-      const localCart = getLocalCart()
-
-      // Find item in cart
-      const itemIndex = localCart.items.findIndex((item) => item.id === itemId)
-
-      if (itemIndex === -1) {
-        throw {
-          success: false,
-          message: "Item not found in cart",
-        }
-      }
-
-      // Update quantity
-      localCart.items[itemIndex].quantity = quantity
-
-      // Save to local storage
-      saveLocalCart(localCart)
-
-      // Calculate totals
-      let subtotal = 0
-      let totalItems = 0
-
-      localCart.items.forEach((item) => {
-        const price = item.product.salePrice || item.product.price
-        subtotal += price * item.quantity
-        totalItems += item.quantity
+      const response = await fetch(`${API_URL}/api/cart/items`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ productId, quantity, variationId }),
       })
-
-      return {
-        success: true,
-        message: "Cart updated",
-        cart: {
-          items: localCart.items,
-          subtotal,
-          total: subtotal,
-          totalItems,
-        },
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || "Failed to update cart")
       }
-    }
+      return await response.json()
+
   } catch (error) {
     console.error("Error updating cart:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to update cart",
+      message: error.message || "Failed to update cart",
     }
   }
 }
 
 // Remove item from cart
-export const removeFromCart = async (itemId) => {
+export const removeFromCart = async (productId, variationId) => {
   try {
-    const authHeader = getAuthHeader()
+    const headers = await getAuthHeaders()
 
-    if (authHeader) {
       // Remove from authenticated cart
-      const response = await axios.delete(`${API_URL}/api/cart/items/${itemId}`, {
-        headers: {
-          ...authHeader,
-        },
+      const response = await fetch(`${API_URL}/api/cart/items`, {
+        method: "DELETE",
+        headers,
+        body: JSON.stringify({ productId, variationId }),
       })
-      return response.data
-    } else {
-      // Remove from local cart
-      const localCart = getLocalCart()
-
-      // Remove item from cart
-      localCart.items = localCart.items.filter((item) => item.id !== itemId)
-
-      // Save to local storage
-      saveLocalCart(localCart)
-
-      // Calculate totals
-      let subtotal = 0
-      let totalItems = 0
-
-      localCart.items.forEach((item) => {
-        const price = item.product.salePrice || item.product.price
-        subtotal += price * item.quantity
-        totalItems += item.quantity
-      })
-
-      return {
-        success: true,
-        message: "Item removed from cart",
-        cart: {
-          items: localCart.items,
-          subtotal,
-          total: subtotal,
-          totalItems,
-        },
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || "Failed to remove item from cart")
       }
-    }
+      return await response.json()
   } catch (error) {
     console.error("Error removing from cart:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to remove item from cart",
+      message: error.message || "Failed to remove item from cart",
     }
   }
 }
@@ -285,53 +172,31 @@ export const removeFromCart = async (itemId) => {
 // Clear cart
 export const clearCart = async () => {
   try {
-    const authHeader = getAuthHeader()
+    const headers = await getAuthHeaders()
 
-    if (authHeader) {
       // Clear authenticated cart
-      const response = await axios.delete(`${API_URL}/api/cart`, {
-        headers: {
-          ...authHeader,
-        },
+      const response = await fetch(`${API_URL}/api/cart`, {
+        method: "DELETE",
+        headers,
       })
-      return response.data
-    } else {
-      // Clear local cart
-      saveLocalCart({ items: [] })
-
-      return {
-        success: true,
-        message: "Cart cleared",
-        cart: {
-          items: [],
-          subtotal: 0,
-          total: 0,
-          totalItems: 0,
-        },
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || "Failed to clear cart")
       }
-    }
+      return await response.json()
   } catch (error) {
     console.error("Error clearing cart:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to clear cart",
+      message: error.message || "Failed to clear cart",
     }
   }
 }
 
 // Sync local cart with server
-export const syncCart = async () => {
+export const syncCart = async (localCart) => {
   try {
-    const authHeader = getAuthHeader()
-
-    if (!authHeader) {
-      return {
-        success: false,
-        message: "User not authenticated",
-      }
-    }
-
-    const localCart = getLocalCart()
+    const headers = await getAuthHeaders()
 
     if (localCart.items.length === 0) {
       return {
@@ -340,26 +205,26 @@ export const syncCart = async () => {
       }
     }
 
-    const response = await axios.post(
-      `${API_URL}/api/cart/sync`,
-      { items: localCart.items },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
-      },
-    )
+    const response = await fetch(`${API_URL}/api/cart/sync`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ items: localCart.items }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to sync cart")
+    }
 
     // Clear local cart after sync
     saveLocalCart({ items: [] })
 
-    return response.data
+    return await response.json()
   } catch (error) {
     console.error("Error syncing cart:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to sync cart",
+      message: error.message || "Failed to sync cart",
     }
   }
 }

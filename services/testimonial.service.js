@@ -1,17 +1,31 @@
-import axios from "axios"
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+const getAuthHeaders = () => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+  const headers = {
+    "Content-Type": "application/json",
+  }
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`
+  }
+  return headers
+}
 
 // Get all testimonials
 export const getTestimonials = async (params = {}) => {
   try {
-    const response = await axios.get(`${API_URL}/api/testimonials`, { params })
-    return response.data
+    const query = new URLSearchParams(params).toString()
+    const response = await fetch(`${API_URL}/api/testimonials?${query}`)
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to fetch testimonials")
+    }
+    return await response.json()
   } catch (error) {
     console.error("Get testimonials error:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to fetch testimonials",
+      message: error.message || "Failed to fetch testimonials",
     }
   }
 }
@@ -19,15 +33,19 @@ export const getTestimonials = async (params = {}) => {
 // Get featured testimonials
 export const getFeaturedTestimonials = async (limit = 6) => {
   try {
-    const response = await axios.get(`${API_URL}/api/testimonials`, {
-      params: { featured: true, limit },
-    })
-    return response.data
+    const response = await fetch(
+      `${API_URL}/api/testimonials?featured=true&limit=${limit}`
+    )
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to fetch featured testimonials")
+    }
+    return await response.json()
   } catch (error) {
     console.error("Get featured testimonials error:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to fetch featured testimonials",
+      message: error.message || "Failed to fetch featured testimonials",
     }
   }
 }
@@ -35,13 +53,17 @@ export const getFeaturedTestimonials = async (limit = 6) => {
 // Get single testimonial
 export const getTestimonialById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/api/testimonials/${id}`)
-    return response.data
+    const response = await fetch(`${API_URL}/api/testimonials/${id}`)
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to fetch testimonial")
+    }
+    return await response.json()
   } catch (error) {
     console.error("Get testimonial error:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to fetch testimonial",
+      message: error.message || "Failed to fetch testimonial",
     }
   }
 }
@@ -49,21 +71,22 @@ export const getTestimonialById = async (id) => {
 // Create testimonial (admin only)
 export const createTestimonial = async (testimonialData) => {
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-
-    const response = await axios.post(`${API_URL}/api/testimonials`, testimonialData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+    const headers = getAuthHeaders()
+    const response = await fetch(`${API_URL}/api/testimonials`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(testimonialData),
     })
-
-    return response.data
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to create testimonial")
+    }
+    return await response.json()
   } catch (error) {
     console.error("Create testimonial error:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to create testimonial",
+      message: error.message || "Failed to create testimonial",
     }
   }
 }
@@ -71,21 +94,22 @@ export const createTestimonial = async (testimonialData) => {
 // Update testimonial (admin only)
 export const updateTestimonial = async (id, testimonialData) => {
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-
-    const response = await axios.put(`${API_URL}/api/testimonials/${id}`, testimonialData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+    const headers = getAuthHeaders()
+    const response = await fetch(`${API_URL}/api/testimonials/${id}`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(testimonialData),
     })
-
-    return response.data
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to update testimonial")
+    }
+    return await response.json()
   } catch (error) {
     console.error("Update testimonial error:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to update testimonial",
+      message: error.message || "Failed to update testimonial",
     }
   }
 }
@@ -93,20 +117,21 @@ export const updateTestimonial = async (id, testimonialData) => {
 // Delete testimonial (admin only)
 export const deleteTestimonial = async (id) => {
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-
-    const response = await axios.delete(`${API_URL}/api/testimonials/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const headers = getAuthHeaders()
+    const response = await fetch(`${API_URL}/api/testimonials/${id}`, {
+      method: "DELETE",
+      headers,
     })
-
-    return response.data
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to delete testimonial")
+    }
+    return await response.json()
   } catch (error) {
     console.error("Delete testimonial error:", error)
     throw {
       success: false,
-      message: error.response?.data?.message || "Failed to delete testimonial",
+      message: error.message || "Failed to delete testimonial",
     }
   }
 }

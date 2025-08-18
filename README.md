@@ -163,7 +163,7 @@ This e-commerce solution is designed to provide businesses with a complete onlin
 - **Charts:** Chart.js / Recharts
 - **Icons:** Lucide React
 - **Theme:** Next-themes
-- **HTTP Client:** Axios
+- **HTTP Client:** Fetch API
 - **Notifications:** React Hot Toast
 - **Date Handling:** Date-fns
 

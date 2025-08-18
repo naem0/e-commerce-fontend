@@ -15,7 +15,7 @@ import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react"
 export default function CartPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { cart, removeFromCart, updateCartItemQuantity } = useCart()
+  const { cart, removeFromCart, updateCartItemQuantity, getCartTotal } = useCart()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [updating, setUpdating] = useState(false)
@@ -26,8 +26,9 @@ export default function CartPage() {
 
     try {
       setUpdating(true)
-      const itemId = item._id || item.product._id
-      await updateCartItemQuantity(itemId, newQuantity, item.variation)
+      const productId = item.product._id
+      const variationId = item.variation ? item.variation._id : null
+      await updateCartItemQuantity(productId, newQuantity, variationId)
 
       toast({
         title: "Cart Updated",
@@ -48,8 +49,9 @@ export default function CartPage() {
   const handleRemoveItem = async (item) => {
     try {
       setUpdating(true)
-      const itemId = item._id || item.product._id
-      await removeFromCart(itemId, item.variation)
+      const productId = item.product._id
+      const variationId = item.variation ? item.variation._id : null
+      await removeFromCart(productId, variationId)
 
       toast({
         title: "Item Removed",
@@ -67,16 +69,7 @@ export default function CartPage() {
     }
   }
 
-  const calculateSubtotal = () => {
-    return (
-      cart?.items.reduce((total, item) => {
-        const price = item.product.salePrice || item.product.price
-        return total + price * item.quantity
-      }, 0) || 0
-    )
-  }
-
-  const formatPrice = (price) => `$${price.toFixed(2)}`
+  const formatPrice = (price) => `${price?.toFixed(2)}`
 
   const handleCheckout = () => {
     router.push("/checkout")
@@ -133,11 +126,15 @@ export default function CartPage() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
-                {cart.items.map((item, index) => (
-                  <div key={`${item.product._id}-${index}`} className="flex py-4 px-6">
+                {cart.items.map((item, index) => {
+                  const price = item.variation ? item.variation.price : (item.product.salePrice || item.product.price)
+                  const image = item.variation?.image ? process.env.NEXT_PUBLIC_API_URL + item.variation.image : (item.product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=96&width=96")
+                  
+                  return (
+                  <div key={`${item.product._id}-${item.variation ? item.variation._id : ''}`} className="flex py-4 px-6">
                     <div className="relative h-24 w-24 rounded-md overflow-hidden">
                       <Image
-                        src={item.product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=96&width=96"}
+                        src={image}
                         alt={item.product.name}
                         fill
                         className="object-cover"
@@ -147,21 +144,19 @@ export default function CartPage() {
                       <div className="flex justify-between">
                         <div>
                           <h3 className="font-medium">
-                            <Link href={`/products/${item.product._id}`} className="hover:underline">
+                            <Link href={`/products/${item.product.slug}`} className="hover:underline">
                               {item.product.name}
                             </Link>
                           </h3>
                           <p className="mt-1 text-sm text-muted-foreground">
-                            {item.product.salePrice
-                              ? `${formatPrice(item.product.salePrice)} (${formatPrice(item.product.price)})`
-                              : formatPrice(item.product.price)}
+                            {formatPrice(price)}
                           </p>
                           {item.variation && (
-                            <p className="text-xs text-muted-foreground">
-                              {Object.entries(item.variation)
-                                .map(([key, value]) => `${key}: ${value}`)
-                                .join(", ")}
-                            </p>
+                            <div className="text-xs text-muted-foreground">
+                              {item?.variation?.options?.map(opt => (
+                                <span key={opt.type} className="mr-2">{opt.type}: {opt.value}</span>
+                              ))}
+                            </div>
                           )}
                         </div>
                         <Button
@@ -191,19 +186,19 @@ export default function CartPage() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleQuantityChange(item, item.quantity + 1)}
-                            disabled={item.quantity >= (item.product.stock || 10) || updating}
+                            disabled={item.quantity >= (item.variation ? item.variation.stock : item.product.stock || 10) || updating}
                             className="h-8 w-8"
                           >
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
                         <div className="ml-auto font-medium">
-                          {formatPrice((item.price || item.product.price) * item.quantity)}
+                          {formatPrice(price * item.quantity)}
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
@@ -223,7 +218,7 @@ export default function CartPage() {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>{formatPrice(calculateSubtotal())}</span>
+                  <span>{formatPrice(getCartTotal())}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -236,7 +231,7 @@ export default function CartPage() {
                 <Separator />
                 <div className="flex justify-between font-medium text-lg">
                   <span>Total</span>
-                  <span>{formatPrice(calculateSubtotal())}</span>
+                  <span>{formatPrice(getCartTotal())}</span>
                 </div>
               </div>
             </CardContent>

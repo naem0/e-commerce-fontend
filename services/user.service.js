@@ -2,28 +2,7 @@ import { createAPI, getAuthHeaders, handleError } from "./api.utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-// Create axios instance for users
-// const userAPI = axios.create({
-//   baseURL: `${API_URL}/api/users`,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// })
 
-// Add auth token to requests
-// userAPI.interceptors.request.use(
-//   (config) => {
-//     const authHeader = getAuthHeader()
-//     if (authHeader) {
-//       config.headers = {
-//         ...config.headers,
-//         ...authHeader,
-//       }
-//     }
-//     return config
-//   },
-//   (error) => Promise.reject(error),
-// )
 
 // Create user API instance
 const userAPI = createAPI("users")

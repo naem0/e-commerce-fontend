@@ -1,4 +1,3 @@
-import axios from "axios"
 import { getSession } from "next-auth/react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -50,16 +49,21 @@ const getAuthHeaders = async () => {
 // Get site settings
 export const getSiteSettings = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/site-settings`)
+    const response = await fetch(`${API_URL}/api/site-settings`)
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to fetch settings")
+    }
+    const data = await response.json()
     return {
       success: true,
-      settings: response.data.settings,
+      settings: data.settings,
     }
   } catch (error) {
     console.error("Get site settings error:", error)
     return {
       success: false,
-      message: error.response?.data?.message || "Failed to fetch settings",
+      message: error.message || "Failed to fetch settings",
     }
   }
 }
@@ -79,23 +83,32 @@ export const updateSiteSettings = async (settings) => {
       throw new Error("No authentication token available. Please login again.")
     }
 
-    const response = await axios.put(`${API_URL}/api/site-settings`, settings, {
+    const response = await fetch(`${API_URL}/api/site-settings`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         ...authHeaders,
       },
+      body: JSON.stringify(settings),
     })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to update settings")
+    }
+
+    const data = await response.json()
 
     return {
       success: true,
-      settings: response.data.settings,
-      message: response.data.message,
+      settings: data.settings,
+      message: data.message,
     }
   } catch (error) {
     console.error("Update site settings error:", error)
     return {
       success: false,
-      message: error.response?.data?.message || error.message || "Failed to update settings",
+      message: error.message || "Failed to update settings",
       status: error.response?.status,
     }
   }
@@ -110,23 +123,31 @@ export const updateSiteSettingsWithFiles = async (formData) => {
       throw new Error("No authentication token available. Please login again.")
     }
 
-    const response = await axios.put(`${API_URL}/api/site-settings`, formData, {
+    const response = await fetch(`${API_URL}/api/site-settings`, {
+      method: "PUT",
       headers: {
-        "Content-Type": "multipart/form-data",
         ...authHeaders,
       },
+      body: formData,
     })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to update settings")
+    }
+
+    const data = await response.json()
 
     return {
       success: true,
-      settings: response.data.settings,
-      message: response.data.message,
+      settings: data.settings,
+      message: data.message,
     }
   } catch (error) {
     console.error("Update site settings with files error:", error)
     return {
       success: false,
-      message: error.response?.data?.message || "Failed to update settings",
+      message: error.message || "Failed to update settings",
       status: error.response?.status,
     }
   }

@@ -1,5 +1,4 @@
 "use client"
-
 import { createContext, useContext, useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useToast } from "@/components/ui/use-toast"
@@ -23,37 +22,34 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState({ items: [] })
   const [isLoading, setIsLoading] = useState(true)
 
+
   // Initialize cart from localStorage or API
   useEffect(() => {
     const initCart = async () => {
       try {
         setIsLoading(true)
 
-        // If user is logged in, fetch cart from API
         if (status === "authenticated") {
-          try {
-            const response = await cartService.getCart()
-            if (response.success) {
-              setCart(response.cart)
+          // If user is logged in, fetch cart from API
+          const response = await cartService.getCart()
+          let serverCart = response.success ? response.cart : { items: [] }
 
-              // Sync local cart with server if local cart exists
-              const localCart = getLocalCart()
-              if (localCart.items.length > 0) {
-                await cartService.syncCart(localCart)
-                // Clear local cart after sync
-                localStorage.removeItem("cart")
-              }
-            } else {
-              // If API call fails, try to get from localStorage
-              const localCart = getLocalCart()
-              setCart(localCart)
+          // Get local cart
+          const localCart = getLocalCart()
+
+          // If local cart has items, merge them with the server cart
+          if (localCart.items.length > 0) {
+            // Create a new cart object with merged items
+            const mergedCart = await cartService.syncCart(localCart)
+            if (mergedCart.success) {
+              serverCart = mergedCart.cart
             }
-          } catch (error) {
-            console.error("Error fetching cart:", error)
-            // Fallback to localStorage
-            const localCart = getLocalCart()
-            setCart(localCart)
+
+            // Clear local cart after merging
+            localStorage.removeItem("cart")
           }
+
+          setCart(serverCart)
         } else if (status === "unauthenticated") {
           // If user is not logged in, get cart from localStorage
           const localCart = getLocalCart()
@@ -109,9 +105,13 @@ export function CartProvider({ children }) {
     try {
       setIsLoading(true)
 
-      // If user is logged in, add to API
       if (status === "authenticated") {
-        const response = await cartService.addToCart(productId, quantity, variation)
+        // If user is logged in, add to API
+        const response = await cartService.addToCart(
+          productId,
+          quantity,
+          variation
+        )
         if (response.success) {
           setCart(response.cart)
           toast({
@@ -138,34 +138,22 @@ export function CartProvider({ children }) {
         }
 
         setCart((prevCart) => {
-          // Check if product already exists in cart
           const existingItemIndex = prevCart.items.findIndex(
             (item) =>
-              (item.product._id === productId || item.product === productId) &&
-              JSON.stringify(item.variation) === JSON.stringify(variation),
+              item.product._id === productId &&
+              JSON.stringify(item.variation) === JSON.stringify(variation)
           )
 
           if (existingItemIndex !== -1) {
             // Update quantity if product exists
             const updatedItems = [...prevCart.items]
             updatedItems[existingItemIndex].quantity += quantity
-
-            return {
-              ...prevCart,
-              items: updatedItems,
-            }
+            return { ...prevCart, items: updatedItems }
           } else {
             // Add new item if product doesn't exist
             return {
               ...prevCart,
-              items: [
-                ...prevCart.items,
-                {
-                  product,
-                  quantity,
-                  variation,
-                },
-              ],
+              items: [...prevCart.items, { product, quantity, variation }],
             }
           }
         })
@@ -191,13 +179,13 @@ export function CartProvider({ children }) {
   }
 
   // Remove item from cart
-  const removeItemFromCart = async (itemId, variation = null) => {
+  const removeItemFromCart = async (productId, variationId = null) => {
     try {
       setIsLoading(true)
 
-      // If user is logged in, remove from API
       if (status === "authenticated") {
-        const response = await cartService.removeFromCart(itemId)
+        // If user is logged in, remove from API
+        const response = await cartService.removeFromCart(productId, variationId)
         if (response.success) {
           setCart(response.cart)
           toast({
@@ -214,15 +202,11 @@ export function CartProvider({ children }) {
           const updatedItems = prevCart.items.filter(
             (item) =>
               !(
-                item._id === itemId ||
-                (item.product._id === itemId && JSON.stringify(item.variation) === JSON.stringify(variation))
-              ),
+                item.product._id === productId &&
+                (item.variation ? item.variation._id : null) === variationId
+              )
           )
-
-          return {
-            ...prevCart,
-            items: updatedItems,
-          }
+          return { ...prevCart, items: updatedItems }
         })
 
         toast({
@@ -246,13 +230,13 @@ export function CartProvider({ children }) {
   }
 
   // Update cart item quantity
-  const updateItemQuantity = async (itemId, quantity, variation = null) => {
+  const updateItemQuantity = async (productId, quantity, variationId = null) => {
     try {
       setIsLoading(true)
 
-      // If user is logged in, update in API
       if (status === "authenticated") {
-        const response = await cartService.updateCartItem(itemId, quantity)
+        // If user is logged in, update in API
+        const response = await cartService.updateCartItem(productId, quantity, variationId)
         if (response.success) {
           setCart(response.cart)
           toast({
@@ -268,18 +252,14 @@ export function CartProvider({ children }) {
         setCart((prevCart) => {
           const updatedItems = prevCart.items.map((item) => {
             if (
-              item._id === itemId ||
-              (item.product._id === itemId && JSON.stringify(item.variation) === JSON.stringify(variation))
+              item.product._id === productId &&
+              (item.variation ? item.variation._id : null) === variationId
             ) {
               return { ...item, quantity }
             }
             return item
           })
-
-          return {
-            ...prevCart,
-            items: updatedItems,
-          }
+          return { ...prevCart, items: updatedItems }
         })
 
         toast({
@@ -307,8 +287,8 @@ export function CartProvider({ children }) {
     try {
       setIsLoading(true)
 
-      // If user is logged in, clear in API
       if (status === "authenticated") {
+        // If user is logged in, clear in API
         const response = await cartService.clearCart()
         if (response.success) {
           setCart({ items: [] })
@@ -345,7 +325,9 @@ export function CartProvider({ children }) {
   // Calculate cart total
   const getCartTotal = () => {
     return cart.items.reduce((total, item) => {
-      const price = item.product.salePrice || item.product.price
+      const price = item.variation
+        ? item.variation.price
+        : item.product.salePrice || item.product.price
       return total + price * item.quantity
     }, 0)
   }
