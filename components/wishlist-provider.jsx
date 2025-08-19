@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { getWishlist, addToWishlist, removeFromWishlist } from "@/services/wishlist.service"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 const WishlistContext = createContext()
 

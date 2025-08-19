@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { ShoppingCart, Search, SlidersHorizontal } from "lucide-react"
 import { productService, categoryService, brandService } from "@/services/api"
 import { useCart } from "@/components/cart-provider"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ProductsPage() {
   const { addToCart } = useCart()

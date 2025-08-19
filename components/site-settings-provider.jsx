@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { getSiteSettings, updateSiteSettings } from "@/services/settings.service"
 
 const SiteSettingsContext = createContext({

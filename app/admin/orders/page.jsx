@@ -25,7 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Search, MoreHorizontal, Eye, FileText, Truck, CreditCard } from 'lucide-react'
 import { getAllOrders, updateOrderStatus, updatePaymentStatus } from "@/services/order.service"
 import { format } from "date-fns"

@@ -9,7 +9,7 @@ import { useCart } from "@/components/cart-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react"
 
 export default function CartPage() {
