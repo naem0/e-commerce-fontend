@@ -211,9 +211,8 @@ export default function ProductPageClient({ product }) {
               {(selectedVariant?.images?.length > 0 ? selectedVariant.images : product.images).map((image, index) => (
                 <button
                   key={index}
-                  className={`relative h-20 w-20 cursor-pointer rounded-md border ${
-                    activeImage === index ? "border-primary" : "border-gray-200"
-                  }`}
+                  className={`relative h-20 w-20 cursor-pointer rounded-md border ${activeImage === index ? "border-primary" : "border-gray-200"
+                    }`}
                   onClick={() => setActiveImage(index)}
                 >
                   <Image
@@ -237,9 +236,8 @@ export default function ProductPageClient({ product }) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.round(product.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                    }`}
+                    className={`h-5 w-5 ${i < Math.round(product.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                      }`}
                   />
                 ))}
               </div>
@@ -274,11 +272,10 @@ export default function ProductPageClient({ product }) {
                       <button
                         key={option.value}
                         onClick={() => handleVariantOptionChange(variationType.name, option.value)}
-                        className={`px-3 py-2 border rounded-md text-sm ${
-                          selectedOptions[variationType.name] === option.value
-                            ? "border-primary bg-primary-custom text-white"
-                            : "border-gray-300 hover:border-gray-400"
-                        }`}
+                        className={`px-3 py-2 border rounded-md text-sm ${selectedOptions[variationType.name] === option.value
+                          ? "border-primary bg-primary-custom text-white"
+                          : "border-gray-300 hover:border-gray-400"
+                          }`}
                       >
                         {option.name}
                       </button>
@@ -405,28 +402,101 @@ export default function ProductPageClient({ product }) {
               <Card>
                 <CardContent className="pt-6">
                   {product.reviews && product.reviews.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {product.reviews.map((review, index) => (
-                        <div key={index} className="border-b pb-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium">{review.name}</span>
-                            <div className="flex items-center">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-4 w-4 ${
-                                    i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                                  }`}
-                                />
-                              ))}
+                        <div
+                          key={index}
+                          className="border rounded-2xl p-5 shadow-md bg-white dark:bg-gray-900 dark:border-gray-800 transition"
+                        >
+                          {/* Header: User info + Date */}
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              {/* Avatar */}
+                              <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-green-400 to-emerald-500 text-white font-semibold shadow-md">
+                                {review.user?.name?.[0]?.toUpperCase() || "U"}
+                              </div>
+
+                              {/* Name + Date */}
+                              <div>
+                                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                                  {review.user?.name || "Anonymous"}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {/* Formatted date */}
+                                  {new Date(review.createdAt).toLocaleDateString("en-US", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                  })}
+                                </p>
+                              </div>
+
+                              {/* Verified badge */}
+                              {review.verified && (
+                                <span className="ml-2 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full">
+                                  ✔ Verified
+                                </span>
+                              )}
                             </div>
                           </div>
-                          <p className="text-gray-600">{review.comment}</p>
+
+                          {/* Rating + Title */}
+                          <div className="flex items-center mb-3">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-5 w-5 ${i < review.rating
+                                    ? "text-yellow-400 fill-yellow-400"
+                                    : "text-gray-300 dark:text-gray-600"
+                                  }`}
+                              />
+                            ))}
+                            {review.title && (
+                              <span className="ml-3 text-sm font-medium text-gray-800 dark:text-gray-200">
+                                {review.title}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Comment */}
+                          <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                            {review.comment}
+                          </p>
+
+                          {/* Images */}
+                          {review.images?.length > 0 && (
+                            <div className="flex gap-3 mb-4">
+                              {review.images.map((img, i) => (
+                                <>
+                                {console.log(process.env.NEXT_PUBLIC_API_URL + img)}
+                                <img
+                                  key={i}
+                                  src={process.env.NEXT_PUBLIC_API_URL + img}
+                                  loading="lazy"
+                                  alt={`review-${i}`}
+                                  height={100}
+                                  width={100}
+                                  className="w-24 h-24 object-cover rounded-lg border dark:border-gray-700 shadow-sm hover:scale-105 transition-transform"
+                                />
+                                </>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Footer */}
+                          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <button className="flex items-center gap-1 hover:text-green-600 dark:hover:text-green-400 transition">
+                              👍 Helpful ({review.helpful})
+                            </button>
+                            <p className="text-xs">
+                              Last updated {new Date(review.updatedAt).toLocaleDateString()}
+                            </p>
+                          </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500">No reviews yet</p>
+                    <p className="text-gray-500 dark:text-gray-400">No reviews yet</p>
                   )}
                 </CardContent>
               </Card>

@@ -85,18 +85,14 @@ export function ReviewModal({ isOpen, onClose, product, orderId }) {
     try {
       setLoading(true)
 
-      const formData = new FormData()
-      formData.append("product", product._id)
-      formData.append("order", orderId)
-      formData.append("rating", rating)
-      formData.append("title", title)
-      formData.append("comment", comment)
-
-      images.forEach((img) => {
-        formData.append("images", img.file)
+      const response = await createReview({
+        productId: product._id,
+        orderId,
+        rating,
+        title,
+        comment,
+        images: images.map((img) => img.file),
       })
-
-      const response = await createReview(formData)
 
       if (response.success) {
         toast({
@@ -166,9 +162,8 @@ export function ReviewModal({ isOpen, onClose, product, orderId }) {
                     onClick={() => setRating(star)}
                   >
                     <Star
-                      className={`h-8 w-8 ${
-                        star <= (hoverRating || rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                      }`}
+                      className={`h-8 w-8 ${star <= (hoverRating || rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                        }`}
                     />
                   </button>
                 ))}

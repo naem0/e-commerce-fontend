@@ -1,5 +1,4 @@
 import { getSession } from "next-auth/react"
-import { api } from "./api"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
@@ -7,12 +6,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 const getAuthHeaders = async (isFormData = false) => {
   try {
     const session = await getSession()
+    let token = session?.accessToken || null
 
-    let token = null
-
-    if (session?.accessToken) {
-      token = session.accessToken
-    } else if (typeof window !== "undefined") {
+    if (!token && typeof window !== "undefined") {
       token = localStorage.getItem("authToken")
     }
 
@@ -22,7 +18,6 @@ const getAuthHeaders = async (isFormData = false) => {
       headers.Authorization = `Bearer ${token}`
     }
 
-    // Don't set Content-Type for FormData, let browser set it
     if (!isFormData) {
       headers["Content-Type"] = "application/json"
     }
@@ -33,13 +28,15 @@ const getAuthHeaders = async (isFormData = false) => {
   }
 }
 
+/**
+ * USER REVIEW ENDPOINTS
+ */
+
 // Add product review
 export const addProductReview = async (productId, reviewData) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/api/products/${productId}/reviews`
-
-    const response = await fetch(url, {
+    const response = await fetch(`${API_URL}/api/products/${productId}/reviews`, {
       method: "POST",
       headers,
       body: JSON.stringify(reviewData),
@@ -47,18 +44,12 @@ export const addProductReview = async (productId, reviewData) => {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error("Review API error:", errorText)
       throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
-    console.error("Add product review error:", error)
-    return {
-      success: false,
-      message: error.message,
-    }
+    return { success: false, message: error.message }
   }
 }
 
@@ -70,17 +61,12 @@ export const getProductReviews = async (productId, params = {}) => {
 
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
     return {
       success: false,
@@ -99,9 +85,7 @@ export const getProductReviews = async (productId, params = {}) => {
 export const updateReview = async (productId, reviewId, reviewData) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/api/products/${productId}/reviews/${reviewId}`
-
-    const response = await fetch(url, {
+    const response = await fetch(`${API_URL}/api/products/${productId}/reviews/${reviewId}`, {
       method: "PUT",
       headers,
       body: JSON.stringify(reviewData),
@@ -112,94 +96,82 @@ export const updateReview = async (productId, reviewId, reviewData) => {
       throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
-    console.error("Update review error:", error)
-    return {
-      success: false,
-      message: error.message,
-    }
+    return { success: false, message: error.message }
   }
 }
 
-// Delete review
+// Delete review (User)
 export const deleteReview = async (reviewId) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/api/reviews/${reviewId}`
-
-    const response = await fetch(url, {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
       method: "DELETE",
       headers,
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    }
+    return { success: false, message: error.message }
   }
 }
 
-// Create review
+// Create review with images
 export const createReview = async (reviewData) => {
   try {
+    const headers = await getAuthHeaders(true)
     const formData = new FormData()
+
     formData.append("productId", reviewData.productId)
     formData.append("orderId", reviewData.orderId)
     formData.append("rating", reviewData.rating)
     formData.append("title", reviewData.title)
     formData.append("comment", reviewData.comment)
 
-    // Add images if any
-    if (reviewData.images && reviewData.images.length > 0) {
+    if (reviewData.images?.length) {
       reviewData.images.forEach((image) => {
         formData.append("images", image)
       })
     }
 
-    const response = await api.post("/reviews", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const response = await fetch(`${API_URL}/api/reviews`, {
+      method: "POST",
+      headers,
+      body: formData,
     })
-    return response.data
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    return await response.json()
   } catch (error) {
-    throw error.response?.data || error
+    return { success: false, message: error.message }
   }
 }
 
-// Get all reviews (Admin)
+/**
+ * ADMIN REVIEW ENDPOINTS
+ */
+
+// Get all reviews
 export const getAllReviews = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
     const url = `${API_URL}/api/reviews${queryString ? `?${queryString}` : ""}`
 
-    const response = await fetch(url, {
-      method: "GET",
-      headers,
-    })
+    const response = await fetch(url, { method: "GET", headers })
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-      reviews: [],
-    }
+    return { success: false, message: error.message, reviews: [] }
   }
 }
 
@@ -207,25 +179,17 @@ export const getAllReviews = async (params = {}) => {
 export const updateReviewStatus = async (reviewId, status) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/api/reviews/${reviewId}/status`
-
-    const response = await fetch(url, {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}/status`, {
       method: "PATCH",
       headers,
       body: JSON.stringify({ status }),
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    }
+    return { success: false, message: error.message }
   }
 }
 
@@ -233,41 +197,43 @@ export const updateReviewStatus = async (reviewId, status) => {
 export const addAdminResponse = async (reviewId, message) => {
   try {
     const headers = await getAuthHeaders()
-    const url = `${API_URL}/api/reviews/${reviewId}/response`
-
-    const response = await fetch(url, {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}/response`, {
       method: "POST",
       headers,
       body: JSON.stringify({ message }),
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    }
+    return { success: false, message: error.message }
   }
 }
 
 // Delete review (Admin)
 export const deleteReviewAdmin = async (reviewId) => {
   try {
-    const response = await api.delete(`/reviews/${reviewId}`)
-    return response.data
+    const headers = await getAuthHeaders()
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
+      method: "DELETE",
+      headers,
+    })
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
+    return await response.json()
   } catch (error) {
-    throw error.response?.data || error
+    return { success: false, message: error.message }
   }
 }
 
 export const reviewService = {
+  addProductReview,
   createReview,
   getProductReviews,
+  updateReview,
+  deleteReview,
   getAllReviews,
   updateReviewStatus,
   addAdminResponse,
