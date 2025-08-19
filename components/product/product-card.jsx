@@ -16,14 +16,13 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
   const [loading, setLoading] = useState(false)
   const { addToWishlist } = useWishlist()
 
-
   // Calculate discount percentage
-  const calculatedDiscountPercentage = product.salePrice
-    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
+  const calculatedDiscountPercentage = product.comparePrice
+    ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
     : discountPercentage
 
-  const finalPrice = product.salePrice || product.price
-  const originalPrice = product.price
+  const finalPrice = product.price || product.comparePrice
+  const originalPrice = product.comparePrice
 
     const handleAddToCart = async (product) => {
     if (!product || !product._id) {
@@ -91,13 +90,13 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
           <h3 className="font-medium line-clamp-2 min-h-[3rem]">{product.name}</h3>
           <div className="mt-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {product.salePrice ? (
+              {product.comparePrice && product.comparePrice > product.price ? (
                 <>
-                  <span className="font-bold">${finalPrice.toFixed(2)}</span>
-                  <span className="text-sm text-muted-foreground line-through">${originalPrice.toFixed(2)}</span>
+                  <span className="text-sm text-muted-foreground line-through">৳{originalPrice.toFixed(2)}</span>
+                  <span className="font-bold">৳{finalPrice.toFixed(2)}</span>
                 </>
               ) : (
-                <span className="font-bold">${finalPrice.toFixed(2)}</span>
+                <span className="font-bold">৳{finalPrice.toFixed(2)}</span>
               )}
             </div>
             {product.rating ? (
