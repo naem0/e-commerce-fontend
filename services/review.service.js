@@ -142,12 +142,6 @@ export const createReview = async (reviewData) => {
       headers,
       body: formData,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     return await response.json()
   } catch (error) {
     return { success: false, message: error.message }
@@ -166,9 +160,6 @@ export const getAllReviews = async (params = {}) => {
     const url = `${API_URL}/api/reviews${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, { method: "GET", headers })
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-
     return await response.json()
   } catch (error) {
     return { success: false, message: error.message, reviews: [] }
@@ -184,8 +175,6 @@ export const updateReviewStatus = async (reviewId, status) => {
       headers,
       body: JSON.stringify({ status }),
     })
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
     return await response.json()
   } catch (error) {
@@ -203,8 +192,6 @@ export const addAdminResponse = async (reviewId, message) => {
       body: JSON.stringify({ message }),
     })
 
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-
     return await response.json()
   } catch (error) {
     return { success: false, message: error.message }
@@ -219,8 +206,6 @@ export const deleteReviewAdmin = async (reviewId) => {
       method: "DELETE",
       headers,
     })
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
     return await response.json()
   } catch (error) {

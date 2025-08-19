@@ -72,11 +72,6 @@ export const getCategories = async (params = {}) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -98,11 +93,6 @@ export const getCategoryBySlug = async (slug) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -123,11 +113,6 @@ export const getCategoryById = async (id) => {
       method: "GET",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data
@@ -211,11 +196,6 @@ export const updateCategory = async (id, categoryData) => {
       body: formData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -236,11 +216,6 @@ export const deleteCategory = async (id) => {
       method: "DELETE",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data
@@ -268,11 +243,6 @@ export const getCategoryWithProducts = async (id, params = {}) => {
       method: "GET",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data

@@ -68,12 +68,6 @@ export const getBrands = async (params = {}) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Brands API error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -96,12 +90,6 @@ export const getBrandById = async (id) => {
       method: "GET",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Brand API error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data
@@ -140,11 +128,6 @@ export const createBrand = async (brandData) => {
       body: formData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -182,12 +165,6 @@ export const updateBrand = async (id, brandData) => {
       body: formData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Update brand error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -209,12 +186,6 @@ export const deleteBrand = async (id) => {
       method: "DELETE",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Delete brand error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data
@@ -243,12 +214,6 @@ export const getBrandWithProducts = async (id, params = {}) => {
       method: "GET",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Brand with products error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data

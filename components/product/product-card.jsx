@@ -7,11 +7,14 @@ import { useCart } from "@/components/cart-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, ShoppingCart, Eye } from "lucide-react"
+import { Loader2, ShoppingCart, Eye, Heart } from "lucide-react"
+import { toast } from "sonner"
+import { useWishlist } from "../wishlist-provider"
 
 export function ProductCard({ product,  showDiscount = false, discountPercentage = 0 }) {
   const { addToCart } = useCart()
   const [loading, setLoading] = useState(false)
+  const { addToWishlist } = useWishlist()
 
 
   // Calculate discount percentage
@@ -30,6 +33,27 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
     try {
       setLoading(true)
       await addToCart(product._id, 1)
+    } catch (error) {
+      console.error("Error adding to cart:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAddWishlist = async (product) => {
+    if (!product || !product._id) {
+      console.error("Invalid product data:", product)
+      return
+    }
+    try {
+      setLoading(true)
+      const response = await addToWishlist(product._id)
+      console.log(response)
+      if (response.success) {
+        toast.success("Added to wishlist")
+      }else{
+        toast.error(response.message)
+      }
     } catch (error) {
       console.error("Error adding to cart:", error)
     } finally {
@@ -76,12 +100,12 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
                 <span className="font-bold">${finalPrice.toFixed(2)}</span>
               )}
             </div>
-            {product.rating && (
+            {product.rating ? (
               <div className="flex items-center text-sm text-muted-foreground">
                 <span className="text-yellow-500">★</span>
                 <span className="ml-1">{product.rating.toFixed(1)}</span>
               </div>
-            )}
+            ): null}
           </div>
         </CardContent>
       </Link>
@@ -92,7 +116,7 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
             View
           </Link>
         </Button>
-        <Button
+        {/* <Button
           size="sm"
           className="flex-1"
           onClick={(e) => { e.preventDefault(); handleAddToCart(product) }}
@@ -101,6 +125,16 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
         >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
           Add
+        </Button> */}
+        {/* wishlist button */}
+        <Button
+          size="sm"
+          className="flex-2"
+          onClick={(e) => { e.preventDefault(); handleAddWishlist(product) }}
+          disabled={loading}
+          data-testid="add-to-wishlist-button"
+        >
+          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4" />}
         </Button>
       </CardFooter>
     </Card>

@@ -39,12 +39,6 @@ export const getWishlist = async () => {
       method: "GET",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -66,11 +60,6 @@ export const addToWishlist = async (productId) => {
       body: JSON.stringify({ productId }),
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -89,11 +78,6 @@ export const removeFromWishlist = async (productId) => {
       method: "DELETE",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data
@@ -114,11 +98,6 @@ export const checkWishlist = async (productId) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -138,11 +117,6 @@ export const clearWishlist = async () => {
       method: "DELETE",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data

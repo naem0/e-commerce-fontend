@@ -69,12 +69,6 @@ export const getBanners = async (params = {}) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Banners API error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -97,12 +91,6 @@ export const getBannerById = async (id) => {
       method: "GET",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Banner API error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data
@@ -127,12 +115,6 @@ export const createBanner = async (formData) => {
       body: formData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Create banner error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -156,12 +138,6 @@ export const updateBanner = async (id, formData) => {
       body: formData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Update banner error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -183,12 +159,6 @@ export const deleteBanner = async (id) => {
       method: "DELETE",
       headers,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Delete banner error:", errorText)
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data

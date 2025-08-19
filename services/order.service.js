@@ -44,11 +44,6 @@ export const getOrders = async (params = {}) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -70,10 +65,6 @@ export const getAllOrders = async (params = {}) => {
       method: "GET",
       headers,
     })
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
     const data = await response.json()
     return data
   } catch (error) {
@@ -96,11 +87,6 @@ export const getOrderById = async (id) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -121,11 +107,6 @@ export const createOrder = async (orderData) => {
       headers,
       body: JSON.stringify(orderData),
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data
@@ -150,11 +131,6 @@ export const addPartialPayment = async (orderId, paymentData) => {
       body: paymentData,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -177,11 +153,6 @@ export const confirmPayment = async (orderId, paymentId, confirmData) => {
       body: JSON.stringify(confirmData),
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -203,12 +174,6 @@ export const updatePaymentStatus = async (orderId, paymentData) => {
       headers,
       body: JSON.stringify(paymentData),
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -231,11 +196,6 @@ export const updateOrderStatus = async (orderId, status) => {
       body: JSON.stringify({ status }),
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
@@ -257,11 +217,6 @@ export const cancelOrder = async (orderId) => {
       headers,
       body: JSON.stringify({ status: "cancelled" }),
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
 
     const data = await response.json()
     return data

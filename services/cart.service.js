@@ -104,10 +104,7 @@ export const addToCart = async (productId, quantity = 1, variation = null) => {
         headers,
         body: JSON.stringify({ productId, quantity, variation }),
       })
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to add to cart")
-      }
+
       return await response.json()
   } catch (error) {
     console.error("Error adding to cart:", error)
@@ -129,12 +126,8 @@ export const updateCartItem = async (productId, quantity, variationId) => {
         headers,
         body: JSON.stringify({ productId, quantity, variationId }),
       })
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to update cart")
-      }
-      return await response.json()
 
+      return await response.json()
   } catch (error) {
     console.error("Error updating cart:", error)
     throw {
@@ -155,10 +148,7 @@ export const removeFromCart = async (productId, variationId) => {
         headers,
         body: JSON.stringify({ productId, variationId }),
       })
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to remove item from cart")
-      }
+
       return await response.json()
   } catch (error) {
     console.error("Error removing from cart:", error)
@@ -179,10 +169,7 @@ export const clearCart = async () => {
         method: "DELETE",
         headers,
       })
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to clear cart")
-      }
+
       return await response.json()
   } catch (error) {
     console.error("Error clearing cart:", error)
@@ -211,14 +198,7 @@ export const syncCart = async (localCart) => {
       body: JSON.stringify({ items: localCart.items }),
     })
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to sync cart")
-    }
-
-    // Clear local cart after sync
     saveLocalCart({ items: [] })
-
     return await response.json()
   } catch (error) {
     console.error("Error syncing cart:", error)

@@ -16,10 +16,6 @@ export const getTestimonials = async (params = {}) => {
   try {
     const query = new URLSearchParams(params).toString()
     const response = await fetch(`${API_URL}/api/testimonials?${query}`)
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to fetch testimonials")
-    }
     return await response.json()
   } catch (error) {
     console.error("Get testimonials error:", error)
@@ -36,10 +32,6 @@ export const getFeaturedTestimonials = async (limit = 6) => {
     const response = await fetch(
       `${API_URL}/api/testimonials?featured=true&limit=${limit}`
     )
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to fetch featured testimonials")
-    }
     return await response.json()
   } catch (error) {
     console.error("Get featured testimonials error:", error)
@@ -54,10 +46,6 @@ export const getFeaturedTestimonials = async (limit = 6) => {
 export const getTestimonialById = async (id) => {
   try {
     const response = await fetch(`${API_URL}/api/testimonials/${id}`)
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to fetch testimonial")
-    }
     return await response.json()
   } catch (error) {
     console.error("Get testimonial error:", error)
@@ -77,10 +65,6 @@ export const createTestimonial = async (testimonialData) => {
       headers,
       body: JSON.stringify(testimonialData),
     })
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to create testimonial")
-    }
     return await response.json()
   } catch (error) {
     console.error("Create testimonial error:", error)
