@@ -16,9 +16,6 @@ export default function ProductPageClient({ product }) {
   const { addToCart } = useCart()
   const { toast } = useToast()
   const router = useRouter()
-  // const [product, setProduct] = useState(null)
-  // const [loading, setLoading] = useState(true)
-  // const [error, setError] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [activeImage, setActiveImage] = useState(0)
   const [addingToCart, setAddingToCart] = useState(false)
@@ -115,24 +112,6 @@ export default function ProductPageClient({ product }) {
       setAddingToCart(false)
     }
   }
-
-  // if (loading) {
-  //   return (
-  //     <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
-  //       <Loader2 className="h-12 w-12 animate-spin text-primary-custom" />
-  //     </div>
-  //   )
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div className="container mx-auto px-4 py-16">
-  //       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-  //         <p>{error}</p>
-  //       </div>
-  //     </div>
-  //   )
-  // }
 
   if (!product) {
     return (
