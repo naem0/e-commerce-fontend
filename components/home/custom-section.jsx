@@ -67,7 +67,8 @@ export default async function CustomSection({ section }) {
     "new-arrivals": <Badge variant="outline">New Arrivals</Badge>,
     trending: <Badge variant="default">Trending</Badge>,
   }[section.type]
-
+console.log("Rendering CustomSection with products:", products)
+console.log("Section details:", section)
   return (
     <section className="py-12" style={{ backgroundColor, color: textColor }}>
       <div className="container mx-auto px-4">
@@ -77,6 +78,17 @@ export default async function CustomSection({ section }) {
             <h2 className="text-2xl md:text-3xl font-bold">{section.title}</h2>
             {sectionBadge}
           </div>
+          {/* if Flash Sale show countdown timer */}
+          {section.settings.showTimer && (
+            <div className="mt-2">
+              <p className="text-sm">Hurry up! Flash sale ends in:</p>
+              {/* Countdown timer component can be added here */}
+              <div className="flex items-center justify-center">
+                {/* format date and time in countdown */}
+                <span className="text-2xl font-bold">{new Date(section.settings.endDate).toLocaleString()}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {error ? (
