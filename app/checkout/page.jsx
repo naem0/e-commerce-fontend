@@ -148,7 +148,6 @@ export default function CheckoutPage() {
           throw new Error("Password is required to create account")
         }
 
-        console.log("Creating new account...")
         const registerResponse = await register({
           name: formData.name,
           email: formData.email,
@@ -166,7 +165,6 @@ export default function CheckoutPage() {
         })
 
         // Auto login after registration
-        console.log("Auto logging in...")
         const loginResult = await signIn("credentials", {
           redirect: false,
           email: formData.email,
@@ -235,8 +233,6 @@ export default function CheckoutPage() {
         notes: formData.notes,
         userId: userId || null, // null for guest orders
       }
-
-      console.log("Order data being sent:", orderData)
 
       const response = await createOrder(orderData)
 

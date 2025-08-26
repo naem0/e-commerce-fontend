@@ -1,5 +1,5 @@
 "use client"
-
+import React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -19,7 +19,8 @@ import Image from "next/image"
 
 export default function EditProductPage({ params }) {
   const router = useRouter()
-  const { id } = params
+  const resolvedParams = React.use(params);
+  const id = resolvedParams.id;
   const { toast } = useToast()
   const [activeTab, setActiveTab] = useState("general")
   const [formData, setFormData] = useState({
@@ -31,6 +32,7 @@ export default function EditProductPage({ params }) {
     category: "",
     brand: "",
     stock: "",
+    videoUrl: "",
     featured: false,
     status: "draft",
     sku: "",
@@ -90,6 +92,7 @@ export default function EditProductPage({ params }) {
           featured: product.featured || false,
           status: product.status || "draft",
           sku: product.sku || "",
+          videoUrl: product.videoUrl || "",
           weight: product.weight?.toString() || "",
           dimensions: {
             length: product.dimensions?.length?.toString() || "",
@@ -443,7 +446,7 @@ export default function EditProductPage({ params }) {
           // Separate existing and new images for variants
           const existingVariantImages = variant.images?.filter(img => typeof img === 'string') || []
           const newVariantImages = variant.images?.filter(img => typeof img !== 'string') || []
-          
+
           formattedVariant.images = existingVariantImages
           if (newVariantImages.length > 0) {
             formattedVariant.newImages = newVariantImages
@@ -770,6 +773,21 @@ export default function EditProductPage({ params }) {
                   </div>
                 </div>
               )}
+
+              <div className="pb-4">
+                <Label htmlFor="videoUrl">Videos Url</Label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <Input
+                    name="videoUrl"
+                    id="videoUrl"
+                    type="text"
+                    value={formData.videoUrl}
+                    onChange={handleChange}
+                    placeholder="Enter video URL"
+                    className="border border-gray-300 rounded-md p-2"
+                  />
+                </div>
+              </div>
             </TabsContent>
 
             {/* Variations Tab */}

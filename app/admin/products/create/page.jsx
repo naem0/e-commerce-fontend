@@ -31,6 +31,7 @@ export default function CreateProductPage() {
     stock: "",
     featured: false,
     status: "draft",
+    videoUrl: "",
     sku: "",
     weight: "",
     dimensions: {
@@ -660,6 +661,17 @@ export default function CreateProductPage() {
                   </div>
                 </div>
               )}
+              <div className="pb-4">
+                <Label htmlFor="videoUrl">Product Video URL</Label>
+                <Input
+                  id="videoUrl"
+                  name="videoUrl"
+                  type="url"
+                  placeholder="https://example.com/video.mp4"
+                  value={formData.videoUrl}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, videoUrl: e.target.value }))}
+                />
+              </div>
             </TabsContent>
 
             {/* Variations Tab */}

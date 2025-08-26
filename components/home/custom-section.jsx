@@ -2,6 +2,7 @@ import { Clock, Flame, Star, TrendingUp } from "lucide-react"
 import { getProducts } from "@/services/product.service"
 import { ProductCard } from "@/components/product/product-card"
 import { Badge } from "@/components/ui/badge"
+import CountdownTimer from "@/components/ui/countdown-timer"
 
 export default async function CustomSection({ section }) {
   if (!section?.enabled) return null
@@ -79,14 +80,10 @@ console.log("Section details:", section)
             {sectionBadge}
           </div>
           {/* if Flash Sale show countdown timer */}
-          {section.settings.showTimer && (
-            <div className="mt-2">
-              <p className="text-sm">Hurry up! Flash sale ends in:</p>
-              {/* Countdown timer component can be added here */}
-              <div className="flex items-center justify-center">
-                {/* format date and time in countdown */}
-                <span className="text-2xl font-bold">{new Date(section.settings.endDate).toLocaleString()}</span>
-              </div>
+          {section.settings.showTimer && section.settings.endDate && (
+            <div className="font-bold text-lg">
+              <p className="text-sm font-light">Hurry up! Flash sale ends in:</p>
+              <CountdownTimer endDate={section.settings.endDate} />
             </div>
           )}
         </div>
