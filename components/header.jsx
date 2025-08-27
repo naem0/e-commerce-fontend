@@ -51,11 +51,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* add marquee text */}
-      <div className="marquee pt-1 container mx-auto">
+      {/* <div className="marquee pt-1 container mx-auto">
         <marquee behavior="scroll" direction="left" className="border-b">
           {settings?.marqueeText || "🛡️ডেলিভারি ও রিটার্ন নীতিমালা। 💬 ঢাকার ভেতরে ডেলিভারি: অর্ডার কনফার্ম করার পর ৪৮ ঘণ্টার মধ্যে পণ্য ডেলিভারি করা হবে। 💬 ঢাকার বাইরে ডেলিভারি: দেশের ৬৪ জেলায় অর্ডার কনফার্ম করার পর ৩ থেকে ৫ কর্মদিবসের মধ্যে পণ্য ডেলিভারি করা হবে। রিটার্ন নীতিমালা: পণ্য ডেলিভারির তারিখ থেকে ৭ দিনের মধ্যে রিটার্নের অনুরোধ করতে হবে।"}
         </marquee>
-      </div>
+      </div> */}
       <div className="container flex h-16 items-center justify-between mx-auto px-3">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
@@ -123,10 +123,10 @@ export function Header() {
           </Button>
 
           {/* Theme Toggle */}
-          {/* <Button variant="ghost" size="icon" onClick={toggleTheme}>
+          <Button variant="ghost" size="icon" onClick={toggleTheme}>
             {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             <span className="sr-only">Toggle theme</span>
-          </Button> */}
+          </Button>
 
           {/* Wishlist */}
           {session && (
