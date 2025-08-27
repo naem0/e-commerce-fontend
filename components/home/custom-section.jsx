@@ -68,8 +68,7 @@ export default async function CustomSection({ section }) {
     "new-arrivals": <Badge variant="outline">New Arrivals</Badge>,
     trending: <Badge variant="default">Trending</Badge>,
   }[section.type]
-console.log("Rendering CustomSection with products:", products)
-console.log("Section details:", section)
+
   return (
     <section className="py-12" style={{ backgroundColor, color: textColor }}>
       <div className="container mx-auto px-4">

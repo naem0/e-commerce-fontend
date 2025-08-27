@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react"
 import { formatPrice, getErrorMessage } from "@/services/utils"
+import Link from "next/link"
 
 export default function ProductPageClient({ product }) {
   const { slug } = useParams()
@@ -302,9 +303,9 @@ export default function ProductPageClient({ product }) {
               </p>
             )}
             <p className="text-sm text-gray-500">
-              Return Policy: <span className="font-medium">
-                ঢাকার ভিতরে ২৪ ঘন্টার মধ্যে ডেলিভারি করা হয় এবং ঢাকার বাইরে 64 জেলায় তিনদিন থেকে সাত দিনের ভিতর ডেলিভারি করা হয় সেভেন ডেস রিটার্ন পলিসি
-              </span>
+              Return Policy: <Link href="/return-policy" className="font-medium">
+                {product.returnPolicy || "7 days return policy"}
+              </Link>
             </p>
           </div>
 

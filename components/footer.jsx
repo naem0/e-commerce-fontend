@@ -21,7 +21,7 @@ export function Footer() {
   return (
     <footer style={footerStyle} className="pt-10 pb-6">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">About</h3>
             <p className="mb-4">About Description</p>
@@ -47,6 +47,11 @@ export function Footer() {
               <li>
                 <Link href="/" style={linkStyle} className="hover:text-primary-custom">
                   Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/return-policy" style={linkStyle} className="hover:text-primary-custom">
+                  Return Policy
                 </Link>
               </li>
               <li>
@@ -125,6 +130,16 @@ export function Footer() {
           <div className="mt-4 md:mt-0">
             <ul className="flex space-x-4">
               <li>
+                <Link href="/return-policy" style={linkStyle} className="hover:text-primary-custom">
+                  Return Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" style={linkStyle} className="hover:text-primary-custom">
+                  About
+                </Link>
+              </li>
+              {/* <li>
                 <Link href="/terms" style={linkStyle} className="hover:text-primary-custom">
                   Terms
                 </Link>
@@ -138,7 +153,7 @@ export function Footer() {
                 <Link href="/faq" style={linkStyle} className="hover:text-primary-custom">
                   FAQ
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
