@@ -258,6 +258,93 @@ exports.createOrder = async (req, res) => {
   }
 }
 
+// @desc    Create a new order by admin
+// @route   POST /api/orders/admin
+// @access  Private/Admin
+exports.createOrderByAdmin = async (req, res) => {
+  try {
+    const { userType, user, customer, shippingAddress, items, status, paymentMethod, total } = req.body
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No order items",
+      })
+    }
+
+    let orderData = {
+      items: [],
+      status,
+      paymentMethod,
+      total,
+      subtotal: 0,
+      tax: 0,
+      shippingCost: 0,
+      paidAmount: 0,
+    }
+
+    if (userType === 'guest') {
+      orderData.customer = customer;
+      orderData.shippingAddress = shippingAddress;
+    } else {
+      orderData.user = user;
+    }
+
+    // Verify items and calculate prices
+    for (const item of items) {
+      const product = await Product.findById(item.product)
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: `Product not found: ${item.product}`,
+        })
+      }
+
+      let price = product.price
+      let stock = product.stock
+
+      if (stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for ${product.name}. Available: ${stock}`,
+        })
+      }
+
+      orderData.items.push({
+        product: product._id,
+        name: product.name,
+        price,
+        quantity: item.quantity,
+        image: product.images?.[0] || "",
+      })
+
+      orderData.subtotal += price * item.quantity
+
+      // Update product stock
+      product.stock -= item.quantity
+      await product.save()
+    }
+    
+    orderData.total = orderData.subtotal;
+
+    // Create order
+    const order = await Order.create(orderData)
+
+    res.status(201).json({
+      success: true,
+      order,
+    })
+  } catch (error) {
+    console.error("Create order by admin error:", error)
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    })
+  }
+}
+
 // @desc    Add partial payment
 // @route   POST /api/orders/:id/payments
 // @access  Private/Admin

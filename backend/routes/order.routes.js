@@ -5,6 +5,7 @@ const {
   getMyOrders,
   getOrder,
   createOrder,
+  createOrderByAdmin,
   updateOrderStatus,
   updatePaymentStatus,
   addPartialPayment,
@@ -18,6 +19,7 @@ router.get("/", protect, admin, getOrders)
 router.get("/my-orders", protect, getMyOrders)
 router.get("/:id", protect, getOrder)
 router.post("/", protect, createOrder)
+router.post("/admin", protect, admin, createOrderByAdmin)
 router.post("/:id/payments", protect, upload.array("images", 5), addPartialPayment)
 router.patch("/:id/payments/:paymentId/confirm", protect, admin, confirmPayment)
 router.patch("/:id/status", protect, admin, updateOrderStatus)

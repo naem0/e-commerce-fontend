@@ -118,6 +118,27 @@ export const createOrder = async (orderData) => {
   }
 }
 
+// Create order by admin
+export const createOrderByAdmin = async (orderData) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/api/orders/admin`
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(orderData),
+    })
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
 // Add partial payment (supports FormData for file upload)
 export const addPartialPayment = async (orderId, paymentData) => {
   try {

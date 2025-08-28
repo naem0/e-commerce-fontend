@@ -5,6 +5,7 @@ import { Newsletter } from "@/components/home/newsletter"
 import { getSiteSettings } from "@/services/settings.service"
 import FeaturedProducts  from "@/components/home/featured-products"
 import Categories from "@/components/home/categories"
+import { WelcomeAlertDialog } from "@/components/home/welcome-alert-dialog"
 
 export default async function Home() {
   let settings
@@ -112,6 +113,7 @@ export default async function Home() {
 
   return (
     <div>
+      <WelcomeAlertDialog />
       {sections.map((section, index) => (
         <div key={index}>{section.component}</div>
       ))}

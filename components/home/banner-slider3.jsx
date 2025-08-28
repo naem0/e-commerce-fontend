@@ -5,7 +5,6 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { SideCategoryMenu } from "@/components/side-category-menu"
 import Image from "next/image"
 
 export default function BannerSlider3({ banners, design, settings }) {
@@ -25,9 +24,6 @@ export default function BannerSlider3({ banners, design, settings }) {
     <section className="relative w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          <div className="hidden lg:block h-[400px] md:h-[500px] overflow-hidden">
-            <SideCategoryMenu className="h-full" />
-          </div>
           <div className="lg:col-span-3 relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
             {banners.map((banner, index) => {
               let imageUrl = banner.image.startsWith("/uploads")

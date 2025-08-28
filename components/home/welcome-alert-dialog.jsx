@@ -1,0 +1,55 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+
+export function WelcomeAlertDialog() {
+  const [isOpen, setIsOpen] = useState(false) // শুরুতে বন্ধ থাকবে
+
+  useEffect(() => {
+    const hasVisited = localStorage.getItem("hasVisitedWelcome");
+    if (!hasVisited) {
+      // modal খোলার আগে একটু delay
+      const openTimer = setTimeout(() => {
+        setIsOpen(true);
+        localStorage.setItem("hasVisitedWelcome", "true");
+
+        // ৫ সেকেন্ড পরে auto close হবে
+        const closeTimer = setTimeout(() => {
+          setIsOpen(false);
+        }, 5000);
+
+        return () => clearTimeout(closeTimer);
+      }, 1500); // 1.5 sec পরে open হবে
+
+      return () => clearTimeout(openTimer);
+    }
+  }, [])
+
+  return (
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Welcome to our Store!</AlertDialogTitle>
+          <AlertDialogDescription>
+            We're glad to have you here. Explore our products and enjoy your shopping!
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Close</AlertDialogCancel>
+          <AlertDialogAction>Explore</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+ 

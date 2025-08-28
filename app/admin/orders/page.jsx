@@ -29,6 +29,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Search, MoreHorizontal, Eye, FileText, Truck, CreditCard } from 'lucide-react'
 import { getAllOrders, updateOrderStatus, updatePaymentStatus } from "@/services/order.service"
 import { format } from "date-fns"
+import Link from "next/link"
 
 export default function OrdersPage() {
   const router = useRouter()
@@ -64,7 +65,7 @@ export default function OrdersPage() {
         }
       })
 
-      const response = await  getAllOrders(params)
+      const response = await getAllOrders(params)
       setOrders(response.orders)
       setPagination({
         ...pagination,
@@ -210,14 +211,17 @@ export default function OrdersPage() {
 
   return (
     <div className="flex-1 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
-      </div>
-
       <Card>
         <CardHeader>
-          <CardTitle>Order Management</CardTitle>
-          <CardDescription>Manage your orders, update status, and track payments.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Order Management</CardTitle>
+              <CardDescription>Manage your orders, update status, and track payments.</CardDescription>
+            </div>
+            <Button variant="default">
+              <Link href="/admin/orders/new">Create Order</Link>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Filters */}

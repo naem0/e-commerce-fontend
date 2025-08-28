@@ -1,6 +1,6 @@
 // app/components/BannerSlider.jsx
 import BannerSliderClient from "./banner-slider-client"
-import SideCategoryMenu from "@/components/side-category-menu"
+import SideCategoryMenu from "../side-category-menu"
 
 export default function BannerSlider({ banners, design, settings }) {
   return (
