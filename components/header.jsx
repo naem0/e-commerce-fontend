@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ShoppingCart, User, Sun, Moon, Search, Heart, Menu } from "lucide-react"
+import { ShoppingCart, User, Sun, Moon, Search, Heart, Menu, PhoneIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -51,8 +51,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* add marquee text */}
-      <div className="marquee pt-1 container mx-auto">
-        <marquee behavior="scroll" direction="left" className="border-b">
+      <div className="marquee pt-1 container mx-auto flex gap-3 items-center border-b px-3">
+        <PhoneIcon className="h-4 w-4" /> 
+        <span>01310881055</span>
+        <marquee behavior="scroll" direction="left">
           {settings?.marqueeText || "🛡️ডেলিভারি ও রিটার্ন নীতিমালা। 💬 ঢাকার ভেতরে ডেলিভারি: অর্ডার কনফার্ম করার পর ৪৮ ঘণ্টার মধ্যে পণ্য ডেলিভারি করা হবে। 💬 ঢাকার বাইরে ডেলিভারি: দেশের ৬৪ জেলায় অর্ডার কনফার্ম করার পর ৩ থেকে ৫ কর্মদিবসের মধ্যে পণ্য ডেলিভারি করা হবে। রিটার্ন নীতিমালা: পণ্য ডেলিভারির তারিখ থেকে ৭ দিনের মধ্যে রিটার্নের অনুরোধ করতে হবে।"}
         </marquee>
       </div>
