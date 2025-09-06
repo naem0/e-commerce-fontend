@@ -97,6 +97,59 @@ export default async function Categories() {
     )
   }
 
+  if (catagoryDesign === "catagory-2") {
+    return (
+      <section className="py-12 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <Layers className="text-primary-customh-6 w-6" />
+              <h3 className="text-xl font-semibold ml-3">
+                {"Shop by Categories"}
+              </h3>
+            </div>
+          </div>
+
+          <Carousel
+            opts={{ align: "start", slidesToScroll: "auto" }}
+            className="w-full"
+          >
+            <div className="relative">
+              <CarouselContent className="-ml-4">
+                {categories.map((category) => (
+                  <CarouselItem
+                    key={category._id}
+                    className="basis-1/3 sm:basis-1/4 md:basis-1/6 lg:basis-1/8 xl:basis-1/10 pl-4"
+                  >
+                    <Link href={`/categories/${category.slug}`} className="block text-center">
+                      <div className="relative w-24 h-24 mx-auto">
+                        <Image
+                          src={
+                            category.image
+                              ? process.env.NEXT_PUBLIC_API_URL + category.image
+                              : "/placeholder.svg?height=96&width=96"
+                          }
+                          alt={category.name}
+                          fill
+                          className="rounded-full object-cover border-2 border-transparent hover:border-primary-custom transition-all"
+                        />
+                      </div>
+                      <h3 className="mt-2 text-sm font-medium truncate">
+                        {category.name}
+                      </h3>
+                    </Link>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4" />
+              <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4" />
+            </div>
+          </Carousel>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-12 bg-gray-50 dark:bg-gray-800">
       <div className="container mx-auto px-4">
