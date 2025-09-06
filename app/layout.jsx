@@ -19,8 +19,8 @@ const data = await getSiteSettings()
 const settings = data?.success ? data.settings : {}
 
 export const metadata = {
-  title: settings.siteName || "E-Commerce Solution",
-  description: settings.metaTags?.description || "an e-commerce solution built with MERN stack",
+  title: settings?.siteName || "E-Commerce Solution",
+  description: settings?.metaTags?.description || "an e-commerce solution built with MERN stack",
 }
 
 export default async function RootLayout({ children }) {
@@ -35,8 +35,8 @@ export default async function RootLayout({ children }) {
         <style>
           {`
             :root {
-              --primary-color: ${settings.primaryColor || "#f7733b"};
-              --secondary-color: ${settings.secondaryColor || "#f7733b"};
+              --primary-color: ${settings?.primaryColor || "#f7733b"};
+              --secondary-color: ${settings?.secondaryColor || "#f7733b"};
             }
           `}
         </style>
