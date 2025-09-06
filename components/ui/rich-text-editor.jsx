@@ -98,11 +98,13 @@ export default function RichTextEditor({ value = "", onChange, placeholder = "En
 
           {/* Font Size */}
           <div className="flex gap-1 border-r pr-2 mr-2">
-            <select onChange={(e) => changeFontSize(e.target.value)} className="text-sm border rounded px-2 py-1 h-8">
+            <select
+              onChange={(e) => changeFontSize(e.target.value)}
+              className="text-sm border rounded px-2 py-1 h-8"
+              defaultValue="3"
+            >
               <option value="1">Small</option>
-              <option value="3" selected>
-                Normal
-              </option>
+              <option value="3">Normal</option>
               <option value="5">Large</option>
               <option value="7">Extra Large</option>
             </select>

@@ -11,6 +11,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react"
+import { formatPrice } from "@/services/utils"
 
 export default function CartPage() {
   const { data: session, status } = useSession()
@@ -69,7 +70,7 @@ export default function CartPage() {
     }
   }
 
-  const formatPrice = (price) => `${price?.toFixed(2)}`
+  
 
   const handleCheckout = () => {
     router.push("/checkout")

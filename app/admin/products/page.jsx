@@ -42,6 +42,7 @@ import Link from "next/link"
 // import { productService, categoryService } from "@/services/api"
 import { getProducts, updateProduct, deleteProduct } from "@/services/product.service"
 import { getCategories } from "@/services/category.service"
+import { formatPrice } from "@/services/utils"
 
 export default function ProductsPage() {
   const router = useRouter()
@@ -341,7 +342,7 @@ export default function ProductsPage() {
                           </div>
                         </TableCell>
                         <TableCell className="font-medium">{product.name}</TableCell>
-                        <TableCell>${product.price.toFixed(2)}</TableCell>
+                        <TableCell>{formatPrice(product.price)}</TableCell>
                         <TableCell>{product.stock}</TableCell>
                         <TableCell>{product.category?.name || "Uncategorized"}</TableCell>
                         <TableCell>{getStatusBadge(product.status)}</TableCell>

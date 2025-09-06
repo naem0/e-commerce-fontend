@@ -153,7 +153,7 @@ export default function AnalyticsPage() {
                 <p className="text-2xl font-bold">{formatPrice(analytics?.overview?.totalRevenue || 0)}</p>
               </div>
               <div className="p-3 bg-green-100 rounded-full">
-                <DollarSign className="h-6 w-6 text-green-600" />
+                <span className="h-6 w-6 text-green-600">৳</span>
               </div>
             </div>
             <div className="mt-4 flex items-center text-sm">

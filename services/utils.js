@@ -10,11 +10,8 @@ export const getAuthHeader = () => {
 }
 
 // Format price with currency
-export const formatPrice = (price, currency = "USD") => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-  }).format(price)
+export const formatPrice = (price) => {
+    return `৳${Number(price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 // Format date

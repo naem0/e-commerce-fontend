@@ -30,6 +30,7 @@ import { Search, MoreHorizontal, Eye, FileText, Truck, CreditCard } from 'lucide
 import { getAllOrders, updateOrderStatus, updatePaymentStatus } from "@/services/order.service"
 import { format } from "date-fns"
 import Link from "next/link"
+import { formatPrice } from "@/services/utils"
 
 export default function OrdersPage() {
   const router = useRouter()
@@ -312,7 +313,7 @@ export default function OrdersPage() {
                       <TableCell className="font-medium">#{order.orderNumber || order._id.slice(-6)}</TableCell>
                       <TableCell>{order.user?.name || "Guest"}</TableCell>
                       <TableCell>{format(new Date(order.createdAt), "MMM d, yyyy")}</TableCell>
-                      <TableCell>${order.total.toFixed(2)}</TableCell>
+                      <TableCell>{formatPrice(order.total)}</TableCell>
                       <TableCell>{getOrderStatusBadge(order.status)}</TableCell>
                       <TableCell>{getPaymentStatusBadge(order.paymentStatus)}</TableCell>
                       <TableCell className="text-right">
