@@ -35,8 +35,8 @@ export default async function RootLayout({ children }) {
         <style>
           {`
             :root {
-              --primary-color: ${settings.primaryColor || "#22c55e"};
-              --secondary-color: ${settings.secondaryColor || "#16a34a"};
+              --primary-color: ${settings.primaryColor || "#f7733b"};
+              --secondary-color: ${settings.secondaryColor || "#f7733b"};
             }
           `}
         </style>
