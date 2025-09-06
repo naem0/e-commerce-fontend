@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react"
 import { formatPrice, getErrorMessage } from "@/services/utils"
 import Link from "next/link"
+import RelatedProducts from "@/components/product/related-products"
 
 export default function ProductPageClient({ product }) {
   const { slug } = useParams()
@@ -479,6 +480,7 @@ export default function ProductPageClient({ product }) {
           </Tabs>
         </div>
       </div>
+      <RelatedProducts categoryId={product.category?._id} currentProductId={product._id} />
     </div>
   )
 }

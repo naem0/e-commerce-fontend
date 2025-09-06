@@ -226,7 +226,7 @@ exports.createOrder = async (req, res) => {
 
     // Calculate tax and shipping (simplified for demo)
     const tax = subtotal * 0.05 // 5% tax
-    const shippingCost = subtotal > 100 ? 0 : 10 // Free shipping over $100
+    const shippingCost = subtotal > 100 ? 0 : 10 // Free shipping over ৳100
     const total = subtotal + tax + shippingCost
 
     // Create order
@@ -379,7 +379,7 @@ exports.addPartialPayment = async (req, res) => {
     if (amount > order.dueAmount) {
       return res.status(400).json({
         success: false,
-        message: `Payment amount cannot exceed due amount of $${order.dueAmount}`,
+        message: `Payment amount cannot exceed due amount of ৳${order.dueAmount}`,
       })
     }
 
