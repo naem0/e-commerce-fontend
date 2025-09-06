@@ -24,8 +24,8 @@ export const metadata = {
 }
 
 export default async function RootLayout({ children }) {
-  // const data = await getSiteSettings()
-  // const settings = data?.success ? data.settings : {}
+  const data = await getSiteSettings()
+  const settings = data?.success ? data.settings : {}
   const session = await getServerSession(authOptions)
   const user = session?.user || null
 
@@ -44,7 +44,7 @@ export default async function RootLayout({ children }) {
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <AuthProvider session={session}>
-            <SiteSettingsProvider>
+            <SiteSettingsProvider initialSettings={settings}>
               <CartProvider>
                 <WishlistProvider>
                   <div className="min-h-screen flex flex-col">
