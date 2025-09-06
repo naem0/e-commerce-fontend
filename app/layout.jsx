@@ -10,21 +10,22 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
 import WhatsAppButton from "@/components/whatsapp-button"
-import Chatbot from "@/components/chatbot"
 import { getSiteSettings } from "@/services/settings.service"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
 const inter = Inter({ subsets: ["latin"] })
+const data = await getSiteSettings()
+const settings = data?.success ? data.settings : {}
 
 export const metadata = {
-  title: "E-Commerce Store",
-  description: "Modern e-commerce solution with Next.js",
+  title: settings.siteName || "E-Commerce Solution",
+  description: settings.metaTags?.description || "an e-commerce solution built with MERN stack",
 }
 
 export default async function RootLayout({ children }) {
-  const data = await getSiteSettings()
-  const settings = data?.success ? data.settings : {}
+  // const data = await getSiteSettings()
+  // const settings = data?.success ? data.settings : {}
   const session = await getServerSession(authOptions)
   const user = session?.user || null
 

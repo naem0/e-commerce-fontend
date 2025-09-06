@@ -17,6 +17,7 @@ export function Footer() {
     color: "#FFFFFF",
     transition: "color 0.3s ease",
   }
+  console.log("Footer settings:", settings)
 
   return (
     <footer style={footerStyle} className="pt-10 pb-6">
@@ -24,7 +25,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">About</h3>
-            <p className="mb-4">About Description</p>
+            <p className="mb-4">{settings?.metaTags?.description || "Your company description goes here."}</p>
             <div className="flex space-x-4">
               <a href="#" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-facebook-f"></i>
