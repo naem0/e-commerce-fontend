@@ -14,6 +14,7 @@ import { ShoppingCart, Search, SlidersHorizontal } from "lucide-react"
 import { productService, categoryService, brandService } from "@/services/api"
 import { useCart } from "@/components/cart-provider"
 import { useToast } from "@/hooks/use-toast"
+import ProductCard from "@/components/product/product-card"
 
 export default function ProductsPage() {
   const { addToCart } = useCart()
@@ -234,7 +235,7 @@ export default function ProductsPage() {
 
       {/* Products Grid */}
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
           {[...Array(8)].map((_, i) => (
             <Card key={i} className="overflow-hidden">
               <div className="aspect-square relative">
@@ -259,58 +260,9 @@ export default function ProductsPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
           {products.map((product) => (
-            <Card key={product._id} className="overflow-hidden">
-              <Link href={`/products/${product.slug}`}>
-                <div className="aspect-square relative overflow-hidden group">
-                  <Image
-                    src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=300&width=300"}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-110"
-                  />
-                  {product.discount > 0 && (
-                    <Badge className="absolute top-2 left-2 bg-red-500">
-                      {product.discount}% OFF
-                    </Badge>
-                  )}
-                  {product.isNew && (
-                    <Badge className="absolute top-2 right-2 bg-green-500">NEW</Badge>
-                  )}
-                </div>
-              </Link>
-              <CardContent className="p-4">
-                <Link href={`/products/${product.slug}`}>
-                  <h3 className="font-medium line-clamp-1 hover:underline">{product.name}</h3>
-                </Link>
-                <div className="flex items-center mt-1">
-                  {product.salePrice ? (
-                    <>
-                      <span className="font-bold">${product.salePrice.toFixed(2)}</span>
-                      <span className="text-sm text-muted-foreground line-through ml-2">
-                        ${product.price.toFixed(2)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="font-bold">${product.price.toFixed(2)}</span>
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{product.shortDescription}</p>
-              </CardContent>
-              <CardFooter className="p-4 pt-0">
-                <Button className="w-full" onClick={() => handleAddToCart(product)} disabled={product.stock <= 0}>
-                  {product.stock <= 0 ? (
-                    "Out of Stock"
-                  ) : (
-                    <>
-                      <ShoppingCart className="mr-2 h-4 w-4" />
-                      Add to Cart
-                    </>
-                  )}
-                </Button>
-              </CardFooter>
-            </Card>
+            <ProductCard key={product._id} product={product} />
           ))}
         </div>
       )}
