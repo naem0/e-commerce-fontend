@@ -61,7 +61,7 @@ export const getProfile = async () => {
 export const updateProfile = async (profileData) => {
   try {
     const response = await userAPI.put("/profile", profileData)
-    return response.data
+    return response
   } catch (error) {
     throw handleError(error)
   }

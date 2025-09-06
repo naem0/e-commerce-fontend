@@ -309,13 +309,13 @@ export default function ProfilePage() {
                   {getInitials(user?.name)}
                 </AvatarFallback>
               </Avatar>
-              <Button
+              {/* <Button
                 size="sm"
                 className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0 bg-transparent"
                 variant="outline"
               >
                 <Camera className="h-4 w-4" />
-              </Button>
+              </Button> */}
             </div>
             <div className="text-center md:text-left flex-1">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{user?.name}</h1>
@@ -334,7 +334,7 @@ export default function ProfilePage() {
                 </Badge>
               </div>
             </div>
-            <div className="flex gap-2">
+            {/* <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
@@ -343,7 +343,7 @@ export default function ProfilePage() {
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -467,7 +467,7 @@ export default function ProfilePage() {
                         placeholder="+880 1234 567890"
                       />
                     </div>
-                    <div className="space-y-2">
+                    {/* <div className="space-y-2">
                       <Label htmlFor="dateOfBirth" className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
                         Date of Birth
@@ -479,8 +479,8 @@ export default function ProfilePage() {
                         onChange={(e) => setProfileForm({ ...profileForm, dateOfBirth: e.target.value })}
                         className="h-11"
                       />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
+                    </div> */}
+                    <div className="space-y-2">
                       <Label htmlFor="gender">Gender</Label>
                       <select
                         id="gender"

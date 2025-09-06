@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --primary-color: #3b82f6;
-  --secondary-color: #1e3a8a;
+  --primary-color: #f7733b;
+  --secondary-color: #f7733b;
 
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -73,7 +73,7 @@
 }
 
 .bg-primary-custom {
-  background-color: var(--primary-color);
+  background-color: var(--primary-color) !important;
 }
 
 .text-secondary-custom {
