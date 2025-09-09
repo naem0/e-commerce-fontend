@@ -148,7 +148,7 @@ export default function EditCategoryPage({ params }) {
                   name="parent"
                   value={formData.parent}
                   onChange={handleChange}
-                  className="w-full border rounded-md px-3 py-2"
+                  className="w-full border rounded-md px-3 py-2 bg-background"
                 >
                   <option value="">None (Top Level Category)</option>
                   {parentCategories.map((category) => (
@@ -166,7 +166,7 @@ export default function EditCategoryPage({ params }) {
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full border rounded-md px-3 py-2"
+                  className="w-full border rounded-md px-3 py-2 bg-background"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>

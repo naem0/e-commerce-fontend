@@ -293,6 +293,7 @@ exports.createProduct = async (req, res) => {
       hasVariations,
       variationTypes,
       variants,
+      specification,
     } = req.body
 
     // Check if product already exists
@@ -341,6 +342,7 @@ exports.createProduct = async (req, res) => {
       weight: weight ? Number.parseFloat(weight) : undefined,
       createdBy: req.user.id,
       hasVariations: hasVariations === "true" || hasVariations === true,
+      specification,
     }
 
     // Add optional fields
@@ -375,15 +377,46 @@ exports.createProduct = async (req, res) => {
 
     if (shipping) {
       try {
-        productData.shipping = typeof shipping === "string" ? JSON.parse(shipping) : shipping
+        console.log("Received shipping:", shipping);
+        let parsedShipping = shipping;
+        if (typeof shipping === "string") {
+          parsedShipping = JSON.parse(shipping);
+        }
+
+        if (parsedShipping.dimensions) {
+          console.log("Received shipping.dimensions:", parsedShipping.dimensions);
+          if (typeof parsedShipping.dimensions === 'string') {
+            parsedShipping.dimensions = JSON.parse(parsedShipping.dimensions);
+          }
+        }
+        productData.shipping = parsedShipping;
       } catch (e) {
-        console.error("Invalid shipping format:", e)
+        console.error("Invalid shipping format:", e);
       }
     }
 
-    // Handle main product images
+    // Initialize image arrays
+    const mainProductImages = [];
+    const variantImagesMap = new Map(); // Map to store variant images by variant index
+
+    // Process all uploaded files
     if (req.files && req.files.length > 0) {
-      productData.images = req.files.map((file) => `/uploads/${file.filename}`)
+      req.files.forEach(file => {
+        if (file.fieldname === 'images') {
+          mainProductImages.push(`/uploads/${file.filename}`);
+        } else if (file.fieldname.startsWith('variantImages_')) {
+          const variantIndex = parseInt(file.fieldname.split('_')[1]);
+          if (!variantImagesMap.has(variantIndex)) {
+            variantImagesMap.set(variantIndex, []);
+          }
+          variantImagesMap.get(variantIndex).push(`/uploads/${file.filename}`);
+        }
+      });
+    }
+
+    // Assign main product images
+    if (mainProductImages.length > 0) {
+      productData.images = mainProductImages;
     }
 
     // Handle variations
@@ -410,10 +443,9 @@ exports.createProduct = async (req, res) => {
               variantData.comparePrice = Number.parseFloat(variant.comparePrice)
             }
 
-            // Handle variant images
-            const variantImageField = `variantImages_${index}`
-            if (req.files && req.files[variantImageField]) {
-              variantData.images = req.files[variantImageField].map((file) => `/uploads/${file.filename}`)
+            // Assign variant images from the map
+            if (variantImagesMap.has(index)) {
+              variantData.images = variantImagesMap.get(index);
             }
 
             return variantData
@@ -485,6 +517,7 @@ exports.updateProduct = async (req, res) => {
       hasVariations,
       variationTypes,
       variants,
+      specification,
     } = req.body
 
     const product = await Product.findById(req.params.id)
@@ -544,6 +577,7 @@ exports.updateProduct = async (req, res) => {
       updatedAt: new Date(),
       hasVariations:
         hasVariations !== undefined ? hasVariations === "true" || hasVariations === true : product.hasVariations,
+      specification: specification !== undefined ? specification : product.specification,
     }
 
     // Add optional fields
@@ -578,14 +612,43 @@ exports.updateProduct = async (req, res) => {
 
     if (shipping) {
       try {
-        updateData.shipping = typeof shipping === "string" ? JSON.parse(shipping) : shipping
+        let parsedShipping = shipping;
+        if (typeof shipping === "string") {
+          parsedShipping = JSON.parse(shipping);
+        }
+
+        if (parsedShipping.dimensions) {
+          if (typeof parsedShipping.dimensions === 'string') {
+            parsedShipping.dimensions = JSON.parse(parsedShipping.dimensions);
+          }
+        }
+        updateData.shipping = parsedShipping;
       } catch (e) {
-        console.error("Invalid shipping format:", e)
+        console.error("Invalid shipping format (update):", e);
       }
     }
 
-    // Handle main product images
+        // Initialize image arrays
+    const mainProductImages = [];
+    const variantImagesMap = new Map(); // Map to store variant images by variant index
+
+    // Process all uploaded files
     if (req.files && req.files.length > 0) {
+      req.files.forEach(file => {
+        if (file.fieldname === 'images') {
+          mainProductImages.push(`/uploads/${file.filename}`);
+        } else if (file.fieldname.startsWith('variantImages_')) {
+          const variantIndex = parseInt(file.fieldname.split('_')[1]);
+          if (!variantImagesMap.has(variantIndex)) {
+            variantImagesMap.set(variantIndex, []);
+          }
+          variantImagesMap.get(variantIndex).push(`/uploads/${file.filename}`);
+        }
+      });
+    }
+
+    // Handle main product images
+    if (mainProductImages.length > 0) {
       // Delete old images
       if (product.images && product.images.length > 0) {
         product.images.forEach((imagePath) => {
@@ -595,7 +658,7 @@ exports.updateProduct = async (req, res) => {
           }
         })
       }
-      updateData.images = req.files.map((file) => `/uploads/${file.filename}`)
+      updateData.images = mainProductImages;
     }
 
     // Handle variations
@@ -622,10 +685,18 @@ exports.updateProduct = async (req, res) => {
               variantData.comparePrice = Number.parseFloat(variant.comparePrice)
             }
 
-            // Handle variant images
-            const variantImageField = `variantImages_${index}`
-            if (req.files && req.files[variantImageField]) {
-              variantData.images = req.files[variantImageField].map((file) => `/uploads/${file.filename}`)
+            // Assign variant images from the map
+            if (variantImagesMap.has(index)) {
+              // Delete old variant images if new ones are uploaded
+              if (variant.images && variant.images.length > 0) {
+                variant.images.forEach((imagePath) => {
+                  const fullPath = path.join(__dirname, "..", imagePath)
+                  if (fs.existsSync(fullPath)) {
+                    fs.unlinkSync(fullPath)
+                  }
+                })
+              }
+              variantData.images = variantImagesMap.get(index);
             }
 
             return variantData
@@ -925,8 +996,11 @@ exports.addProductVariant = async (req, res) => {
 
     // Handle images
     let variantImages = []
-    if (req.files) {
-      variantImages = req.files.map((file) => `/uploads/${file.filename}`)
+    if (req.files && req.files.length > 0) {
+      // Assuming variant images are sent under a field like 'variantImages_0'
+      // or simply 'images' if it's a direct variant image upload
+      const variantImageFiles = req.files.filter(file => file.fieldname.startsWith('variantImages_') || file.fieldname === 'images');
+      variantImages = variantImageFiles.map((file) => `/uploads/${file.filename}`);
     } else if (images) {
       if (typeof images === "string") {
         variantImages = [images]
@@ -1054,7 +1128,22 @@ exports.updateProductVariant = async (req, res) => {
     // Handle images
     let variantImages = product.variants[variantIndex].images
     if (req.files && req.files.length > 0) {
-      variantImages = req.files.map((file) => `/uploads/${file.filename}`)
+      // Assuming variant images are sent under a field like 'variantImages_X'
+      // or simply 'images' if it's a direct variant image upload
+      const newVariantImageFiles = req.files.filter(file => file.fieldname.startsWith('variantImages_') || file.fieldname === 'images');
+
+      if (newVariantImageFiles.length > 0) {
+        // Delete old images if new ones are uploaded
+        if (variantImages && variantImages.length > 0) {
+          variantImages.forEach((imagePath) => {
+            const fullPath = path.join(__dirname, "..", imagePath)
+            if (fs.existsSync(fullPath)) {
+              fs.unlinkSync(fullPath)
+            }
+          })
+        }
+        variantImages = newVariantImageFiles.map((file) => `/uploads/${file.filename}`);
+      }
     } else if (images) {
       if (typeof images === "string") {
         variantImages = [images]

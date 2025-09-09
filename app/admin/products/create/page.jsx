@@ -32,6 +32,7 @@ export default function CreateProductPage() {
     featured: false,
     status: "draft",
     sku: "",
+    barcode: "", // Allow manual barcode input
     weight: "",
     dimensions: {
       length: "",
@@ -45,6 +46,7 @@ export default function CreateProductPage() {
       description: "",
       keywords: "",
     },
+    specification: "",
     shipping: {
       weight: "",
       dimensions: {
@@ -109,21 +111,20 @@ export default function CreateProductPage() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
 
-    if (name.includes(".")) {
-      const [parent, child] = name.split(".")
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: type === "checkbox" ? checked : value,
-        },
-      }))
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }))
-    }
+    const processedValue = type === "checkbox" ? checked : value
+
+    setFormData((prev) => {
+      const newFormData = { ...prev }
+      const keys = name.split(".")
+      let temp = newFormData
+
+      for (let i = 0; i < keys.length - 1; i++) {
+        temp = temp[keys[i]]
+      }
+
+      temp[keys[keys.length - 1]] = processedValue
+      return newFormData
+    })
   }
 
   const handleImagesChange = (e) => {
@@ -380,8 +381,11 @@ export default function CreateProductPage() {
         })
       }
 
-      await createProduct(productData)
+      const response = await createProduct(productData)
 
+      if (!response.success) {
+        throw new Error(response.message)
+      }
       toast({
         title: "Success",
         description: "Product created successfully",
@@ -391,6 +395,7 @@ export default function CreateProductPage() {
     } catch (error) {
       console.error("Error creating product:", error)
       setError(error.response?.data?.message || "Failed to create product. Please try again.")
+    } finally {
       setLoading(false)
     }
   }
@@ -459,6 +464,15 @@ export default function CreateProductPage() {
                       placeholder="Enter detailed product description..."
                     />
                   </div>
+
+                  <div>
+                    <Label htmlFor="specification">Specification</Label>
+                    <RichTextEditor
+                      value={formData.specification}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, specification: value }))}
+                      placeholder="Enter product specifications..."
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -501,7 +515,7 @@ export default function CreateProductPage() {
                         value={formData.category}
                         onChange={handleChange}
                         required
-                        className="w-full border rounded-md px-3 py-2"
+                        className="w-full border rounded-md px-3 py-2 bg-background"
                       >
                         <option value="">Select Category</option>
                         {categories.map((category) => (
@@ -518,7 +532,7 @@ export default function CreateProductPage() {
                         name="brand"
                         value={formData.brand}
                         onChange={handleChange}
-                        className="w-full border rounded-md px-3 py-2"
+                        className="w-full border rounded-md px-3 py-2 bg-background"
                       >
                         <option value="">Select Brand</option>
                         {brands.map((brand) => (
@@ -549,7 +563,7 @@ export default function CreateProductPage() {
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="w-full border rounded-md px-3 py-2"
+                        className="w-full border rounded-md px-3 py-2 bg-background"
                       >
                         <option value="draft">Draft</option>
                         <option value="published">Published</option>
@@ -785,7 +799,7 @@ export default function CreateProductPage() {
                                 id={`variant-status-${index}`}
                                 value={variant.status}
                                 onChange={(e) => handleVariantChange(index, "status", e.target.value)}
-                                className="w-full border rounded-md px-3 py-2"
+                                className="w-full border rounded-md px-3 py-2 bg-background"
                               >
                                 <option value="active">Active</option>
                                 <option value="draft">Draft</option>
@@ -841,7 +855,7 @@ export default function CreateProductPage() {
                                     id={`variant-option-${index}-${type.name}`}
                                     value={variant.options.find((o) => o.type === type.name)?.value || ""}
                                     onChange={(e) => handleVariantOptionChange(index, type.name, e.target.value)}
-                                    className="w-full border rounded-md px-3 py-2"
+                                    className="w-full border rounded-md px-3 py-2 bg-background"
                                   >
                                     {type.options.map((option) => (
                                       <option key={option.value} value={option.value}>
@@ -967,6 +981,17 @@ export default function CreateProductPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
+                  <Label htmlFor="barcode">Barcode (Optional)</Label>
+                  <Input
+                    id="barcode"
+                    name="barcode"
+                    value={formData.barcode}
+                    onChange={handleChange}
+                    placeholder="Leave empty for auto-generation"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">If left empty, a barcode will be automatically generated</p>
+                </div>
+                <div>
                   <Label htmlFor="weight">Weight (kg)</Label>
                   <Input
                     id="weight"
@@ -979,43 +1004,43 @@ export default function CreateProductPage() {
                     placeholder="0.00"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <Label>Dimensions (cm)</Label>
-                  <div className="grid grid-cols-3 gap-2 mt-1">
-                    <div>
-                      <Input
-                        name="dimensions.length"
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        value={formData.dimensions.length}
-                        onChange={handleChange}
-                        placeholder="Length"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        name="dimensions.width"
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        value={formData.dimensions.width}
-                        onChange={handleChange}
-                        placeholder="Width"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        name="dimensions.height"
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        value={formData.dimensions.height}
-                        onChange={handleChange}
-                        placeholder="Height"
-                      />
-                    </div>
+              <div>
+                <Label>Dimensions (cm)</Label>
+                <div className="grid grid-cols-3 gap-2 mt-1">
+                  <div>
+                    <Input
+                      name="dimensions.length"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.dimensions.length}
+                      onChange={handleChange}
+                      placeholder="Length"
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      name="dimensions.width"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.dimensions.width}
+                      onChange={handleChange}
+                      placeholder="Width"
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      name="dimensions.height"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.dimensions.height}
+                      onChange={handleChange}
+                      placeholder="Height"
+                    />
                   </div>
                 </div>
               </div>

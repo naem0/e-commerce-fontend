@@ -2,29 +2,6 @@ import { createAPI, getAuthHeaders, handleError } from "./api.utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-// Create axios instance for users
-// const userAPI = axios.create({
-//   baseURL: `${API_URL}/api/users`,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// })
-
-// Add auth token to requests
-// userAPI.interceptors.request.use(
-//   (config) => {
-//     const authHeader = getAuthHeader()
-//     if (authHeader) {
-//       config.headers = {
-//         ...config.headers,
-//         ...authHeader,
-//       }
-//     }
-//     return config
-//   },
-//   (error) => Promise.reject(error),
-// )
-
 // Create user API instance
 const userAPI = createAPI("users")
 
@@ -32,6 +9,16 @@ const userAPI = createAPI("users")
 export const getUsers = async (params = {}) => {
   try {
     const response = await userAPI.get("/", { params })
+    return response
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Get users by role (admin only)
+export const getUsersByRole = async () => {
+  try {
+    const response = await userAPI.get("/by-role")
     return response
   } catch (error) {
     throw handleError(error)
@@ -170,5 +157,45 @@ export const getUserAddresses = async () => {
       message: error.message,
       addresses: [],
     }
+  }
+}
+
+// Assign role to user
+export const assignUserRole = async (userId, role) => {
+  try {
+    const response = await userAPI.put(`/${userId}/role`, { role })
+    return response
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Get user roles
+export const getUserRoles = async (userId) => {
+  try {
+    const response = await userAPI.get(`/${userId}/roles`)
+    return response
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Update user permissions
+export const updateUserPermissions = async (userId, permissions) => {
+  try {
+    const response = await userAPI.put(`/${userId}/permissions`, { permissions })
+    return response
+  } catch (error) {
+    throw handleError(error)
+  }
+}
+
+// Bulk assign roles
+export const bulkAssignRoles = async (userIds, role) => {
+  try {
+    const response = await userAPI.post("/bulk-assign-roles", { userIds, role })
+    return response
+  } catch (error) {
+    throw handleError(error)
   }
 }

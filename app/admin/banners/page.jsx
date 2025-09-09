@@ -31,10 +31,10 @@ export default function BannersPage() {
     title: "",
     subtitle: "",
     description: "",
-    buttonText: "Shop Now",
-    buttonLink: "/products",
-    backgroundColor: "#f8fafc",
-    textColor: "#1e293b",
+    buttonText: "",
+    buttonLink: "",
+    backgroundColor: "",
+    textColor: "",
     enabled: true,
     image: "",
   })
@@ -111,10 +111,6 @@ export default function BannersPage() {
       setSaving(true)
       setError(null)
 
-      if (!newBanner.title) {
-        throw new Error("Banner title is required")
-      }
-
       if (!imageFile && !newBanner.image) {
         throw new Error("Banner image is required")
       }
@@ -140,10 +136,10 @@ export default function BannersPage() {
           title: "",
           subtitle: "",
           description: "",
-          buttonText: "Shop Now",
-          buttonLink: "/products",
-          backgroundColor: "#f8fafc",
-          textColor: "#1e293b",
+          buttonText: "",
+          buttonLink: "",
+          backgroundColor: "",
+          textColor: "",
           enabled: true,
           image: "",
         })
@@ -245,7 +241,7 @@ export default function BannersPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="p-6 bg-background">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
@@ -263,7 +259,7 @@ export default function BannersPage() {
         </Alert>
       )}
 
-      <Tabs defaultValue="all" className="space-y-4" onValueChange={setActiveTab}>
+      <Tabs defaultValue="all" className="space-y-4 pt-3" onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="all">All Banners</TabsTrigger>
           <TabsTrigger value="active">Active</TabsTrigger>
@@ -299,7 +295,6 @@ export default function BannersPage() {
                       value={newBanner.title}
                       onChange={handleInputChange}
                       placeholder="Enter banner title"
-                      required
                     />
                   </div>
                   <div>
@@ -466,11 +461,10 @@ function BannersList({ banners, onDelete, onToggleStatus }) {
               <TableCell>
                 <div className="w-16 h-12 relative">
                   <Image
-                    src={
-                      banner.image.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${banner.image}` : banner.image
-                    }
+                    src={`${process.env.NEXT_PUBLIC_API_URL}${banner.image}`}
                     alt={banner.title}
                     className="w-full h-full object-cover rounded-md"
+                    fill
                     onError={(e) => {
                       e.target.src = "/placeholder.svg?height=48&width=64"
                     }}

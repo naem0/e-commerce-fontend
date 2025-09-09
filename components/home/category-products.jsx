@@ -15,7 +15,7 @@ export default async function CategoryProducts({ categoryId, title, limit = 8, d
 
   try {
     const [categoryResult, productsResult] = await Promise.all([
-      getCategory(categoryId?._id || categoryId),
+      getCategory(categoryId),
       getProducts({ category: categoryId?._id || categoryId, limit }),
     ])
 

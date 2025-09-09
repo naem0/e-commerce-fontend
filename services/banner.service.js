@@ -116,28 +116,10 @@ export const getBannerById = async (id) => {
 }
 
 // Create banner (Admin only)
-export const createBanner = async (bannerData) => {
+export const createBanner = async (formData) => {
   try {
     const headers = await getAuthHeadersForFormData()
     const url = `${API_URL}/api/banners`
-
-    // Create FormData
-    const formData = new FormData()
-
-    // Add text fields
-    formData.append("title", bannerData.title || "")
-    formData.append("subtitle", bannerData.subtitle || "")
-    formData.append("description", bannerData.description || "")
-    formData.append("buttonText", bannerData.buttonText || "Shop Now")
-    formData.append("buttonLink", bannerData.buttonLink || "/products")
-    formData.append("backgroundColor", bannerData.backgroundColor || "#f8fafc")
-    formData.append("textColor", bannerData.textColor || "#1e293b")
-    formData.append("enabled", bannerData.enabled || true)
-
-    // Add image file if exists
-    if (bannerData.image && bannerData.image instanceof File) {
-      formData.append("image", bannerData.image)
-    }
 
     const response = await fetch(url, {
       method: "POST",
@@ -163,28 +145,10 @@ export const createBanner = async (bannerData) => {
 }
 
 // Update banner (Admin only)
-export const updateBanner = async (id, bannerData) => {
+export const updateBanner = async (id, formData) => {
   try {
     const headers = await getAuthHeadersForFormData()
     const url = `${API_URL}/api/banners/${id}`
-
-    // Create FormData
-    const formData = new FormData()
-
-    // Add text fields
-    formData.append("title", bannerData.title || "")
-    formData.append("subtitle", bannerData.subtitle || "")
-    formData.append("description", bannerData.description || "")
-    formData.append("buttonText", bannerData.buttonText || "Shop Now")
-    formData.append("buttonLink", bannerData.buttonLink || "/products")
-    formData.append("backgroundColor", bannerData.backgroundColor || "#f8fafc")
-    formData.append("textColor", bannerData.textColor || "#1e293b")
-    formData.append("enabled", bannerData.enabled || true)
-
-    // Add image file if exists
-    if (bannerData.image && bannerData.image instanceof File) {
-      formData.append("image", bannerData.image)
-    }
 
     const response = await fetch(url, {
       method: "PUT",

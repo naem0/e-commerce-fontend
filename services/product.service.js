@@ -69,7 +69,6 @@ export const getProducts = async (params = {}) => {
     const response = await fetch(url, {
       method: "GET",
       headers,
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
     })
 
     if (!response.ok) {
@@ -140,6 +139,32 @@ export const getProductBySlug = async (slug) => {
   }
 }
 
+// Get product by barcode
+export const getProductByBarcode = async (barcode) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/api/products/barcode/${barcode}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
 // Create product (Admin only)
 export const createProduct = async (productData) => {
   try {
@@ -161,6 +186,7 @@ export const createProduct = async (productData) => {
     formData.append("featured", productData.featured || false)
     formData.append("status", productData.status || "draft")
     formData.append("sku", productData.sku || "")
+    formData.append("barcode", productData.barcode || "")
     formData.append("weight", productData.weight || "")
     formData.append("hasVariations", productData.hasVariations || false)
 
@@ -258,6 +284,7 @@ export const updateProduct = async (id, productData) => {
     formData.append("featured", productData.featured || false)
     formData.append("status", productData.status || "draft")
     formData.append("sku", productData.sku || "")
+    formData.append("barcode", productData.barcode || "")
     formData.append("weight", productData.weight || "")
     formData.append("hasVariations", productData.hasVariations || false)
 
@@ -391,4 +418,44 @@ export const searchProducts = async (query, params = {}) => {
       products: [],
     }
   }
+}
+
+// Generate barcode for product
+export const generateBarcode = async (id) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/api/products/${id}/generate-barcode`
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}
+
+// Export all functions as named exports
+export const productService = {
+  getProducts,
+  getProductById,
+  getProductBySlug,
+  getProductByBarcode,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getFeaturedProducts,
+  searchProducts,
+  generateBarcode,
 }

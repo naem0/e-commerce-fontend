@@ -48,7 +48,6 @@ export default function LoginPage() {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
 
-    // Clear error when user types
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
     }
@@ -57,7 +56,6 @@ export default function LoginPage() {
     }
   }
 
-  // Test backend connection
   const testBackendConnection = async () => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -72,8 +70,6 @@ export default function LoginPage() {
           password: formData.password,
         }),
       })
-      const data = await response.text()
-
       return response.ok
     } catch (error) {
       console.error("Backend connection test failed:", error)
@@ -84,21 +80,17 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!validateForm()) {
-      return
-    }
+    if (!validateForm()) return
 
     setIsLoading(true)
     setError("")
 
     try {
-      // Test backend connection first
       const backendConnected = await testBackendConnection()
       if (!backendConnected) {
         throw new Error("Cannot connect to backend server. Please try again.")
       }
 
-      // Try to login with NextAuth
       const result = await signIn("credentials", {
         redirect: false,
         email: formData.email,
@@ -106,13 +98,7 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        console.error("Login error:", result.error)
-        let errorMessage = "Invalid email or password. Please try again."
-
-        if (result.error === "CredentialsSignin") {
-          errorMessage = "Invalid email or password. Please check your credentials."
-        }
-
+        let errorMessage = "Invalid email or password. Please check your credentials."
         setError(errorMessage)
         toast({
           title: t("auth.loginFailed") || "Login Failed",

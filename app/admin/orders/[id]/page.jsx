@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -39,7 +38,6 @@ export default function AdminOrderDetailsPage() {
   const { id } = useParams()
   const router = useRouter()
   const { data: session } = useSession()
-  const { t } = useLanguage()
   const { toast } = useToast()
 
   const [order, setOrder] = useState(null)

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { AdminLayout } from "@/components/admin/admin-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -37,9 +36,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Search, MoreHorizontal, Edit, Trash2, Eye, UserPlus } from 'lucide-react'
+import { Search, MoreHorizontal, Edit, Trash2, Eye, Shield } from "lucide-react"
 import { getUsers, updateUser, deleteUser } from "@/services/user.service"
 import { format } from "date-fns"
+import { RoleAssignmentModal } from "@/components/admin/role-assignment-modal"
 
 export default function UsersPage() {
   const router = useRouter()
@@ -59,16 +59,14 @@ export default function UsersPage() {
   })
   const [userToDelete, setUserToDelete] = useState(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [roleAssignmentOpen, setRoleAssignmentOpen] = useState(false)
+  const [selectedUserForRole, setSelectedUserForRole] = useState(null)
 
   // Fetch users
   const fetchUsers = async () => {
     try {
       setLoading(true)
-      const params = {
-        page: pagination.page,
-        limit: pagination.limit,
-        ...filters,
-      }
+      const params = `?page=${pagination.page}&limit=${pagination.limit}&${new URLSearchParams(filters).toString()}`
 
       // Remove empty filters
       Object.keys(params).forEach((key) => {
@@ -98,7 +96,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     fetchUsers()
-  }, [pagination.page, pagination.limit])
+  }, [pagination.page, pagination.limit, filters])
 
   // Handle filter changes
   const handleFilterChange = (name, value) => {
@@ -193,6 +191,16 @@ export default function UsersPage() {
     }
   }
 
+  // Handle role assignment
+  const handleRoleAssignment = (user) => {
+    setSelectedUserForRole(user)
+    setRoleAssignmentOpen(true)
+  }
+
+  const onRoleAssigned = () => {
+    fetchUsers() // Refresh the users list
+  }
+
   // Get role badge color
   const getRoleBadge = (role) => {
     switch (role) {
@@ -224,13 +232,6 @@ export default function UsersPage() {
   return (
     <>
       <div className="flex-1 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Users</h2>
-          <Button onClick={() => router.push("/admin/users/create")}>
-            <UserPlus className="mr-2 h-4 w-4" /> Add User
-          </Button>
-        </div>
-
         <Card>
           <CardHeader>
             <CardTitle>User Management</CardTitle>
@@ -258,8 +259,9 @@ export default function UsersPage() {
                   <SelectContent>
                     <SelectItem value="all">All Roles</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="super-admin">Super Admin</SelectItem>
                     <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="customer">Customer</SelectItem>
+                    <SelectItem value="user">Customer</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -340,6 +342,9 @@ export default function UsersPage() {
                                 <a href={`/admin/users/edit/${user._id}`}>
                                   <Edit className="mr-2 h-4 w-4" /> Edit
                                 </a>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleRoleAssignment(user)}>
+                                <Shield className="mr-2 h-4 w-4" /> Assign Role
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuLabel>Status</DropdownMenuLabel>
@@ -446,6 +451,14 @@ export default function UsersPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Role Assignment Modal */}
+      <RoleAssignmentModal
+        open={roleAssignmentOpen}
+        onOpenChange={setRoleAssignmentOpen}
+        user={selectedUserForRole}
+        onRoleAssigned={onRoleAssigned}
+      />
     </>
   )
 }
