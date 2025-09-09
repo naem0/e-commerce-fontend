@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import { useLanguage } from "@/components/language-provider"
-import { getCategoryById } from "@/services/category.service"
+import { getCategoryBySlug } from "@/services/category.service"
 import { getProducts } from "@/services/product.service"
 import { ProductCard } from "@/components/product/product-card"
 import { Button } from "@/components/ui/button"
@@ -35,7 +35,7 @@ export default function CategoryPage() {
     const fetchCategory = async () => {
       try {
         setLoading(true)
-        const response = await getCategoryById(slug)
+        const response = await getCategoryBySlug(slug)
         if (response.success) {
           setCategory(response.category)
         } else {

@@ -146,6 +146,7 @@ export function AdminLayout({ children }) {
       </div>
 
       {/* Main content */}
+      {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         <header className="bg-background border-b h-16 flex items-center px-4">
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)} className="lg:hidden">

@@ -124,11 +124,6 @@ export const getCategoryById = async (id) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
-
     const data = await response.json()
     return data
   } catch (error) {

@@ -6,8 +6,7 @@ import { LanguageProvider } from "@/components/language-provider"
 import { SiteSettingsProvider } from "@/components/site-settings-provider"
 import { CartProvider } from "@/components/cart-provider"
 import { WishlistProvider } from "@/components/wishlist-provider"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+
 import { Toaster } from "@/components/ui/toaster"
 import WhatsAppButton from "@/components/whatsapp-button"
 import Chatbot from "@/components/chatbot"
@@ -48,9 +47,7 @@ export default async function RootLayout({ children }) {
                 <CartProvider>
                   <WishlistProvider>
                     <div className="min-h-screen flex flex-col">
-                      <Header />
                       <main className="flex-1">{children}</main>
-                      <Footer />
                     </div>
                     <Toaster />
                     <WhatsAppButton />
