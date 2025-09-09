@@ -2932,4 +2932,7 @@ export const en = {
     subscribe: "Subscribe",
     copyright: "All rights reserved.",
   },
+
+  // Other
+  other: {},
 }

@@ -2440,4 +2440,7 @@ export const bn = {
     subscribe: "সাবস্ক্রাইব",
     copyright: "সর্বস্বত্ব সংরক্ষিত।",
   },
+
+  // Other
+  other: {},
 };
