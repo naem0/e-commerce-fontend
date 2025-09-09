@@ -61,7 +61,7 @@ export default function RegisterPage() {
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = t("validation.passwordsMatch") || "Passwords do not match"
+      newErrors.confirmPassword = t("validation.passwordMismatch") || "Passwords do not match"
     }
 
     setErrors(newErrors)
@@ -216,3 +216,4 @@ export default function RegisterPage() {
     </div>
   )
 }
+
