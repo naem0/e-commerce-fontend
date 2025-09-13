@@ -1,15 +1,14 @@
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { AuthProvider } from "@/components/auth-provider"
+import { AuthProvider as NextAuthProvider } from "@/components/auth-provider"
+import { AuthProvider } from "@/contexts/auth-context"
 import { LanguageProvider } from "@/components/language-provider"
 import { SiteSettingsProvider } from "@/components/site-settings-provider"
 import { CartProvider } from "@/components/cart-provider"
 import { WishlistProvider } from "@/components/wishlist-provider"
-
 import { Toaster } from "@/components/ui/toaster"
 import WhatsAppButton from "@/components/whatsapp-button"
-import Chatbot from "@/components/chatbot"
 import { getSiteSettings } from "@/services/settings.service"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
@@ -41,6 +40,7 @@ export default async function RootLayout({ children }) {
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <NextAuthProvider session={session} user={user}>
           <AuthProvider>
             <LanguageProvider>
               <SiteSettingsProvider>
@@ -56,6 +56,7 @@ export default async function RootLayout({ children }) {
               </SiteSettingsProvider>
             </LanguageProvider>
           </AuthProvider>
+          </NextAuthProvider>
         </ThemeProvider>
       </body>
     </html>

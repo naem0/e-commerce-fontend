@@ -5,11 +5,33 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ShoppingBag, Users, Package, Settings, BarChart, LogOut, Menu, X, Tag, Tags, GalleryHorizontal, Layers, MonitorCog } from "lucide-react"
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  Users,
+  Package,
+  Settings,
+  BarChart,
+  LogOut,
+  Menu,
+  X,
+  Tag,
+  Tags,
+  GalleryHorizontal,
+  Layers,
+  MonitorIcon as MonitorCog,
+  Shield,
+  Building2,
+  ShoppingCart,
+  Warehouse,
+} from "lucide-react"
+import { usePermissions } from "@/hooks/use-permissions"
+import { PERMISSIONS } from "@/lib/permissions"
 
 export function AdminLayout({ children }) {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const { hasPermission } = usePermissions()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const isActive = (path) => {
@@ -22,68 +44,110 @@ export function AdminLayout({ children }) {
       href: "/admin/dashboard",
       icon: LayoutDashboard,
       current: isActive("/admin/dashboard"),
+      permission: PERMISSIONS.VIEW_DASHBOARD,
     },
     {
       name: "Products",
       href: "/admin/products",
       icon: Package,
       current: isActive("/admin/products"),
+      permission: PERMISSIONS.VIEW_PRODUCTS,
     },
     {
       name: "Categories",
       href: "/admin/categories",
       icon: Layers,
       current: isActive("/admin/categories"),
+      permission: PERMISSIONS.MANAGE_PRODUCT_CATEGORIES,
     },
     {
       name: "Brands",
       href: "/admin/brands",
       icon: Tag,
       current: isActive("/admin/brands"),
+      permission: PERMISSIONS.MANAGE_PRODUCT_BRANDS,
     },
     {
       name: "Orders",
       href: "/admin/orders",
       icon: ShoppingBag,
       current: isActive("/admin/orders"),
+      permission: PERMISSIONS.VIEW_ORDERS,
     },
     {
       name: "Reviews",
       href: "/admin/reviews",
       icon: Tags,
       current: isActive("/admin/reviews"),
+      permission: PERMISSIONS.VIEW_REVIEWS,
     },
     {
       name: "Customers",
       href: "/admin/users",
       icon: Users,
       current: isActive("/admin/users"),
+      permission: PERMISSIONS.VIEW_USERS,
+    },
+    {
+      name: "Suppliers",
+      href: "/admin/suppliers",
+      icon: Building2,
+      current: isActive("/admin/suppliers"),
+      permission: PERMISSIONS.VIEW_SUPPLIERS,
+    },
+    {
+      name: "Inventory",
+      href: "/admin/inventory",
+      icon: Warehouse,
+      current: isActive("/admin/inventory"),
+      permission: PERMISSIONS.VIEW_INVENTORY,
+    },
+    {
+      name: "POS",
+      href: "/admin/pos",
+      icon: ShoppingCart,
+      current: isActive("/admin/pos"),
+      permission: PERMISSIONS.ACCESS_POS,
     },
     {
       name: "Banners",
       href: "/admin/banners",
       icon: GalleryHorizontal,
       current: isActive("/admin/banners"),
+      permission: PERMISSIONS.MANAGE_BANNERS,
     },
     {
       name: "Analytics",
       href: "/admin/analytics",
       icon: BarChart,
       current: isActive("/admin/analytics"),
+      permission: PERMISSIONS.VIEW_ANALYTICS,
+    },
+    {
+      name: "Roles",
+      href: "/admin/roles",
+      icon: Shield,
+      current: isActive("/admin/roles"),
+      permission: PERMISSIONS.MANAGE_ROLES,
     },
     {
       name: "Home Settings",
       href: "/admin/home-settings",
       icon: MonitorCog,
       current: isActive("/admin/home-settings"),
+      permission: PERMISSIONS.MANAGE_HOME_SETTINGS,
     },
     {
       name: "Settings",
       href: "/admin/site-settings",
       icon: Settings,
       current: isActive("/admin/site-settings"),
+      permission: PERMISSIONS.MANAGE_SITE_SETTINGS,
     },
   ]
+
+  // Filter navigation based on permissions
+  const filteredNavigation = navigation.filter((item) => !item.permission || hasPermission(item.permission))
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -110,7 +174,7 @@ export function AdminLayout({ children }) {
         </div>
         <div className="flex flex-col h-[calc(100%-4rem)] justify-between">
           <nav className="flex-1 px-2 py-4 space-y-1">
-            {navigation.map((item) => (
+            {filteredNavigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -128,13 +192,13 @@ export function AdminLayout({ children }) {
           <div className="p-4 border-t">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="h-8 w-8 rounded-full bg-primary-custom text-primary-foreground flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                   {session?.user?.name?.charAt(0) || "A"}
                 </div>
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium">{session?.user?.name || "Admin User"}</p>
-                <p className="text-xs text-muted-foreground">{session?.user?.email || "admin@example.com"}</p>
+                <p className="text-xs text-muted-foreground">{session?.user?.role || "admin"}</p>
               </div>
             </div>
             <Button variant="ghost" className="w-full justify-start mt-4">
@@ -145,7 +209,6 @@ export function AdminLayout({ children }) {
         </div>
       </div>
 
-      {/* Main content */}
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         <header className="bg-background border-b h-16 flex items-center px-4">

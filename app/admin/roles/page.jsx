@@ -28,9 +28,10 @@ import {
 import { Search, MoreHorizontal, Edit, Trash2, Eye, Shield, Users, Plus } from "lucide-react"
 import { getAllRoles, PERMISSIONS } from "@/lib/permissions"
 import { PermissionGuard } from "@/components/permission-guard"
+import { PageGuard } from "@/components/page-guard"
 import { getUsersByRole } from "@/services/user.service"
 
-export default function RolesPage() {
+function RolesPageContent() {
   const { toast } = useToast()
   const [roles, setRoles] = useState([])
   const [loading, setLoading] = useState(true)
@@ -363,5 +364,13 @@ export default function RolesPage() {
         </AlertDialogContent>
       </AlertDialog>
     </>
+  )
+}
+
+export default function RolesPage() {
+  return (
+    <PageGuard roles={["SUPER_ADMIN", "ADMIN"]} permissions={[PERMISSIONS.MANAGE_ROLES]}>
+      <RolesPageContent />
+    </PageGuard>
   )
 }
