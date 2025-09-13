@@ -42,14 +42,6 @@ export default function BannersPage() {
   const [imagePreview, setImagePreview] = useState("")
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/banners")
-    } else if (status === "authenticated" && session?.user?.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, router])
-
-  useEffect(() => {
     const fetchBanners = async () => {
       try {
         setLoading(true)

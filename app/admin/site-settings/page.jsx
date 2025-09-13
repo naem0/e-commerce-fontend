@@ -48,15 +48,6 @@ export default function SiteSettingsPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Redirect if not admin
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/site-settings")
-    } else if (status === "authenticated" && session.user.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, router])
-
   // Load settings when available
   useEffect(() => {
     if (!settingsLoading && settings) {

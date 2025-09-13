@@ -23,15 +23,6 @@ export default function AdminDashboard() {
   const [period, setPeriod] = useState("30")
 
   useEffect(() => {
-    // Redirect if not admin
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/dashboard")
-    } else if (status === "authenticated" && session.user.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, router])
-
-  useEffect(() => {
     const fetchAnalytics = async () => {
       try {
         setLoading(true)

@@ -40,14 +40,6 @@ export default function AnalyticsPage() {
   const [groupBy, setGroupBy] = useState("day")
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/analytics")
-    } else if (status === "authenticated" && session.user.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, session, router])
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)

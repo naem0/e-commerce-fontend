@@ -85,14 +85,6 @@ export default function HomeSettingsPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/home-settings")
-    } else if (status === "authenticated" && session?.user?.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, router])
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)

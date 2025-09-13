@@ -22,14 +22,6 @@ export default function ViewBannerPage({ params }) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/banners")
-    } else if (status === "authenticated" && session?.user?.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, router])
-
-  useEffect(() => {
     const fetchBanner = async () => {
       try {
         setLoading(true)
