@@ -60,6 +60,34 @@ const getAuthHeaders = async () => {
   }
 }
 
+// Get category tree
+export const getCategoryTree = async (params = {}) => {
+  try {
+    const headers = await getAuthHeaders()
+    const queryString = new URLSearchParams(params).toString()
+    const url = `${API_URL}/api/categories/tree${queryString ? `?${queryString}` : ""}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+      categories: [],
+    }
+  }
+}
+
 // Get all categories
 export const getCategories = async (params = {}) => {
   try {

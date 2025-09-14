@@ -1,5 +1,6 @@
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import MobileBottomNav from "@/components/mobile-bottom-nav";
 
 export default function MainLayout({ children }) {
   return (
@@ -7,6 +8,7 @@ export default function MainLayout({ children }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <MobileBottomNav />
     </div>
-  )
+  );
 }
