@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
-import SideCategoryMenu from "./side-category-menu"
 import SearchModal from "./search-modal"
 
 export function Header() {
@@ -84,14 +83,11 @@ export function Header() {
               className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/products") ? "text-foreground" : "text-muted-foreground"}`}>
               {t("nav.products") || "Products"}
             </Link>
-            <div className="group relative">
-              <span className={`text-sm font-medium transition-colors cursor-pointer hover:text-primary-custom ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"}`}>
-                {t("nav.categories") || "Categories"}
-              </span>
-              <div className="absolute top-full left-0 hidden group-hover:block z-10 pt-2">
-                <SideCategoryMenu className="w-64" />
-              </div>
-            </div>
+            <Link
+              href="/categories"
+              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"}`}>
+              {t("nav.categories") || "Categories"}
+            </Link>
           </nav>
 
           {/* Desktop Search */}
@@ -139,7 +135,7 @@ export function Header() {
 
           {/* Wishlist */}
           {session && (
-            <Link href="/wishlist">
+            <Link href="/wishlist" className="hidden md:flex items-center">
               <Button variant="ghost" size="icon" className="relative">
                 <Heart className="h-5 w-5" />
                 {wishlistCount > 0 && (
@@ -172,39 +168,41 @@ export function Header() {
           </Link>
 
           {/* User Account */}
-          {session ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
-                  <span className="sr-only">{t("nav.account") || "Account"}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <Link href="/profile">
-                  <DropdownMenuItem>
-                    {t("nav.profile") || "Profile"}
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/orders">
-                  <DropdownMenuItem>
-                    {t("nav.orders") || "Orders"}
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/wishlist">
-                  <DropdownMenuItem>
-                    {t("nav.wishlist") || "Wishlist"}
-                  </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout") || "Logout"}</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Link href="/auth/login">
-              <Button variant="outline">{t("auth.login") || "Login"}</Button>
-            </Link>
-          )}
+          <div className="hidden md:flex items-center">
+            {session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                    <span className="sr-only">{t("nav.account") || "Account"}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <Link href="/profile">
+                    <DropdownMenuItem>
+                      {t("nav.profile") || "Profile"}
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/orders">
+                    <DropdownMenuItem>
+                      {t("nav.orders") || "Orders"}
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/wishlist">
+                    <DropdownMenuItem>
+                      {t("nav.wishlist") || "Wishlist"}
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()}>{t("auth.logout") || "Logout"}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/auth/login">
+                <Button variant="outline">{t("auth.login") || "Login"}</Button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

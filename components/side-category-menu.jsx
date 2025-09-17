@@ -1,38 +1,26 @@
-'use client'
-
 // app/components/SideCategoryMenu.jsx
-import { useState, useEffect } from 'react';
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { getCategoryTree } from "@/services/category.service"
 import { cn } from "@/lib/utils"
 
-export default function SideCategoryMenu({ className }) {
-  const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
+export default async function SideCategoryMenu({ className }) {
+  let categories = []
+  let error = null
 
-  useEffect(() => {
-    async function fetchCategoryTree() {
-      try {
-        const result = await getCategoryTree({ status: 'active' });
-        if (!result.success) {
-          throw new Error(result.message || "Failed to fetch categories");
-        }
-        setCategories(result.categories);
-      } catch (err) {
-        setError(err.message);
-      }
-    }
-
-    fetchCategoryTree();
-  }, []);
+  try {
+    const result = await getCategoryTree({ status: "active" })
+    categories = result.categories
+  } catch (err) {
+    error = err.message
+  }
 
   if (error) {
     return (
       <div className={cn("bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4", className)}>
         <p className="text-red-500">{error}</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -49,7 +37,9 @@ export default function SideCategoryMenu({ className }) {
                   <span className="text-gray-500">{category.icon}</span>
                 ) : (
                   <div className="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-full">
-                    <span className="text-xs text-gray-500">{category.name.charAt(0)}</span>
+                    <span className="text-xs text-gray-500">
+                      {category.name.charAt(0)}
+                    </span>
                   </div>
                 )}
                 <span className="text-sm font-medium">{category.name}</span>
@@ -59,9 +49,9 @@ export default function SideCategoryMenu({ className }) {
               )}
             </Link>
 
-            {/* Sub-category dropdown on hover */}
+            {/* Hover dropdown for child categories */}
             {category.children && category.children.length > 0 && (
-              <div className="absolute left-full top-0 w-full bg-white dark:bg-gray-900 border shadow-md rounded-r-lg hidden group-hover:block z-10">
+              <div className="absolute left-full top-0 min-w-[200px] bg-white dark:bg-gray-900 border shadow-md rounded-r-lg hidden group-hover:block z-10">
                 <ul className="divide-y divide-gray-100 dark:divide-gray-800">
                   {category.children.map((subCategory) => (
                     <li key={subCategory._id}>
@@ -80,5 +70,5 @@ export default function SideCategoryMenu({ className }) {
         ))}
       </ul>
     </div>
-  );
+  )
 }

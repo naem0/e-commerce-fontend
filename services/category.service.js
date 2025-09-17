@@ -1,3 +1,5 @@
+import { authOptions } from "@/lib/auth"
+import { getServerSession } from "next-auth"
 import { getSession } from "next-auth/react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -30,7 +32,7 @@ const getAuthHeadersForFormData = async () => {
 const getAuthHeaders = async () => {
   try {
     // Try to get session first
-    const session = await getSession()
+    const session = await getServerSession(authOptions)
 
     let token = null
 
@@ -65,7 +67,7 @@ export const getCategoryTree = async (params = {}) => {
   try {
     const headers = await getAuthHeaders()
     const queryString = new URLSearchParams(params).toString()
-    const url = `${API_URL}/api/categories/tree${queryString ? `?${queryString}` : ""}`
+    const url = `${API_URL}/api/categories/tree/all${queryString ? `?${queryString}` : ""}`
 
     const response = await fetch(url, {
       method: "GET",
