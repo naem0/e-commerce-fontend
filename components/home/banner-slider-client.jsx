@@ -55,7 +55,8 @@ export default function BannerSliderClient({ banners = [], design, settings }) {
                   {banner.description && (
                     <p className="text-base md:text-lg opacity-80 max-w-md">{banner.description}</p>
                   )}
-                  <Button
+                  {banner.buttonText && banner.buttonLink && (
+                    <Button
                     variant="default"
                     size="lg"
                     className="text-lg px-8 py-3 mt-6"
@@ -66,6 +67,7 @@ export default function BannerSliderClient({ banners = [], design, settings }) {
                   >
                     <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>
                   </Button>
+                  )}
                 </div>
               </div>
             </div>

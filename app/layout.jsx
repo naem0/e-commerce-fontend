@@ -9,7 +9,7 @@ import { WishlistProvider } from "@/components/wishlist-provider"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
-import WhatsAppButton from "@/components/whatsapp-button"
+import { ConditionalNav } from "@/components/conditional-nav"
 import { getSiteSettings } from "@/services/settings.service"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
@@ -53,7 +53,7 @@ export default async function RootLayout({ children }) {
                     <Footer />
                   </div>
                   <Toaster />
-                  <WhatsAppButton />
+                  <ConditionalNav />
                   {/* <Chatbot user={user} /> */}
                 </WishlistProvider>
               </CartProvider>

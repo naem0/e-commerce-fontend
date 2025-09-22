@@ -253,3 +253,24 @@ export const getCategoryWithProducts = async (id, params = {}) => {
     }
   }
 }
+// getCategoryTree
+export const getCategoryTree = async (params = {}) => {
+  try {
+    const headers = await getAuthHeaders()
+    const queryString = new URLSearchParams(params).toString()
+    const url = `${API_URL}/api/categories/tree/all${queryString ? `?${queryString}` : ""}`
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+    })
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}

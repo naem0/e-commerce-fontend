@@ -10,7 +10,7 @@ export default function BannerSlider({ banners, design, settings }) {
           <div className="hidden lg:block h-[400px] md:h-[500px] overflow-hidden">
             <SideCategoryMenu className="h-full" />
           </div>
-          <div className="lg:col-span-3 relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
+          <div className="lg:col-span-3 relative h-[250px] md:h-[300px] lg:h-[500px] rounded-lg overflow-hidden">
             <BannerSliderClient banners={banners} design={design} settings={settings} />
           </div>
         </div>

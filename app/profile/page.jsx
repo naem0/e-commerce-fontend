@@ -34,6 +34,7 @@ import {
   CreditCard,
   Heart,
   Star,
+  LogOut,
 } from "lucide-react"
 import { formatPrice, formatDate } from "@/services/utils"
 import { getProfile, updateProfile } from "@/services/user.service"
@@ -334,16 +335,20 @@ export default function ProfilePage() {
                 </Badge>
               </div>
             </div>
-            {/* <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+            <div className="flex gap-2">
+              {/* <Button variant="outline" size="sm">
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
-              </Button>
-              <Button variant="outline" size="sm">
+              </Button> */}
+              {/* <Button variant="outline" size="sm">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
+              </Button> */}
+              <Button onClick={() => signOut()} variant="outline" size="sm">
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
               </Button>
-            </div> */}
+            </div>
           </div>
         </div>
 

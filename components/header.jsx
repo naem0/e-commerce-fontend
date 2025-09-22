@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ShoppingCart, User, Sun, Moon, Search, Heart, Menu, PhoneIcon } from "lucide-react"
+import { ShoppingCart, User, Sun, Moon, Search, Heart, Menu } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -50,14 +50,6 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      {/* add marquee text */}
-      <div className="marquee pt-1 container mx-auto flex gap-3 items-center border-b px-3">
-        <PhoneIcon className="h-4 w-4" /> 
-        <span>01310881055</span>
-        <marquee behavior="scroll" direction="left">
-          {settings?.marqueeText || "🛡️ডেলিভারি ও রিটার্ন নীতিমালা। 💬 ঢাকার ভেতরে ডেলিভারি: অর্ডার কনফার্ম করার পর ৪৮ ঘণ্টার মধ্যে পণ্য ডেলিভারি করা হবে। 💬 ঢাকার বাইরে ডেলিভারি: দেশের ৬৪ জেলায় অর্ডার কনফার্ম করার পর ৩ থেকে ৫ কর্মদিবসের মধ্যে পণ্য ডেলিভারি করা হবে। রিটার্ন নীতিমালা: পণ্য ডেলিভারির তারিখ থেকে ৭ দিনের মধ্যে রিটার্নের অনুরোধ করতে হবে।"}
-        </marquee>
-      </div>
       <div className="container flex h-16 items-center justify-between mx-auto px-3">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
@@ -121,7 +113,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           {/* Mobile Menu Button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            <Menu className="h-5 w-5" />
+            <Search className="h-5 w-5" />
           </Button>
 
           {/* Theme Toggle */}
@@ -165,6 +157,7 @@ export function Header() {
           </Link>
 
           {/* User Account */}
+          <span className="hidden md:block" >
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -198,6 +191,7 @@ export function Header() {
               <Button variant="outline">Login</Button>
             </Link>
           )}
+          </span>
         </div>
       </div>
 
@@ -218,18 +212,6 @@ export function Header() {
                 <Search className="h-4 w-4" />
               </Button>
             </form>
-            {/* Mobile Navigation */}
-            <nav className="flex flex-col space-y-2">
-              <Link href="/" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
-                Home
-              </Link>
-              <Link href="/products" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
-                Products
-              </Link>
-              <Link href="/categories" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>
-                Categories
-              </Link>
-            </nav>
           </div>
         </div>
       )}
