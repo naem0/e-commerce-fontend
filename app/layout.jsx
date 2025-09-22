@@ -32,6 +32,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.png" />
         <style>
           {`
             :root {

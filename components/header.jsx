@@ -53,19 +53,19 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between mx-auto px-3">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
-            {settings?.logo ? (
+            {/* {settings?.logo ? ( */}
               <Image
-                src={settings.logo || "/placeholder.svg"}
+                src={settings.logo || "/logo.png"}
                 alt={settings.siteName}
-                width={40}
-                height={40}
-                className="h-8 w-auto"
+                width={50}
+                height={100}
+                className="h-10 w-auto"
               />
-            ) : (
+            {/* ) : (
               <span className="font-bold text-xl" style={{ color: settings?.primaryColor }}>
                 {settings?.siteName || "E-Shop"}
               </span>
-            )}
+            )} */}
           </Link>
 
           {/* Desktop Navigation */}

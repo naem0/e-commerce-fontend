@@ -1,6 +1,6 @@
 'use client'
 
-import { Phone, MessageCircle, Mail, HelpCircle } from "lucide-react"
+import { Phone, MessageCircle, Mail, Headset } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -14,9 +14,9 @@ export default function SupportButton() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="fixed bottom-6 right-6 z-50 bg-primary-custom hover:bg-primary-custom/90 text-white p-4 rounded-full shadow-lg transition-all duration-300"
+          className="fixed bottom-6 right-6 z-50 bg-primary-custom hover:bg-primary-custom/90 text-white px-4 py-6 rounded-full shadow-lg transition-all duration-300"
         >
-          <HelpCircle className="w-6 h-6" />
+          <Headset className="w-10 h-10" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-48">
