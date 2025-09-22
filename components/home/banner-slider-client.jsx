@@ -30,12 +30,7 @@ export default function BannerSliderClient({ banners = [], design, settings }) {
         return (
           <div
             key={banner._id}
-            className={`absolute inset-0 transition-all duration-500 ease-in-out ${index === currentSlide
-              ? "opacity-100 translate-x-0"
-              : index < currentSlide
-              ? "opacity-0 -translate-x-full"
-              : "opacity-0 translate-x-full"
-            }`}
+            className={`absolute inset-0 transition-all duration-500 ease-in-out ${index === currentSlide ? "opacity-100 translate-x-0" : index < currentSlide ? "opacity-0 -translate-x-full" : "opacity-0 translate-x-full"}`}
             style={{
               backgroundColor: banner.backgroundColor || "#f8fafc",
               backgroundImage: `url(${imageUrl})`,
@@ -57,16 +52,16 @@ export default function BannerSliderClient({ banners = [], design, settings }) {
                   )}
                   {banner.buttonText && banner.buttonLink && (
                     <Button
-                    variant="default"
-                    size="lg"
-                    className="text-lg px-8 py-3 mt-6"
-                    style={{
-                      backgroundColor: banner.textColor ?? "",
-                      color: banner.backgroundColor ?? "",
-                    }}
-                  >
-                    <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>
-                  </Button>
+                      variant="default"
+                      size="lg"
+                      className="text-lg px-8 py-3 mt-6"
+                      style={{
+                        backgroundColor: banner.textColor ?? "",
+                        color: banner.backgroundColor ?? "",
+                      }}
+                    >
+                      <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -98,8 +93,7 @@ export default function BannerSliderClient({ banners = [], design, settings }) {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${index === currentSlide ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
-                }`}
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${index === currentSlide ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"}`}
             />
           ))}
         </div>
