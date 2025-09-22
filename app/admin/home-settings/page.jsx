@@ -85,14 +85,6 @@ export default function HomeSettingsPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/home-settings")
-    } else if (status === "authenticated" && session?.user?.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, router])
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
@@ -372,7 +364,7 @@ export default function HomeSettingsPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">

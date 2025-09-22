@@ -41,13 +41,6 @@ export default function BannersPage() {
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState("")
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login?callbackUrl=/admin/banners")
-    } else if (status === "authenticated" && session?.user?.role !== "admin") {
-      router.push("/")
-    }
-  }, [status, router])
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -241,7 +234,7 @@ export default function BannersPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">

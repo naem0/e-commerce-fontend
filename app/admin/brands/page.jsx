@@ -131,7 +131,7 @@ export default function BrandsPage() {
   }
 
   return (
-    <div className="container mx-auto">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Brands</h1>
         <Button onClick={() => router.push("/admin/brands/create")}>
