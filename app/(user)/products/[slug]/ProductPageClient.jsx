@@ -16,6 +16,7 @@ import RelatedProducts from "@/components/product/related-products"
 import { useWishlist } from "@/components/wishlist-provider"
 
 export default function ProductPageClient({ product }) {
+  console.log("Product data in ProductPageClient:", product)
   const { slug } = useParams()
   const { addToCart } = useCart()
   const { addToWishlist, isInWishlist } = useWishlist()
@@ -136,8 +137,36 @@ export default function ProductPageClient({ product }) {
   const comparePrice = getComparePrice()
   const currentStock = getCurrentStock()
   const discountPercentage = comparePrice ? Math.round(((comparePrice - currentPrice) / comparePrice) * 100) : 0
-  // const isWishlisted = wishlist.some((item) => item.product._id === product._id)
   const isWishlisted = isInWishlist(product._id)
+
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    let videoId = null;
+    if (url.includes("youtube.com/watch")) {
+      const urlParams = new URLSearchParams(new URL(url).search);
+      videoId = urlParams.get("v");
+    } else if (url.includes("youtu.be")) {
+      videoId = url.split("/").pop();
+    }
+
+    if (videoId) {
+      return {
+        embedUrl: `https://www.youtube.com/embed/${videoId}`,
+        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/0.jpg`,
+      };
+    }
+    return null;
+  };
+
+  const videoInfo = getYouTubeEmbedUrl(product.videoUrl);
+
+  const media = [];
+  if (videoInfo) {
+    media.push({ type: 'video', url: videoInfo.embedUrl, thumbnailUrl: videoInfo.thumbnailUrl });
+  }
+  media.push(...(product.images?.map(img => ({ type: 'image', url: img })) || []));
+
+  const [activeMedia, setActiveMedia] = useState({ type: media[0]?.type || 'image', index: 0 });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -183,24 +212,18 @@ export default function ProductPageClient({ product }) {
         {/* Product Images / Video */}
         <div className="space-y-4 md:col-span-2">
           <div className="relative aspect-square overflow-hidden rounded-lg border bg-white">
-            {product.videoUrl ? (
-              <video
-                src={product.videoUrl}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="object-cover w-full h-full transition-transform duration-300 transform hover:scale-110"
-              />
+            {activeMedia.type === 'video' ? (
+              <iframe
+                src={media.find(m => m.type === 'video').url}
+                title={product.name}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
             ) : (
               <MagnifierImage
-                src={
-                  selectedVariant?.images?.length > 0
-                    ? `${process.env.NEXT_PUBLIC_API_URL}${selectedVariant.images[activeImage]}`
-                    : product.images?.length > 0
-                      ? `${process.env.NEXT_PUBLIC_API_URL}${product.images[activeImage]}`
-                      : "/placeholder.svg?height=600&width=600"
-                }
+                src={`${process.env.NEXT_PUBLIC_API_URL}${media[activeMedia.index]?.url}`}
                 alt={product.name}
                 className="w-full h-full"
               />
@@ -208,27 +231,26 @@ export default function ProductPageClient({ product }) {
           </div>
 
           {/* Image thumbnails */}
-          {(!product.videoUrl &&
-            ((selectedVariant?.images?.length > 0 ? selectedVariant.images : product.images) || [])
-              .length > 1) && (
-              <div className="flex space-x-2 overflow-auto pb-2">
-                {(selectedVariant?.images?.length > 0 ? selectedVariant.images : product.images).map((image, index) => (
-                  <button
-                    key={index}
-                    className={`relative h-20 w-20 cursor-pointer rounded-md border ${activeImage === index ? "border-primary" : "border-gray-200"
-                      }`}
-                    onClick={() => setActiveImage(index)}
-                  >
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${image}`}
-                      alt={`${product.name} ${index + 1}`}
-                      fill
-                      className="object-cover rounded-md transition-transform duration-300 transform hover:scale-105"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
+          {media.length > 1 && (
+            <div className="flex space-x-2 overflow-auto pb-2">
+              {media.map((item, index) => (
+                <button
+                  key={index}
+                  className={`relative h-20 w-20 cursor-pointer rounded-md border ${
+                    activeMedia.index === index ? "border-primary" : "border-gray-200"
+                  }`}
+                  onClick={() => setActiveMedia({ type: item.type, index })}
+                >
+                  <Image
+                    src={item.type === 'video' ? item.thumbnailUrl : `${process.env.NEXT_PUBLIC_API_URL}${item.url}`}
+                    alt={`${product.name} ${index + 1}`}
+                    fill
+                    className="object-cover rounded-md transition-transform duration-300 transform hover:scale-105"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Details */}
