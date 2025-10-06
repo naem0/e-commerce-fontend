@@ -139,6 +139,7 @@ export const getProductBySlug = async (slug) => {
 export const createProduct = async (productData) => {
   try {
     const headers = await getAuthHeadersForFormData()
+    console.log("Headers in createProduct:", headers)
     const url = `${API_URL}/api/products`
 
     // Create FormData
@@ -238,63 +239,67 @@ export const updateProduct = async (id, productData) => {
   try {
     const headers = await getAuthHeadersForFormData()
     const url = `${API_URL}/api/products/${id}`
+    const formData = new FormData();
 
-    // Create FormData
-    const formData = new FormData()
-
-    // Add basic fields
-    formData.append("name", productData.name || "")
-    formData.append("description", productData.description || "")
-    formData.append("shortDescription", productData.shortDescription || "")
-    formData.append("price", productData.price || "0")
-    formData.append("comparePrice", productData.comparePrice || "")
-    formData.append("category", productData.category || "")
-    formData.append("brand", productData.brand || "")
-    formData.append("stock", productData.stock || "0")
-    formData.append("featured", productData.featured || false)
-    formData.append("status", productData.status || "draft")
-    formData.append("sku", productData.sku || "")
-    formData.append("weight", productData.weight || "")
-    formData.append("hasVariations", productData.hasVariations || false)
-    formData.append("specification", productData.specification || "")
+    // Add basic fields (assuming these are needed for update as well)
+    formData.append("name", productData.name || "");
+    formData.append("description", productData.description || "");
+    formData.append("shortDescription", productData.shortDescription || "");
+    formData.append("price", productData.price || "0");
+    formData.append("comparePrice", productData.comparePrice || "");
+    formData.append("category", productData.category || "");
+    formData.append("brand", productData.brand || "");
+    formData.append("stock", productData.stock || "0");
+    formData.append("featured", productData.featured || false);
+    formData.append("status", productData.status || "draft");
+    formData.append("sku", productData.sku || "");
+    formData.append("weight", productData.weight || "");
+    formData.append("hasVariations", productData.hasVariations || false);
+    formData.append("specification", productData.specification || "");
+    formData.append("videoUrl", productData.videoUrl || "");
 
     // Add dimensions
     if (productData.dimensions) {
-      formData.append("dimensions", JSON.stringify(productData.dimensions))
+      formData.append("dimensions", JSON.stringify(productData.dimensions));
     }
 
     // Add tags
     if (productData.tags && Array.isArray(productData.tags)) {
-      formData.append("tags", JSON.stringify(productData.tags))
+      formData.append("tags", JSON.stringify(productData.tags));
     }
 
     // Add SEO data
     if (productData.seo) {
-      formData.append("seo", JSON.stringify(productData.seo))
+      formData.append("seo", JSON.stringify(productData.seo));
     }
 
     // Add shipping data
     if (productData.shipping) {
-      formData.append("shipping", JSON.stringify(productData.shipping))
+      formData.append("shipping", JSON.stringify(productData.shipping));
     }
 
     // Add variation data
     if (productData.hasVariations) {
       if (productData.variationTypes) {
-        formData.append("variationTypes", JSON.stringify(productData.variationTypes))
+        formData.append("variationTypes", JSON.stringify(productData.variationTypes));
       }
       if (productData.variants) {
-        formData.append("variants", JSON.stringify(productData.variants))
+        formData.append("variants", JSON.stringify(productData.variants));
       }
     }
 
-    // Add main product images
+    // Add existing images (as paths)
     if (productData.images && Array.isArray(productData.images)) {
-      productData.images.forEach((image, index) => {
+      formData.append("images", JSON.stringify(productData.images));
+    }
+
+    // Add new images (as files)
+    if (productData.newImages && Array.isArray(productData.newImages)) {
+      productData.newImages.forEach((image) => {
         if (image instanceof File) {
-          formData.append("images", image)
+          formData.append("newImages", image);
         }
-      })
+      });
     }
 
     // Add variant images
@@ -315,11 +320,7 @@ export const updateProduct = async (id, productData) => {
       headers,
       body: formData,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
-    }
+    console.log("Update product response:", response)
 
     const data = await response.json()
     return data

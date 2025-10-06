@@ -9,14 +9,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react"
+import { Heart, Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react"
 import { formatPrice, getErrorMessage } from "@/services/utils"
 import Link from "next/link"
 import RelatedProducts from "@/components/product/related-products"
+import { useWishlist } from "@/components/wishlist-provider"
 
 export default function ProductPageClient({ product }) {
   const { slug } = useParams()
   const { addToCart } = useCart()
+  const { addToWishlist, isInWishlist } = useWishlist()
   const { toast } = useToast()
   const router = useRouter()
   const [quantity, setQuantity] = useState(1)
@@ -108,6 +110,18 @@ export default function ProductPageClient({ product }) {
     }
   }
 
+  const handleAddToWishlist = async () => {
+    if (!product) return
+    if (isInWishlist(product._id)) {
+      toast({
+        title: "Already in Wishlist",
+        description: `${product.name} is already in your wishlist`,
+      })
+      return
+    }
+    await addToWishlist(product._id)
+  }
+
   if (!product) {
     return (
       <div className="container mx-auto px-4 py-16">
@@ -122,6 +136,8 @@ export default function ProductPageClient({ product }) {
   const comparePrice = getComparePrice()
   const currentStock = getCurrentStock()
   const discountPercentage = comparePrice ? Math.round(((comparePrice - currentPrice) / comparePrice) * 100) : 0
+  // const isWishlisted = wishlist.some((item) => item.product._id === product._id)
+  const isWishlisted = isInWishlist(product._id)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -163,9 +179,9 @@ export default function ProductPageClient({ product }) {
         </ol>
       </nav>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
         {/* Product Images / Video */}
-        <div className="space-y-4">
+        <div className="space-y-4 md:col-span-2">
           <div className="relative aspect-square overflow-hidden rounded-lg border bg-white">
             {product.videoUrl ? (
               <video
@@ -195,29 +211,28 @@ export default function ProductPageClient({ product }) {
           {(!product.videoUrl &&
             ((selectedVariant?.images?.length > 0 ? selectedVariant.images : product.images) || [])
               .length > 1) && (
-            <div className="flex space-x-2 overflow-auto pb-2">
-              {(selectedVariant?.images?.length > 0 ? selectedVariant.images : product.images).map((image, index) => (
-                <button
-                  key={index}
-                  className={`relative h-20 w-20 cursor-pointer rounded-md border ${
-                    activeImage === index ? "border-primary" : "border-gray-200"
-                  }`}
-                  onClick={() => setActiveImage(index)}
-                >
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${image}`}
-                    alt={`${product.name} ${index + 1}`}
-                    fill
-                    className="object-cover rounded-md transition-transform duration-300 transform hover:scale-105"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
+              <div className="flex space-x-2 overflow-auto pb-2">
+                {(selectedVariant?.images?.length > 0 ? selectedVariant.images : product.images).map((image, index) => (
+                  <button
+                    key={index}
+                    className={`relative h-20 w-20 cursor-pointer rounded-md border ${activeImage === index ? "border-primary" : "border-gray-200"
+                      }`}
+                    onClick={() => setActiveImage(index)}
+                  >
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_API_URL}${image}`}
+                      alt={`${product.name} ${index + 1}`}
+                      fill
+                      className="object-cover rounded-md transition-transform duration-300 transform hover:scale-105"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
         </div>
 
         {/* Product Details */}
-        <div className="space-y-6">
+        <div className="space-y-6 md:col-span-3">
           <div>
             <h1 className="text-3xl font-bold">{product.name}</h1>
             <div className="mt-2 flex items-center">
@@ -225,9 +240,8 @@ export default function ProductPageClient({ product }) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.round(product.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                    }`}
+                    className={`h-5 w-5 ${i < Math.round(product.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                      }`}
                   />
                 ))}
               </div>
@@ -262,11 +276,10 @@ export default function ProductPageClient({ product }) {
                       <button
                         key={option.value}
                         onClick={() => handleVariantOptionChange(variationType.name, option.value)}
-                        className={`px-3 py-2 border rounded-md text-sm ${
-                          selectedOptions[variationType.name] === option.value
+                        className={`px-3 py-2 border rounded-md text-sm ${selectedOptions[variationType.name] === option.value
                             ? "border-primary bg-primary-custom text-white"
                             : "border-gray-300 hover:border-gray-400"
-                        }`}
+                          }`}
                       >
                         {option.name}
                       </button>
@@ -331,6 +344,8 @@ export default function ProductPageClient({ product }) {
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
+            </div>
+            <div className="flex items-center space-x-4 mt-3">
               <Button
                 variant="default"
                 onClick={handleAddToCart}
@@ -362,6 +377,14 @@ export default function ProductPageClient({ product }) {
                   "Buy Now"
                 )}
               </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleAddToWishlist}
+              // disabled={isWishlisted}
+              >
+                <Heart className={`h-5 w-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
+              </Button>
             </div>
           </div>
 
@@ -381,18 +404,11 @@ export default function ProductPageClient({ product }) {
             <TabsContent value="specifications" className="mt-4">
               <Card>
                 <CardContent className="pt-6">
-                  <div className="space-y-4">
-                    {product.specifications ? (
-                      Object.entries(product.specifications).map(([key, value]) => (
-                        <div key={key} className="grid grid-cols-3 border-b pb-2">
-                          <span className="font-medium">{key}</span>
-                          <span className="col-span-2">{value}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-500">No specifications available</p>
-                    )}
-                  </div>
+                  {product.specification ? (
+                    <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.specification }} />
+                  ) : (
+                    <p className="text-gray-500">No specifications available</p>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -431,9 +447,8 @@ export default function ProductPageClient({ product }) {
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
-                                className={`h-5 w-5 ${
-                                  i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300 dark:text-gray-600"
-                                }`}
+                                className={`h-5 w-5 ${i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300 dark:text-gray-600"
+                                  }`}
                               />
                             ))}
                             {review.title && (

@@ -62,7 +62,7 @@ export default function CategoriesPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
           {categories.map((category) => (
             <Link key={category._id} href={`/categories/${category.slug}`}>
               <Card className="overflow-hidden transition-transform hover:scale-105">
@@ -76,9 +76,6 @@ export default function CategoriesPage() {
                 </div>
                 <CardContent className="p-4">
                   <h3 className="font-medium">{category.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {category.productCount || 0} products
-                  </p>
                 </CardContent>
               </Card>
             </Link>
