@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { useWishlist } from "@/components/wishlist-provider"
 import { useCart } from "@/components/cart-provider"
 import { formatPrice } from "@/services/utils"
-import { Loader2, Heart, ShoppingCart, Trash2 } from "lucide-react"
+import { Loader2, Heart, ShoppingCart, Trash2, Eye } from "lucide-react"
 
 export default function WishlistPage() {
   const { data: session } = useSession()
@@ -139,23 +139,11 @@ export default function WishlistPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => handleAddToCart(product)}
-                      disabled={product.stock === 0 || addingToCart[product._id]}
-                    >
-                      {addingToCart[product._id] ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Adding...
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingCart className="mr-2 h-4 w-4" />
-                          Add to Cart
-                        </>
-                      )}
+                    <Button size="sm" className="flex-1" asChild>
+                      <Link href={`/products/${product.slug}`}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View
+                      </Link>
                     </Button>
                   </div>
 
