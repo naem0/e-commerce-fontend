@@ -421,12 +421,12 @@ export default function AdminReviewsPage() {
                             required
                           />
                         </div>
-                        <div className="flex space-x-2">
+                        {/* <div className="flex space-x-2">
                           <Button type="submit" disabled={responseLoading}>
                             {responseLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                             Add Response
                           </Button>
-                        </div>
+                        </div> */}
                       </form>
                     </DialogContent>
                   </Dialog>

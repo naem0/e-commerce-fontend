@@ -288,10 +288,10 @@ export default function CategoriesPage() {
                           <span className="sr-only">Edit</span>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(category)}>
+                        {/* <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(category)}>
                           <span className="sr-only">Delete</span>
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>

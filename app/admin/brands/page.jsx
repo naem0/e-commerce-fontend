@@ -268,10 +268,10 @@ export default function BrandsPage() {
                           <span className="sr-only">Edit</span>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(brand)}>
+                        {/* <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(brand)}>
                           <span className="sr-only">Delete</span>
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>
