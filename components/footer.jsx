@@ -74,27 +74,27 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">Categories</h3>
+            <h3 className="text-xl font-bold mb-4">Follow Us</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/category/electronics" style={linkStyle} className="hover:text-primary-custom">
-                  Electronics
-                </Link>
+                <a href="https://www.facebook.com/easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
+                  <i className="fab fa-facebook-f mr-2"></i> Facebook
+                </a>
               </li>
               <li>
-                <Link href="/category/clothing" style={linkStyle} className="hover:text-primary-custom">
-                  Clothing
-                </Link>
+                <a href="https://www.instagram.com/easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
+                  <i className="fab fa-instagram mr-2"></i> Instagram
+                </a>
               </li>
               <li>
-                <Link href="/category/home" style={linkStyle} className="hover:text-primary-custom">
-                  Home
-                </Link>
+                <a href="https://www.youtube.com/easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
+                  <i className="fab fa-youtube mr-2"></i> YouTube
+                </a>
               </li>
               <li>
-                <Link href="/category/beauty" style={linkStyle} className="hover:text-primary-custom">
-                  Beauty
-                </Link>
+                <a href="https://www.tiktok.com/@easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
+                  <i className="fab fa-tiktok mr-2"></i> TikTok
+                </a>
               </li>
             </ul>
           </div>

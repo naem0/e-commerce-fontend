@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -295,7 +295,7 @@ export default function ProfilePage() {
         </div>
       </div>
     )
-  } 
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -305,7 +305,7 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="relative">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name} />
+                <AvatarImage src={user?.avatar} alt={user?.name} />
                 <AvatarFallback className="text-2xl font-bold bg-primary-custom text-primary-foreground">
                   {getInitials(user?.name)}
                 </AvatarFallback>
