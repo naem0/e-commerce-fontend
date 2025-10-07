@@ -1,121 +1,84 @@
 "use client"
 
-import { useAuth } from "@/contexts/auth-context"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { AlertTriangle, Lock } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useRoleGuard } from "@/hooks/use-role-guard"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ShieldAlert } from "lucide-react"
 
-export function PageGuard({ children, roles = [], permissions = [], requireAll = false, showFallback = true }) {
-  const { user, role, isAnyRole, checkAnyPermission, checkAllPermissions, isLoading } = useAuth()
+export function PageGuard({ children, roles = [], permissions = [], requireAll = false, redirectTo = "/" }) {
   const router = useRouter()
-  const [hasAccess, setHasAccess] = useState(false)
+  const { isAuthenticated, isAnyRole, checkAnyPermission, checkAllPermissions } = useRoleGuard()
 
   useEffect(() => {
-    if (isLoading) return
-
     // Check authentication
-    if (!user) {
+    if (!isAuthenticated) {
       router.push("/auth/login")
       return
     }
 
-    // Check role requirements
-    let roleCheck = true
-    if (roles.length > 0) {
-      roleCheck = isAnyRole(roles)
-    }
-
-    // Check permission requirements
-    let permissionCheck = true
-    if (permissions.length > 0) {
-      permissionCheck = requireAll ? checkAllPermissions(permissions) : checkAnyPermission(permissions)
-    }
-
-    const access = roleCheck && permissionCheck
-    setHasAccess(access)
-
-    if (!access && showFallback) {
-      // Don't redirect, just show access denied
+    // Check roles
+    if (roles.length > 0 && !isAnyRole(roles)) {
+      router.push(redirectTo)
       return
     }
 
-    if (!access && !showFallback) {
-      router.push("/")
+    // Check permissions
+    if (permissions.length > 0) {
+      const hasAccess = requireAll ? checkAllPermissions(permissions) : checkAnyPermission(permissions)
+      if (!hasAccess) {
+        router.push(redirectTo)
+      }
     }
   }, [
-    user,
-    role,
-    isLoading,
+    isAuthenticated,
     roles,
     permissions,
     requireAll,
-    showFallback,
+    redirectTo,
     router,
     isAnyRole,
     checkAnyPermission,
     checkAllPermissions,
   ])
 
-  if (isLoading) {
+  // Show loading or access denied during check
+  if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     )
   }
 
-  if (!user) {
+  // Check roles
+  if (roles.length > 0 && !isAnyRole(roles)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center space-y-4 p-6">
-            <Lock className="h-12 w-12 text-muted-foreground" />
-            <h2 className="text-xl font-semibold">Authentication Required</h2>
-            <p className="text-muted-foreground text-center">You need to be logged in to access this page.</p>
-            <Button onClick={() => router.push("/auth/login")}>Go to Login</Button>
-          </CardContent>
-        </Card>
+        <Alert className="max-w-md" variant="destructive">
+          <ShieldAlert className="h-4 w-4" />
+          <AlertTitle>Access Denied</AlertTitle>
+          <AlertDescription>You don't have the required role to access this page.</AlertDescription>
+        </Alert>
       </div>
     )
   }
 
-  if (!hasAccess && showFallback) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center space-y-4 p-6">
-            <AlertTriangle className="h-12 w-12 text-red-500" />
-            <h2 className="text-xl font-semibold">Access Denied</h2>
-            <p className="text-muted-foreground text-center">You don't have permission to access this page.</p>
-            <div className="text-sm text-muted-foreground">
-              <p>
-                Your role: <span className="font-medium">{role}</span>
-              </p>
-              {roles.length > 0 && (
-                <p>
-                  Required roles: <span className="font-medium">{roles.join(", ")}</span>
-                </p>
-              )}
-              {permissions.length > 0 && (
-                <p>
-                  Required permissions: <span className="font-medium">{permissions.join(", ")}</span>
-                </p>
-              )}
-            </div>
-            <Button onClick={() => router.push("/")} variant="outline">
-              Go to Home
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
+  // Check permissions
+  if (permissions.length > 0) {
+    const hasAccess = requireAll ? checkAllPermissions(permissions) : checkAnyPermission(permissions)
+    if (!hasAccess) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <Alert className="max-w-md" variant="destructive">
+            <ShieldAlert className="h-4 w-4" />
+            <AlertTitle>Access Denied</AlertTitle>
+            <AlertDescription>You don't have the required permissions to access this page.</AlertDescription>
+          </Alert>
+        </div>
+      )
+    }
   }
 
-  if (!hasAccess) {
-    return null
-  }
-
-  return children
+  return <>{children}</>
 }

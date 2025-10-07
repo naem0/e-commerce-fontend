@@ -1,40 +1,61 @@
 "use client"
 
 import { useAuth } from "@/contexts/auth-context"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { hasPermission, hasAnyPermission, hasAllPermissions } from "@/lib/permissions"
 
-export function useRoleGuard(requiredRoles = [], requiredPermissions = [], redirectTo = "/") {
-  const { user, role, checkPermission, checkAnyPermission, isAnyRole, isLoading } = useAuth()
-  const router = useRouter()
+export function useRoleGuard() {
+  const { user, role, permissions, isAuthenticated } = useAuth()
 
-  useEffect(() => {
-    if (isLoading) return
+  const checkPermission = (permission) => {
+    if (!isAuthenticated || !role) return false
+    return hasPermission(role, permission)
+  }
 
-    // Check if user is authenticated
-    if (!user) {
-      router.push("/auth/login")
-      return
+  const checkAnyPermission = (permissionList) => {
+    if (!isAuthenticated || !role) return false
+    return hasAnyPermission(role, permissionList)
+  }
+
+  const checkAllPermissions = (permissionList) => {
+    if (!isAuthenticated || !role) return false
+    return hasAllPermissions(role, permissionList)
+  }
+
+  const isRole = (roleName) => {
+    if (!isAuthenticated || !role) return false
+    return role === roleName.toUpperCase()
+  }
+
+  const isAnyRole = (roleNames) => {
+    if (!isAuthenticated || !role) return false
+    return roleNames.some((r) => role === r.toUpperCase())
+  }
+
+  const isMinRole = (minRole) => {
+    if (!isAuthenticated || !role) return false
+    const roleHierarchy = {
+      SUPER_ADMIN: 100,
+      ADMIN: 90,
+      MANAGER: 80,
+      EMPLOYEE: 70,
+      CASHIER: 60,
+      CUSTOMER: 50,
     }
-
-    // Check role requirements
-    if (requiredRoles.length > 0 && !isAnyRole(requiredRoles)) {
-      router.push(redirectTo)
-      return
-    }
-
-    // Check permission requirements
-    if (requiredPermissions.length > 0 && !checkAnyPermission(requiredPermissions)) {
-      router.push(redirectTo)
-      return
-    }
-  }, [user, role, isLoading, requiredRoles, requiredPermissions, redirectTo, router, isAnyRole, checkAnyPermission])
+    const userLevel = roleHierarchy[role] || 0
+    const minLevel = roleHierarchy[minRole.toUpperCase()] || 0
+    return userLevel >= minLevel
+  }
 
   return {
-    isLoading,
-    hasAccess:
-      user &&
-      (requiredRoles.length === 0 || isAnyRole(requiredRoles)) &&
-      (requiredPermissions.length === 0 || checkAnyPermission(requiredPermissions)),
+    user,
+    role,
+    permissions,
+    isAuthenticated,
+    checkPermission,
+    checkAnyPermission,
+    checkAllPermissions,
+    isRole,
+    isAnyRole,
+    isMinRole,
   }
 }

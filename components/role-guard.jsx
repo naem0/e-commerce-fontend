@@ -1,67 +1,60 @@
 "use client"
 
-import { useAuth } from "@/contexts/auth-context"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useRoleGuard } from "@/hooks/use-role-guard"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ShieldAlert } from "lucide-react"
 
-export function RoleGuard({
-  children,
-  roles = [],
-  permissions = [],
-  requireAll = false,
-  fallback = null,
-  redirectTo = null,
-}) {
-  const { user, isAnyRole, checkPermission, checkAnyPermission, checkAllPermissions, isLoading } = useAuth()
-  const router = useRouter()
+export function RoleGuard({ children, roles = [], permissions = [], requireAll = false, fallback = null }) {
+  const { isAuthenticated, isAnyRole, checkAnyPermission, checkAllPermissions } = useRoleGuard()
 
-  useEffect(() => {
-    if (isLoading) return
-
-    if (!user && redirectTo) {
-      router.push(redirectTo)
-    }
-  }, [user, isLoading, redirectTo, router])
-
-  if (isLoading) {
+  // Check authentication
+  if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-      </div>
+      fallback || (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Alert className="max-w-md">
+            <ShieldAlert className="h-4 w-4" />
+            <AlertTitle>Authentication Required</AlertTitle>
+            <AlertDescription>Please log in to access this content.</AlertDescription>
+          </Alert>
+        </div>
+      )
     )
   }
 
-  if (!user) {
-    return fallback
+  // Check roles
+  if (roles.length > 0 && !isAnyRole(roles)) {
+    return (
+      fallback || (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Alert className="max-w-md" variant="destructive">
+            <ShieldAlert className="h-4 w-4" />
+            <AlertTitle>Access Denied</AlertTitle>
+            <AlertDescription>You don't have the required role to access this content.</AlertDescription>
+          </Alert>
+        </div>
+      )
+    )
   }
 
-  // Check role requirements
-  if (roles.length > 0) {
-    const hasRole = isAnyRole(roles)
-    if (!hasRole) {
-      return fallback
-    }
-  }
-
-  // Check permission requirements
+  // Check permissions
   if (permissions.length > 0) {
-    const hasPermissions = requireAll ? checkAllPermissions(permissions) : checkAnyPermission(permissions)
+    const hasAccess = requireAll ? checkAllPermissions(permissions) : checkAnyPermission(permissions)
 
-    if (!hasPermissions) {
-      return fallback
+    if (!hasAccess) {
+      return (
+        fallback || (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <Alert className="max-w-md" variant="destructive">
+              <ShieldAlert className="h-4 w-4" />
+              <AlertTitle>Access Denied</AlertTitle>
+              <AlertDescription>You don't have the required permissions to access this content.</AlertDescription>
+            </Alert>
+          </div>
+        )
+      )
     }
   }
 
-  return children
-}
-
-// Higher-order component version
-export function withRoleGuard(Component, options = {}) {
-  return function RoleGuardedComponent(props) {
-    return (
-      <RoleGuard {...options}>
-        <Component {...props} />
-      </RoleGuard>
-    )
-  }
+  return <>{children}</>
 }
