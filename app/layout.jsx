@@ -1,4 +1,3 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
@@ -10,7 +9,6 @@ import { getSiteSettings } from "@/services/settings.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-const inter = Inter({ subsets: ["latin"] });
 const data = await getSiteSettings();
 const settings = data?.success ? data.settings : {};
 
@@ -39,7 +37,7 @@ export default async function RootLayout({ children }) {
           `}
         </style>
       </head>
-      <body className={inter.className}>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
