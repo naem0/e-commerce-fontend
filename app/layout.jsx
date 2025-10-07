@@ -1,4 +1,3 @@
-// app/layout.js বা যেখানে তোমার RootLayout আছে
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
