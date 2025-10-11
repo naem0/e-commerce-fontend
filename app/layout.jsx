@@ -14,9 +14,7 @@ const settings = data?.success ? data.settings : {};
 
 export const metadata = {
   title: settings?.siteName || "E-Commerce Solution",
-  description:
-    settings?.metaTags?.description ||
-    "an e-commerce solution built with MERN stack",
+  description: settings?.metaTags?.description || "an e-commerce solution built with MERN stack",
 };
 
 export default async function RootLayout({ children }) {

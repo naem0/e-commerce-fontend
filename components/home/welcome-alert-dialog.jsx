@@ -18,18 +18,16 @@ export function WelcomeAlertDialog() {
   useEffect(() => {
     const hasVisited = localStorage.getItem("hasVisitedWelcome");
     if (!hasVisited) {
-      // modal খোলার আগে একটু delay
       const openTimer = setTimeout(() => {
         setIsOpen(true);
         localStorage.setItem("hasVisitedWelcome", "true");
 
-        // ৫ সেকেন্ড পরে auto close হবে
         const closeTimer = setTimeout(() => {
           setIsOpen(false);
         }, 5000);
 
         return () => clearTimeout(closeTimer);
-      }, 1500); // 1.5 sec পরে open হবে
+      }, 1500);
 
       return () => clearTimeout(openTimer);
     }
