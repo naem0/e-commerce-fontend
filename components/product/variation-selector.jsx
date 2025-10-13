@@ -212,7 +212,7 @@ export default function VariationSelector({ variations = [], onVariationSelect, 
         <div className="mt-4">
           <div className="flex justify-between">
             <span className="text-sm font-medium">Price:</span>
-            <span className="text-sm font-bold">${availableVariation.price.toFixed(2)}</span>
+            <span className="text-sm font-bold">${availableVariation.price?.toFixed(2)}</span>
           </div>
 
           <div className="flex justify-between mt-1">

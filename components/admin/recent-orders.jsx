@@ -83,7 +83,7 @@ export function RecentOrders() {
           <div>
             <p className="font-medium">Order #{order._id.substr(-6)}</p>
             <p className="text-sm text-muted-foreground">
-              {new Date(order.createdAt).toLocaleDateString()} · ${order.total.toFixed(2)}
+              {new Date(order.createdAt).toLocaleDateString()} · ${order.total?.toFixed(2)}
             </p>
             <Badge className={getStatusColor(order.status)}>
               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}

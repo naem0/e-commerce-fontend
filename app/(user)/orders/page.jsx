@@ -143,14 +143,14 @@ export default function OrdersPage() {
                               {item.quantity} x {item.product.name}
                             </span>
                           </div>
-                          <span>${(item.price * item.quantity).toFixed(2)}</span>
+                          <span>${(item.price * item.quantity)?.toFixed(2)}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span>${order.total.toFixed(2)}</span>
+                    <span>${order.total?.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-end">
                     <Link href={`/orders/${order._id}`}>

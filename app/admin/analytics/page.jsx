@@ -101,7 +101,7 @@ export default function AnalyticsPage() {
         item.totalOrders,
         item.totalRevenue,
         item.totalDue,
-        item.averageOrderValue.toFixed(2),
+        item.averageOrderValue?.toFixed(2),
       ]),
     ]
       .map((row) => row.join(","))

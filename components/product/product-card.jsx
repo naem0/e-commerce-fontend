@@ -92,11 +92,11 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
             <div className="flex items-center gap-2">
               {product.comparePrice && product.comparePrice > product.price ? (
                 <>
-                  <span className="font-bold">৳{finalPrice.toFixed(2)}</span>
-                  <span className="text-sm text-muted-foreground line-through">৳{originalPrice.toFixed(2)}</span>
+                  <span className="font-bold">৳{finalPrice?.toFixed(2)}</span>
+                  <span className="text-sm text-muted-foreground line-through">৳{originalPrice?.toFixed(2)}</span>
                 </>
               ) : (
-                <span className="font-bold">৳{finalPrice.toFixed(2)}</span>
+                <span className="font-bold">৳{finalPrice?.toFixed(2)}</span>
               )}
             </div>
             {product.rating ? (

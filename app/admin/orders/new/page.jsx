@@ -189,7 +189,7 @@ export default function NewOrderPage() {
                     onChange={(e) => handleProductChange(index, "quantity", parseInt(e.target.value))}
                     className="w-24"
                   />
-                  <span>${(product.price * product.quantity).toFixed(2)}</span>
+                  <span>${(product.price * product.quantity)?.toFixed(2)}</span>
                 </div>
               ))}
               <Button type="button" onClick={handleAddProduct} variant="outline">
@@ -228,7 +228,7 @@ export default function NewOrderPage() {
               </div>
             </div>
 
-            <div className="text-2xl font-bold">Total: ${total.toFixed(2)}</div>
+            <div className="text-2xl font-bold">Total: ${total?.toFixed(2)}</div>
 
             <Button type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create Order"}
