@@ -13,10 +13,10 @@ export default async function CustomSection({ section }) {
   try {
     switch (section.type) {
       case "best-sellers":
-        products = (await getProducts({ sortBy: "sales", limit: section.settings.limit || 8 })).products || []
+        products = (await getProducts({ sortBy: "sales", limit: section.settings.limit || 8, status: "published" })).products || []
         break
       case "flash-sale":
-        products = (await getProducts({ onSale: true, limit: section.settings.limit || 8 })).products || []
+        products = (await getProducts({ onSale: true, limit: section.settings.limit || 8, status: "published" })).products || []
         break
       case "category-best-sellers":
         if (section.settings.categoryId) {
@@ -25,23 +25,24 @@ export default async function CustomSection({ section }) {
               category: section.settings.categoryId,
               sortBy: "sales",
               limit: section.settings.limit || 8,
+              status: "published"
             })
           ).products || []
         }
         break
       case "new-arrivals":
-        products = (await getProducts({ sortBy: "newest", limit: section.settings.limit || 8 })).products || []
+        products = (await getProducts({ sortBy: "newest", limit: section.settings.limit || 8, status: "published" })).products || []
         break
       case "trending":
-        products = (await getProducts({ sortBy: "popularity", limit: section.settings.limit || 8 })).products || []
+        products = (await getProducts({ sortBy: "popularity", limit: section.settings.limit || 8, status: "published" })).products || []
         break
       case "custom-products":
         if (section.settings.productIds?.length > 0) {
-          products = (await getProducts({ ids: section.settings.productIds })).products || []
+          products = (await getProducts({ ids: section.settings.productIds, status: "published" })).products || []
         }
         break
       default:
-        products = (await getProducts({ limit: section.settings.limit || 8 })).products || []
+        products = (await getProducts({ limit: section.settings.limit || 8, status: "published" })).products || []
     }
   } catch (err) {
     console.error("Server error fetching products:", err)
