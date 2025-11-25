@@ -226,7 +226,7 @@ exports.createOrder = async (req, res) => {
 
     // Calculate tax and shipping (simplified for demo)
     const tax = subtotal * 0.05 // 5% tax
-    const shippingCost = subtotal > 100 ? 0 : 10 // Free shipping over ৳100
+    const shippingCost = subtotal > 100 ? 0 : 10 // Free shipping over $100
     const total = subtotal + tax + shippingCost
 
     // Create order
@@ -250,93 +250,6 @@ exports.createOrder = async (req, res) => {
     })
   } catch (error) {
     console.error("Create order error:", error)
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    })
-  }
-}
-
-// @desc    Create a new order by admin
-// @route   POST /api/orders/admin
-// @access  Private/Admin
-exports.createOrderByAdmin = async (req, res) => {
-  try {
-    const { userType, user, customer, shippingAddress, items, status, paymentMethod, total } = req.body
-
-    if (!items || items.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No order items",
-      })
-    }
-
-    let orderData = {
-      items: [],
-      status,
-      paymentMethod,
-      total,
-      subtotal: 0,
-      tax: 0,
-      shippingCost: 0,
-      paidAmount: 0,
-    }
-
-    if (userType === 'guest') {
-      orderData.customer = customer;
-      orderData.shippingAddress = shippingAddress;
-    } else {
-      orderData.user = user;
-    }
-
-    // Verify items and calculate prices
-    for (const item of items) {
-      const product = await Product.findById(item.product)
-
-      if (!product) {
-        return res.status(404).json({
-          success: false,
-          message: `Product not found: ${item.product}`,
-        })
-      }
-
-      let price = product.price
-      let stock = product.stock
-
-      if (stock < item.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Not enough stock for ${product.name}. Available: ${stock}`,
-        })
-      }
-
-      orderData.items.push({
-        product: product._id,
-        name: product.name,
-        price,
-        quantity: item.quantity,
-        image: product.images?.[0] || "",
-      })
-
-      orderData.subtotal += price * item.quantity
-
-      // Update product stock
-      product.stock -= item.quantity
-      await product.save()
-    }
-    
-    orderData.total = orderData.subtotal;
-
-    // Create order
-    const order = await Order.create(orderData)
-
-    res.status(201).json({
-      success: true,
-      order,
-    })
-  } catch (error) {
-    console.error("Create order by admin error:", error)
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -379,7 +292,7 @@ exports.addPartialPayment = async (req, res) => {
     if (amount > order.dueAmount) {
       return res.status(400).json({
         success: false,
-        message: `Payment amount cannot exceed due amount of ৳${order.dueAmount}`,
+        message: `Payment amount cannot exceed due amount of $${order.dueAmount}`,
       })
     }
 
@@ -604,6 +517,86 @@ exports.updatePaymentStatus = async (req, res) => {
     })
   } catch (error) {
     console.error("Update payment status error:", error)
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    })
+  }
+}
+
+
+// @desc    Create a new order by admin
+// @route   POST /api/orders/admin
+// @access  Private/Admin
+exports.createOrderByAdmin = async (req, res) => { 
+  try {
+    const { user, items, status, total } = req.body
+
+    if (!user || !items || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide user, items, status and total",
+      })
+    }
+
+    // Verify items and calculate prices
+    const orderItems = []
+    let subtotal = 0
+
+    for (const item of items) {
+      const product = await Product.findById(item.product)
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: `Product not found: ${item.product}`,
+        })
+      }
+
+      let price = product.price
+      let stock = product.stock
+
+      if (stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for ${product.name}. Available: ${stock}`,
+        })
+      }
+
+      orderItems.push({
+        product: product._id,
+        name: product.name,
+        price,
+        quantity: item.quantity,
+        image: product.images?.[0] || "",
+      })
+
+      subtotal += price * item.quantity
+
+      // Update product stock
+      product.stock -= item.quantity
+      await product.save()
+    }
+
+    // Create order
+    const order = await Order.create({
+      user,
+      items: orderItems,
+      status,
+      total,
+      subtotal,
+      tax: 0,
+      shippingCost: 0,
+      paidAmount: 0,
+    })
+
+    res.status(201).json({
+      success: true,
+      order,
+    })
+  } catch (error) {
+    console.error("Create order by admin error:", error)
     res.status(500).json({
       success: false,
       message: "Server error",
