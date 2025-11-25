@@ -64,7 +64,7 @@ export default function CategoriesPage() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
           {categories.map((category) => (
-            <Link key={category._id} href={`/categories/${category.slug}`}>
+            <Link key={category._id} href={`/products?category=${category._id}`}>
               <Card className="overflow-hidden transition-transform hover:scale-105">
                 <div className="aspect-square relative">
                   <Image

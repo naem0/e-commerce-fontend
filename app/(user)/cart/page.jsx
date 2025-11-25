@@ -70,7 +70,7 @@ export default function CartPage() {
     }
   }
 
-  
+
 
   const handleCheckout = () => {
     router.push("/checkout")
@@ -130,76 +130,77 @@ export default function CartPage() {
                 {cart.items.map((item, index) => {
                   const price = item.variation ? item.variation.price : (item.product.salePrice || item.product.price)
                   const image = item.variation?.image ? process.env.NEXT_PUBLIC_API_URL + item.variation.image : (item.product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=96&width=96")
-                  
+
                   return (
-                  <div key={`${item.product._id}-${item.variation ? item.variation._id : ''}`} className="flex py-4 px-6">
-                    <div className="relative h-24 w-24 rounded-md overflow-hidden">
-                      <Image
-                        src={image}
-                        alt={item.product.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <div className="flex justify-between">
-                        <div>
-                          <h3 className="font-medium">
-                            <Link href={`/products/${item.product.slug}`} className="hover:underline">
-                              {item.product.name}
-                            </Link>
-                          </h3>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            {formatPrice(price)}
-                          </p>
-                          {item.variation && (
-                            <div className="text-xs text-muted-foreground">
-                              {item?.variation?.options?.map(opt => (
-                                <span key={opt.type} className="mr-2">{opt.type}: {opt.value}</span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleRemoveItem(item)}
-                          disabled={updating}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          <span className="sr-only">Remove</span>
-                        </Button>
+                    <div key={`${item.product._id}-${item.variation ? item.variation._id : ''}`} className="flex py-4 px-6">
+                      <div className="relative h-24 w-24 rounded-md overflow-hidden">
+                        <Image
+                          src={image}
+                          alt={item.product.name}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
-                      <div className="mt-2 flex items-center">
-                        <div className="flex items-center border rounded-md">
+                      <div className="ml-4 flex-1">
+                        <div className="flex justify-between">
+                          <div>
+                            <h3 className="font-medium">
+                              <Link href={`/products/${item.product.slug}`} className="hover:underline">
+                                {item.product.name}
+                              </Link>
+                            </h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                              {formatPrice(price)}
+                            </p>
+                            {item.variation && (
+                              <div className="text-xs text-muted-foreground">
+                                {item?.variation?.options?.map(opt => (
+                                  <span key={opt.type} className="mr-2">{opt.type}: {opt.value}</span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleQuantityChange(item, item.quantity - 1)}
-                            disabled={item.quantity <= 1 || updating}
-                            className="h-8 w-8"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleRemoveItem(item)}
+                            disabled={updating}
                           >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-12 text-center font-medium">{item.quantity}</span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleQuantityChange(item, item.quantity + 1)}
-                            disabled={item.quantity >= (item.variation ? item.variation.stock : item.product.stock || 10) || updating}
-                            className="h-8 w-8"
-                          >
-                            <Plus className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Remove</span>
                           </Button>
                         </div>
-                        <div className="ml-auto font-medium">
-                          {formatPrice(price * item.quantity)}
+                        <div className="mt-2 flex items-center">
+                          <div className="flex items-center border rounded-md">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleQuantityChange(item, item.quantity - 1)}
+                              disabled={item.quantity <= 1 || updating}
+                              className="h-8 w-8"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-12 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleQuantityChange(item, item.quantity + 1)}
+                              disabled={item.quantity >= (item.variation ? item.variation.stock : item.product.stock || 10) || updating}
+                              className="h-8 w-8"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="ml-auto font-medium">
+                            {formatPrice(price * item.quantity)}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )})}
+                  )
+                })}
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
