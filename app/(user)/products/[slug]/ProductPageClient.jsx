@@ -133,12 +133,6 @@ export default function ProductPageClient({ product }) {
     )
   }
 
-  const currentPrice = getCurrentPrice()
-  const comparePrice = getComparePrice()
-  const currentStock = getCurrentStock()
-  const discountPercentage = comparePrice ? Math.round(((comparePrice - currentPrice) / comparePrice) * 100) : 0
-  const isWishlisted = isInWishlist(product._id)
-
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     let videoId = null;
@@ -146,7 +140,7 @@ export default function ProductPageClient({ product }) {
       const urlParams = new URLSearchParams(new URL(url).search);
       videoId = urlParams.get("v");
     } else if (url.includes("youtu.be")) {
-      videoId = url.split("/").pop();
+      videoId = url.split("/").pop().split("?")[0];
     }
 
     if (videoId) {
@@ -159,14 +153,20 @@ export default function ProductPageClient({ product }) {
   };
 
   const videoInfo = getYouTubeEmbedUrl(product.videoUrl);
-
   const media = [];
+
   if (videoInfo) {
     media.push({ type: 'video', url: videoInfo.embedUrl, thumbnailUrl: videoInfo.thumbnailUrl });
   }
   media.push(...(product.images?.map(img => ({ type: 'image', url: img })) || []));
 
   const [activeMedia, setActiveMedia] = useState({ type: media[0]?.type || 'image', index: 0 });
+
+  const currentPrice = getCurrentPrice()
+  const comparePrice = getComparePrice()
+  const currentStock = getCurrentStock()
+  const discountPercentage = comparePrice ? Math.round(((comparePrice - currentPrice) / comparePrice) * 100) : 0
+  const isWishlisted = isInWishlist(product._id)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -236,9 +236,8 @@ export default function ProductPageClient({ product }) {
               {media.map((item, index) => (
                 <button
                   key={index}
-                  className={`relative h-20 w-20 cursor-pointer rounded-md border ${
-                    activeMedia.index === index ? "border-primary" : "border-gray-200"
-                  }`}
+                  className={`relative h-20 w-20 cursor-pointer rounded-md border ${activeMedia.index === index ? "border-primary" : "border-gray-200"
+                    }`}
                   onClick={() => setActiveMedia({ type: item.type, index })}
                 >
                   <Image
@@ -299,8 +298,8 @@ export default function ProductPageClient({ product }) {
                         key={option.value}
                         onClick={() => handleVariantOptionChange(variationType.name, option.value)}
                         className={`px-3 py-2 border rounded-md text-sm ${selectedOptions[variationType.name] === option.value
-                            ? "border-primary bg-primary-custom text-white"
-                            : "border-gray-300 hover:border-gray-400"
+                          ? "border-primary bg-primary-custom text-white"
+                          : "border-gray-300 hover:border-gray-400"
                           }`}
                       >
                         {option.name}
@@ -518,6 +517,6 @@ export default function ProductPageClient({ product }) {
         </div>
       </div>
       <RelatedProducts categoryId={product.category?._id} currentProductId={product._id} />
-    </div>
+    </div >
   )
 }

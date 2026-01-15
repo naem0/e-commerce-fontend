@@ -3,7 +3,7 @@ import { getToken } from "next-auth/jwt"
 
 export async function middleware(request) {
   const token = await getToken({ req: request })
-  console.log("Token:", token)
+
   const isAuthenticated = !!token
   const isAdmin = token?.role === "admin"
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin")

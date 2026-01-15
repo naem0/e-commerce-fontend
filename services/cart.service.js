@@ -9,7 +9,7 @@ const getAuthHeaders = async (isFormData = false) => {
   try {
     const session = await getSession();
 
-    console.log(session?.accessToken)
+
 
     let token = null
 
@@ -30,7 +30,7 @@ const getAuthHeaders = async (isFormData = false) => {
       headers["Content-Type"] = "application/json"
     }
 
-    console.log(headers)
+
 
     return headers
   } catch (error) {
@@ -57,14 +57,14 @@ export const getCart = async () => {
   try {
     // Try to get authenticated cart
     const headers = await getAuthHeaders()
-      const response = await fetch(`${API_URL}/api/cart`, {
-        headers,
-        method: "GET",
-      })
-      if (!response.ok) {
-        throw new Error("Failed to fetch cart")
-      }
-      return await response.json()
+    const response = await fetch(`${API_URL}/api/cart`, {
+      headers,
+      method: "GET",
+    })
+    if (!response.ok) {
+      throw new Error("Failed to fetch cart")
+    }
+    return await response.json()
   } catch (error) {
     console.error("Error getting cart:", error)
 
@@ -98,14 +98,14 @@ export const addToCart = async (productId, quantity = 1, variation = null) => {
   try {
     const headers = await getAuthHeaders()
 
-      // Add to authenticated cart
-      const response = await fetch(`${API_URL}/api/cart/items`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ productId, quantity, variation }),
-      })
+    // Add to authenticated cart
+    const response = await fetch(`${API_URL}/api/cart/items`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ productId, quantity, variation }),
+    })
 
-      return await response.json()
+    return await response.json()
   } catch (error) {
     console.error("Error adding to cart:", error)
     throw {
@@ -120,14 +120,14 @@ export const updateCartItem = async (productId, quantity, variationId) => {
   try {
     const headers = await getAuthHeaders()
 
-      // Update authenticated cart
-      const response = await fetch(`${API_URL}/api/cart/items`, {
-        method: "PUT",
-        headers,
-        body: JSON.stringify({ productId, quantity, variationId }),
-      })
+    // Update authenticated cart
+    const response = await fetch(`${API_URL}/api/cart/items`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({ productId, quantity, variationId }),
+    })
 
-      return await response.json()
+    return await response.json()
   } catch (error) {
     console.error("Error updating cart:", error)
     throw {
@@ -142,14 +142,14 @@ export const removeFromCart = async (productId, variationId) => {
   try {
     const headers = await getAuthHeaders()
 
-      // Remove from authenticated cart
-      const response = await fetch(`${API_URL}/api/cart/items`, {
-        method: "DELETE",
-        headers,
-        body: JSON.stringify({ productId, variationId }),
-      })
+    // Remove from authenticated cart
+    const response = await fetch(`${API_URL}/api/cart/items`, {
+      method: "DELETE",
+      headers,
+      body: JSON.stringify({ productId, variationId }),
+    })
 
-      return await response.json()
+    return await response.json()
   } catch (error) {
     console.error("Error removing from cart:", error)
     throw {
@@ -164,13 +164,13 @@ export const clearCart = async () => {
   try {
     const headers = await getAuthHeaders()
 
-      // Clear authenticated cart
-      const response = await fetch(`${API_URL}/api/cart`, {
-        method: "DELETE",
-        headers,
-      })
+    // Clear authenticated cart
+    const response = await fetch(`${API_URL}/api/cart`, {
+      method: "DELETE",
+      headers,
+    })
 
-      return await response.json()
+    return await response.json()
   } catch (error) {
     console.error("Error clearing cart:", error)
     throw {

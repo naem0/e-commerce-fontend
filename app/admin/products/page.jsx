@@ -213,12 +213,12 @@ export default function ProductsPage() {
   // Get status badge color
   const getStatusBadge = (status) => {
     switch (status) {
-      case "active":
-        return <Badge className="bg-green-500">Active</Badge>
-      case "inactive":
-        return <Badge className="bg-yellow-500">Inactive</Badge>
+      case "published":
+        return <Badge className="bg-green-500">Published</Badge>
       case "draft":
-        return <Badge className="bg-gray-500">Draft</Badge>
+        return <Badge className="bg-yellow-500">Draft</Badge>
+      case "archived":
+        return <Badge className="bg-gray-500">Archived</Badge>
       default:
         return <Badge>{status}</Badge>
     }
@@ -275,9 +275,9 @@ export default function ProductsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
                     <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -323,7 +323,6 @@ export default function ProductsPage() {
                       <TableRow key={product._id}>
                         <TableCell>
                           <div className="h-12 w-12 relative rounded overflow-hidden">
-                            {console.log("Product image URL:", product.images?.[0])}
                             {product.images?.[0] ? (
                               <Image
                                 src={process.env.NEXT_PUBLIC_API_URL + product.images[0]}
@@ -336,8 +335,8 @@ export default function ProductsPage() {
                                 src="/placeholder.svg?height=48&width=48"
                                 alt={product.name}
                                 fill
-                              className="object-cover"
-                            />
+                                className="object-cover"
+                              />
                             )}
                           </div>
                         </TableCell>
@@ -370,22 +369,22 @@ export default function ProductsPage() {
                               <DropdownMenuSeparator />
                               <DropdownMenuLabel>Status</DropdownMenuLabel>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(product._id, "active")}
-                                disabled={product.status === "active"}
+                                onClick={() => handleStatusChange(product._id, "published")}
+                                disabled={product.status === "published"}
                               >
-                                Set as Active
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleStatusChange(product._id, "inactive")}
-                                disabled={product.status === "inactive"}
-                              >
-                                Set as Inactive
+                                Set as Published
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => handleStatusChange(product._id, "draft")}
                                 disabled={product.status === "draft"}
                               >
                                 Set as Draft
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleStatusChange(product._id, "archived")}
+                                disabled={product.status === "archived"}
+                              >
+                                Set as Archived
                               </DropdownMenuItem>
                               {/* <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-red-600" onClick={() => confirmDelete(product)}>

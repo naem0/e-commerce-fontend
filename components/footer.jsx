@@ -17,7 +17,7 @@ export function Footer() {
     color: "#FFFFFF",
     transition: "color 0.3s ease",
   }
-  console.log("Footer settings:", settings)
+
 
   return (
     <footer style={footerStyle} className="pt-10 pb-6">

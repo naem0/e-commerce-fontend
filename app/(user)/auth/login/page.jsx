@@ -20,8 +20,8 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [formData, setFormData] = useState({
-    email: "naem@gmail.com",
-    password: "12345678",
+    email: "",
+    password: "",
   })
   const [errors, setErrors] = useState({})
 

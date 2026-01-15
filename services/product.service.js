@@ -139,7 +139,7 @@ export const getProductBySlug = async (slug) => {
 export const createProduct = async (productData) => {
   try {
     const headers = await getAuthHeadersForFormData()
-    console.log("Headers in createProduct:", headers)
+
     const url = `${API_URL}/api/products`
 
     // Create FormData
