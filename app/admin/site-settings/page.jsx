@@ -46,6 +46,10 @@ export default function SiteSettingsPage() {
       keywords: "",
     },
   })
+  const [files, setFiles] = useState({
+    logo: null,
+    favicon: null,
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
   
   // Load settings when available
@@ -101,6 +105,13 @@ export default function SiteSettingsPage() {
     }
   }
 
+  const handleFileChange = (e) => {
+    const { name, files: selectedFiles } = e.target
+    if (selectedFiles && selectedFiles.length > 0) {
+      setFiles((prev) => ({ ...prev, [name]: selectedFiles[0] }))
+    }
+  }
+
   const handleSelectChange = (value, name) => {
     setFormData((prev) => ({
       ...prev,
@@ -113,7 +124,29 @@ export default function SiteSettingsPage() {
     setIsSubmitting(true)
 
     try {
-      const success = await updateSettings(formData)
+      const isDataDirty = files.logo || files.favicon
+      
+      let submitData
+      if (isDataDirty) {
+        const formDataToSend = new FormData()
+        Object.keys(formData).forEach(key => {
+          if (typeof formData[key] === "object" && formData[key] !== null) {
+            Object.keys(formData[key]).forEach(subKey => {
+               // Use dot-notation so Mongoose's findByIdAndUpdate correctly updates nested schemas
+               formDataToSend.append(`${key}.${subKey}`, formData[key][subKey] || "")
+            })
+          } else {
+            formDataToSend.append(key, formData[key] || "")
+          }
+        })
+        if (files.logo) formDataToSend.append("logo", files.logo)
+        if (files.favicon) formDataToSend.append("favicon", files.favicon)
+        submitData = formDataToSend
+      } else {
+        submitData = formData
+      }
+
+      const success = await updateSettings(submitData, isDataDirty)
 
       if (success) {
         toast({
@@ -175,25 +208,33 @@ export default function SiteSettingsPage() {
                     placeholder="Your Store Name"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="logo">Logo URL</Label>
-                  <Input
-                    id="logo"
-                    name="logo"
-                    value={formData.logo}
-                    onChange={handleChange}
-                    placeholder="https://example.com/logo.png"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="favicon">Favicon URL</Label>
-                  <Input
-                    id="favicon"
-                    name="favicon"
-                    value={formData.favicon}
-                    onChange={handleChange}
-                    placeholder="https://example.com/favicon.ico"
-                  />
+                <div className="space-y-4 flex flex-col sm:flex-row sm:gap-4">
+                  <div className="space-y-2 flex-1">
+                    <Label htmlFor="logo">Upload Logo</Label>
+                    <Input
+                      id="logo"
+                      name="logo"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                    {formData.logo && !files.logo && (
+                       <p className="text-sm text-gray-500 truncate max-w-[250px]">Current: {formData.logo}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2 flex-1">
+                    <Label htmlFor="favicon">Upload Favicon</Label>
+                    <Input
+                      id="favicon"
+                      name="favicon"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                    {formData.favicon && !files.favicon && (
+                       <p className="text-sm text-gray-500 truncate max-w-[250px]">Current: {formData.favicon}</p>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>

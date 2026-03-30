@@ -1,36 +1,49 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
+import { getSiteSettings, updateSiteSettingsWithFiles, updateSiteSettings } from "@/services/settings.service"
 
 const SiteSettingsContext = createContext({
   settings: {},
+  loading: true,
   updateSettings: async () => {},
 })
 
 export function SiteSettingsProvider({ initialSettings, children }) {
   const [settings, setSettings] = useState(initialSettings || {})
+  const [loading, setLoading] = useState(!initialSettings)
   const { toast } = useToast()
 
-  const updateSettings = async (newSettings) => {
+  useEffect(() => {
+    if (!initialSettings) {
+      const fetchSettings = async () => {
+        const result = await getSiteSettings()
+        if (result.success) {
+          setSettings(result.settings)
+        }
+        setLoading(false)
+      }
+      fetchSettings()
+    }
+  }, [initialSettings])
+
+  const updateSettings = async (formDataOrSettings, isFormData = false) => {
     try {
-      const res = await fetch("/api/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newSettings),
-      })
+      const result = isFormData 
+        ? await updateSiteSettingsWithFiles(formDataOrSettings)
+        : await updateSiteSettings(formDataOrSettings)
+        
+      if (!result.success) throw new Error(result.message)
 
-      const data = await res.json()
-      if (!data.success) throw new Error(data.message)
-
-      setSettings(data.settings)
+      setSettings(result.settings)
 
       // Apply theme colors
-      if (data.settings.primaryColor) {
-        document.documentElement.style.setProperty("--primary-color", data.settings.primaryColor)
+      if (result.settings?.primaryColor) {
+        document.documentElement.style.setProperty("--primary-color", result.settings.primaryColor)
       }
-      if (data.settings.secondaryColor) {
-        document.documentElement.style.setProperty("--secondary-color", data.settings.secondaryColor)
+      if (result.settings?.secondaryColor) {
+        document.documentElement.style.setProperty("--secondary-color", result.settings.secondaryColor)
       }
 
       toast({
@@ -50,7 +63,7 @@ export function SiteSettingsProvider({ initialSettings, children }) {
   }
 
   return (
-    <SiteSettingsContext.Provider value={{ settings, updateSettings }}>
+    <SiteSettingsContext.Provider value={{ settings, updateSettings, loading }}>
       {children}
     </SiteSettingsContext.Provider>
   )
