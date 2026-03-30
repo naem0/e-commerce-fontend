@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, ShoppingCart, Eye, Heart } from "lucide-react"
 import { toast } from "sonner"
 import { useWishlist } from "../wishlist-provider"
+import { getImageUrl } from "@/lib/utils"
 
 export function ProductCard({ product,  showDiscount = false, discountPercentage = 0 }) {
   const { addToCart } = useCart()
@@ -65,7 +66,7 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-square overflow-hidden">
           <Image
-            src={product.images?.length > 0 ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=48&width=48"}
+            src={getImageUrl(product.images?.[0])}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 hover:scale-105"

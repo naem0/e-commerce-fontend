@@ -3,6 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart } from "lucide-react"
+import { getImageUrl } from "@/lib/utils"
 
 const ProductCard2 = ({ product, handleAddToCart }) => {
   return (
@@ -10,7 +11,7 @@ const ProductCard2 = ({ product, handleAddToCart }) => {
       <Link href={`/products/${product.slug}`}>
         <div className="relative h-48 w-full">
           <Image
-            src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=192&width=256"}
+            src={getImageUrl(product.images?.[0], '192', '256')}
             alt={product.name}
             fill
             className="object-cover"

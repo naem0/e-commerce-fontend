@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { ShoppingCart } from "lucide-react"
 import StarRating from "@/components/home/star-rating"
 import { Badge } from "@/app/components/ui/badge"
+import { getImageUrl } from "@/lib/utils"
 
 const ProductCard1 = ({ product, handleAddToCart }) => {
     return (
@@ -12,7 +13,7 @@ const ProductCard1 = ({ product, handleAddToCart }) => {
             <Link href={`/product/${product._id}`}>
                 <div className="aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
                     <Image 
-                        src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=192&width=256"}
+                        src={getImageUrl(product.images?.[0], '192', '256')}
                         alt={product.name} 
                         width={400}
                         height={400}
