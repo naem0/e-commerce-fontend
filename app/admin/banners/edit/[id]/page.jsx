@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
 import { AlertCircle, ImageIcon, ArrowLeft } from "lucide-react"
-import { getBanner, updateBanner } from "@/services/banner.service"
+import { getBannerById, updateBanner } from "@/services/banner.service"
 import { useToast } from "@/hooks/use-toast"
 
 export default function EditBannerPage({ params }) {
@@ -39,7 +39,7 @@ export default function EditBannerPage({ params }) {
       try {
         setLoading(true)
         setError(null)
-        const result = await getBanner(id)
+        const result = await getBannerById(id)
         if (result.success) {
           setBanner(result.banner)
           if (result.banner.image) {
