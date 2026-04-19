@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Loader2, Package, ShoppingCart, Users, DollarSign, TrendingUp, AlertTriangle, BarChart3 } from "lucide-react"
+import { Loader2, Package, ShoppingCart, Users, DollarSign, TrendingUp, AlertTriangle, BarChart3, Star } from "lucide-react"
 import { getDashboardAnalytics } from "@/services/analytics.service"
 import { formatPrice } from "@/services/utils"
 import { Overview } from "@/components/admin/overview"
@@ -175,6 +175,20 @@ export default function AdminDashboard() {
                 <div className="text-2xl font-bold">{formatPrice(analytics?.overview?.totalRevenue || 0)}</div>
                 <p className="text-xs text-muted-foreground">
                   <span className="text-green-600">+23%</span> from last month
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Star className="h-4 w-4" />
+                  Total Reviews
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{analytics?.overview?.totalReviews || 0}</div>
+                <p className="text-xs text-muted-foreground">
+                  Latest reviews shown in tab
                 </p>
               </CardContent>
             </Card>

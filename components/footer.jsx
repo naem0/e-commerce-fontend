@@ -22,22 +22,21 @@ export function Footer() {
   return (
     <footer style={footerStyle} className="pt-10 pb-6">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm md:text-base">
           <div>
-            <h3 className="text-xl font-bold mb-4">About</h3>
-            <p className="mb-4">{settings?.metaTags?.description || "Your company description goes here."}</p>
+            <h3 className="text-xl font-bold mb-4">About Equal Fashion</h3>
+            <p className="mb-4 text-gray-200">
+              Equal Fashion একটি আধুনিক ও বিশ্বস্ত অনলাইন শপিং প্ল্যাটফর্ম। আমাদের লক্ষ্য সাশ্রয়ী মূল্যে মানসম্মত পণ্য পৌঁছে দেওয়া।
+            </p>
             <div className="flex space-x-4">
-              <a href="#" style={linkStyle} className="hover:text-primary-custom">
-                <i className="fab fa-facebook-f"></i>
+              <a href="https://facebook.com/equalfashion.bd" target="_blank" style={linkStyle} className="hover:text-primary-custom">
+                <i className="fab fa-facebook-f text-xl"></i>
               </a>
               <a href="#" style={linkStyle} className="hover:text-primary-custom">
-                <i className="fab fa-twitter"></i>
+                <i className="fab fa-instagram text-xl"></i>
               </a>
-              <a href="#" style={linkStyle} className="hover:text-primary-custom">
-                <i className="fab fa-instagram"></i>
-              </a>
-              <a href="#" style={linkStyle} className="hover:text-primary-custom">
-                <i className="fab fa-linkedin-in"></i>
+              <a href="https://wa.me/01410558889" target="_blank" style={linkStyle} className="hover:text-primary-custom">
+                <i className="fab fa-whatsapp text-xl"></i>
               </a>
             </div>
           </div>
@@ -46,116 +45,74 @@ export function Footer() {
             <h3 className="text-xl font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/" style={linkStyle} className="hover:text-primary-custom">
-                  Home
-                </Link>
+                <Link href="/" style={linkStyle} className="hover:text-primary-custom">Home</Link>
               </li>
               <li>
-                <Link href="/return-policy" style={linkStyle} className="hover:text-primary-custom">
-                  Return Policy
-                </Link>
+                <Link href="/products" style={linkStyle} className="hover:text-primary-custom">All Products</Link>
               </li>
               <li>
-                <Link href="/products" style={linkStyle} className="hover:text-primary-custom">
-                  Products
-                </Link>
+                <Link href="/categories" style={linkStyle} className="hover:text-primary-custom">Categories</Link>
               </li>
               <li>
-                <Link href="/about" style={linkStyle} className="hover:text-primary-custom">
-                  About
-                </Link>
+                <Link href="/our-team" style={linkStyle} className="hover:text-primary-custom">Our Team</Link>
               </li>
               <li>
-                <Link href="/contact" style={linkStyle} className="hover:text-primary-custom">
-                  Contact
-                </Link>
+                <Link href="/faq" style={linkStyle} className="hover:text-primary-custom">FAQ</Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">Follow Us</h3>
+            <h3 className="text-xl font-bold mb-4">Policy</h3>
             <ul className="space-y-2">
               <li>
-                <a href="https://www.facebook.com/easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
-                  <i className="fab fa-facebook-f mr-2"></i> Facebook
-                </a>
+                <Link href="/privacy-policy" style={linkStyle} className="hover:text-primary-custom">Privacy Policy</Link>
               </li>
               <li>
-                <a href="https://www.instagram.com/easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
-                  <i className="fab fa-instagram mr-2"></i> Instagram
-                </a>
+                <Link href="/terms-and-conditions" style={linkStyle} className="hover:text-primary-custom">Terms & Conditions</Link>
               </li>
               <li>
-                <a href="https://www.youtube.com/easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
-                  <i className="fab fa-youtube mr-2"></i> YouTube
-                </a>
+                <Link href="/return-policy" style={linkStyle} className="hover:text-primary-custom">Return Policy</Link>
               </li>
               <li>
-                <a href="https://www.tiktok.com/@easyprimemart" target="_blank" rel="noopener noreferrer" style={linkStyle} className="hover:text-primary-custom flex items-center">
-                  <i className="fab fa-tiktok mr-2"></i> TikTok
-                </a>
+                <Link href="/about" style={linkStyle} className="hover:text-primary-custom">About Us</Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">Contact</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-4">Contact Us</h3>
+            <ul className="space-y-3">
               <li className="flex items-start">
-                <i className="fas fa-map-marker-alt mt-1 mr-2"></i>
-                <span>123 Street, City, Country</span>
+                <i className="fas fa-map-marker-alt mt-1 mr-3 text-primary-custom"></i>
+                <span>ঢাকা, বাংলাদেশ</span>
+              </li>
+              <li className="flex items-center">
+                <i className="fas fa-phone-alt mr-3 text-primary-custom"></i>
+                <span>09658-405962</span>
+              </li>
+              <li className="flex items-center">
+                <i className="fas fa-envelope mr-3 text-primary-custom"></i>
+                <span className="text-sm">info.equalfashionltd@gmail.com</span>
               </li>
               <li className="flex items-start">
-                <i className="fas fa-phone-alt mt-1 mr-2"></i>
-                <span>+123 456 7890</span>
-              </li>
-              <li className="flex items-start">
-                <i className="fas fa-envelope mt-1 mr-2"></i>
-                <span>info@example.com</span>
-              </li>
-              <li className="flex items-start">
-                <i className="fas fa-clock mt-1 mr-2"></i>
-                <span>Working Hours</span>
+                <i className="fas fa-clock mt-1 mr-3 text-primary-custom"></i>
+                <span>প্রতিদিন সকাল ১০টা - রাত ১০টা</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <hr className="my-6 border-gray-600" />
+        <hr className="my-8 border-white/10" />
 
-        <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm opacity-80">
           <p>
-            &copy; {new Date().getFullYear()} {settings?.siteName || "E-Commerce"}. Copyright
+            &copy; {new Date().getFullYear()} {settings?.siteName || "Equal Fashion"}. All Rights Reserved.
           </p>
-          <div className="mt-4 md:mt-0">
-            <ul className="flex space-x-4">
-              <li>
-                <Link href="/return-policy" style={linkStyle} className="hover:text-primary-custom">
-                  Return Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" style={linkStyle} className="hover:text-primary-custom">
-                  About
-                </Link>
-              </li>
-              {/* <li>
-                <Link href="/terms" style={linkStyle} className="hover:text-primary-custom">
-                  Terms
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" style={linkStyle} className="hover:text-primary-custom">
-                  Privacy
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" style={linkStyle} className="hover:text-primary-custom">
-                  FAQ
-                </Link>
-              </li> */}
-            </ul>
+          <div className="mt-4 md:mt-0 flex gap-6">
+            <Link href="/privacy-policy" className="hover:underline">Privacy</Link>
+            <Link href="/terms-and-conditions" className="hover:underline">Terms</Link>
+            <Link href="/contact" className="hover:underline">Contact</Link>
           </div>
         </div>
       </div>
