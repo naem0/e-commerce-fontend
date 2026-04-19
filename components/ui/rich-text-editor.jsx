@@ -97,16 +97,17 @@ export default function RichTextEditor({ value = "", onChange, placeholder = "En
           </div>
 
           {/* Font Size */}
-          <div className="flex gap-1 border-r pr-2 mr-2">
+          <div className="flex gap-1 border-border border-r pr-2 mr-2">
             <select
               onChange={(e) => changeFontSize(e.target.value)}
-              className="text-sm border rounded px-2 py-1 h-8"
+              className="text-sm border border-border rounded px-3 py-1 h-8 bg-background text-foreground outline-none cursor-pointer appearance-none pr-8 dark:bg-zinc-900 transition-colors hover:border-primary/50"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1rem' }}
               defaultValue="3"
             >
-              <option value="1">Small</option>
-              <option value="3">Normal</option>
-              <option value="5">Large</option>
-              <option value="7">Extra Large</option>
+              <option value="1" className="bg-background">Small</option>
+              <option value="3" className="bg-background">Normal</option>
+              <option value="5" className="bg-background">Large</option>
+              <option value="7" className="bg-background">Extra Large</option>
             </select>
           </div>
 

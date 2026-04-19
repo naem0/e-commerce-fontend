@@ -343,6 +343,27 @@ export default function ProductPageClient({ product }) {
                 {product.returnPolicy || "7 days return policy"}
               </Link>
             </p>
+            {product.shipping && (
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col gap-2">
+                <p className="text-sm font-semibold flex items-center gap-2">
+                  <Package className="h-4 w-4 text-primary" /> Delivery Charges
+                </p>
+                {product.shipping.free ? (
+                  <p className="text-sm text-green-600 font-medium">Free Shipping</p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-500">Inside Dhaka</p>
+                      <p className="text-sm font-medium">{formatPrice(product.shipping.insideDhakaCharge || 70)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Outside Dhaka</p>
+                      <p className="text-sm font-medium">{formatPrice(product.shipping.outsideDhakaCharge || 120)}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="border-t border-b py-4">

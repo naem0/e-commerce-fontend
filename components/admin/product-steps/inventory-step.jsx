@@ -159,6 +159,67 @@ export default function InventoryStep({ formData, errors, onChange }) {
                     </div>
                 </CardContent>
             </Card>
+
+                {/* Shipping Configuration */}
+                <Card>
+                    <CardContent className="pt-6">
+                        <h3 className="text-lg font-semibold mb-4">Shipping Configuration</h3>
+                    <div className="space-y-4">
+                        <div className="flex items-center space-x-2">
+                            <Switch
+                                id="free_shipping"
+                                checked={formData.shipping?.free || false}
+                                onCheckedChange={(checked) => onChange({
+                                    target: {
+                                        name: "shipping",
+                                        value: { ...formData.shipping, free: checked }
+                                    }
+                                })}
+                            />
+                            <Label htmlFor="free_shipping" className="cursor-pointer">
+                                Free Shipping for this product
+                            </Label>
+                        </div>
+
+                        {!formData.shipping?.free && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                <div className="space-y-2">
+                                    <Label htmlFor="insideDhakaCharge">Inside Dhaka Charge (৳)</Label>
+                                    <Input
+                                        id="insideDhakaCharge"
+                                        type="number"
+                                        min="0"
+                                        value={formData.shipping?.insideDhakaCharge || ""}
+                                        onChange={(e) => onChange({
+                                            target: {
+                                                name: "shipping",
+                                                value: { ...formData.shipping, insideDhakaCharge: e.target.value }
+                                            }
+                                        })}
+                                        placeholder="70"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="outsideDhakaCharge">Outside Dhaka Charge (৳)</Label>
+                                    <Input
+                                        id="outsideDhakaCharge"
+                                        type="number"
+                                        min="0"
+                                        value={formData.shipping?.outsideDhakaCharge || ""}
+                                        onChange={(e) => onChange({
+                                            target: {
+                                                name: "shipping",
+                                                value: { ...formData.shipping, outsideDhakaCharge: e.target.value }
+                                            }
+                                        })}
+                                        placeholder="120"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     )
 }
