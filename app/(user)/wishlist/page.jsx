@@ -12,6 +12,7 @@ import { useWishlist } from "@/components/wishlist-provider"
 import { useCart } from "@/components/cart-provider"
 import { formatPrice } from "@/services/utils"
 import { Loader2, Heart, ShoppingCart, Trash2, Eye } from "lucide-react"
+import { getImageUrl } from "@/lib/utils"
 
 export default function WishlistPage() {
   const { data: session } = useSession()
@@ -87,7 +88,7 @@ export default function WishlistPage() {
                   <Link href={`/products/${product.slug}`}>
                     <div className="aspect-square overflow-hidden bg-gray-100">
                       <Image
-                        src={product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + product.images[0] : "/placeholder.svg?height=300&width=300"}
+                        src={getImageUrl(product.images?.[0], '300', '300')}
                         alt={product.name}
                         width={300}
                         height={300}

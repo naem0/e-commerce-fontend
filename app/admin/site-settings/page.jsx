@@ -34,6 +34,13 @@ export default function SiteSettingsPage() {
       twitter: "",
       instagram: "",
       youtube: "",
+      whatsapp: "",
+      messenger: "",
+    },
+    paymentMethods: {
+      bkash: "",
+      nagad: "",
+      rocket: "",
     },
     contactInfo: {
       email: "",
@@ -70,6 +77,13 @@ export default function SiteSettingsPage() {
           twitter: settings.socialLinks?.twitter || "",
           instagram: settings.socialLinks?.instagram || "",
           youtube: settings.socialLinks?.youtube || "",
+          whatsapp: settings.socialLinks?.whatsapp || "",
+          messenger: settings.socialLinks?.messenger || "",
+        },
+        paymentMethods: {
+          bkash: settings.paymentMethods?.bkash || "",
+          nagad: settings.paymentMethods?.nagad || "",
+          rocket: settings.paymentMethods?.rocket || "",
         },
         contactInfo: {
           email: settings.contactInfo?.email || "",
@@ -188,6 +202,7 @@ export default function SiteSettingsPage() {
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
             <TabsTrigger value="contact">Contact & Social</TabsTrigger>
+            <TabsTrigger value="payment">Payment</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
           </TabsList>
 
@@ -431,6 +446,67 @@ export default function SiteSettingsPage() {
                     value={formData.socialLinks.youtube}
                     onChange={handleChange}
                     placeholder="https://youtube.com/yourstore"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="socialLinks.whatsapp">WhatsApp Number</Label>
+                  <Input
+                    id="socialLinks.whatsapp"
+                    name="socialLinks.whatsapp"
+                    value={formData.socialLinks.whatsapp}
+                    onChange={handleChange}
+                    placeholder="01XXXXXXXXX"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="socialLinks.messenger">Facebook Messenger Link</Label>
+                  <Input
+                    id="socialLinks.messenger"
+                    name="socialLinks.messenger"
+                    value={formData.socialLinks.messenger}
+                    onChange={handleChange}
+                    placeholder="https://m.me/yourpage"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="payment">
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment Settings</CardTitle>
+                <CardDescription>Configure Merchant numbers for mobile payments</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="paymentMethods.bkash">bKash Merchant Number</Label>
+                  <Input
+                    id="paymentMethods.bkash"
+                    name="paymentMethods.bkash"
+                    value={formData.paymentMethods.bkash}
+                    onChange={handleChange}
+                    placeholder="01XXXXXXXXX"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentMethods.nagad">Nagad Merchant Number</Label>
+                  <Input
+                    id="paymentMethods.nagad"
+                    name="paymentMethods.nagad"
+                    value={formData.paymentMethods.nagad}
+                    onChange={handleChange}
+                    placeholder="01XXXXXXXXX"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentMethods.rocket">Rocket Merchant Number</Label>
+                  <Input
+                    id="paymentMethods.rocket"
+                    name="paymentMethods.rocket"
+                    value={formData.paymentMethods.rocket}
+                    onChange={handleChange}
+                    placeholder="01XXXXXXXXX"
                   />
                 </div>
               </CardContent>

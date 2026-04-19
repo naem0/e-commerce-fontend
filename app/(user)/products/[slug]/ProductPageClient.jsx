@@ -14,6 +14,7 @@ import { formatPrice, getErrorMessage } from "@/services/utils"
 import Link from "next/link"
 import RelatedProducts from "@/components/product/related-products"
 import { useWishlist } from "@/components/wishlist-provider"
+import { getImageUrl } from "@/lib/utils"
 
 export default function ProductPageClient({ product }) {
   console.log("Product data in ProductPageClient:", product)
@@ -223,7 +224,7 @@ export default function ProductPageClient({ product }) {
               ></iframe>
             ) : (
               <MagnifierImage
-                src={`${process.env.NEXT_PUBLIC_API_URL}${media[activeMedia.index]?.url}`}
+                src={getImageUrl(media[activeMedia.index]?.url, '800', '800')}
                 alt={product.name}
                 className="w-full h-full"
               />
@@ -241,7 +242,7 @@ export default function ProductPageClient({ product }) {
                   onClick={() => setActiveMedia({ type: item.type, index })}
                 >
                   <Image
-                    src={item.type === 'video' ? item.thumbnailUrl : `${process.env.NEXT_PUBLIC_API_URL}${item.url}`}
+                    src={item.type === 'video' ? item.thumbnailUrl : getImageUrl(item.url, '200', '200')}
                     alt={`${product.name} ${index + 1}`}
                     fill
                     className="object-cover rounded-md transition-transform duration-300 transform hover:scale-105"
@@ -486,7 +487,7 @@ export default function ProductPageClient({ product }) {
                               {review.images.map((img, i) => (
                                 <img
                                   key={i}
-                                  src={process.env.NEXT_PUBLIC_API_URL + img}
+                                  src={getImageUrl(img, '100', '100')}
                                   loading="lazy"
                                   alt={`review-${i}`}
                                   height={100}

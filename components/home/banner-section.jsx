@@ -16,23 +16,10 @@ export default async function BannerSection({ bannerDesign = "banner-11", settin
   } catch (err) {
     console.error("Banner fetch failed:", err)
   }
-
+  
   if (banners.length === 0) {
-    banners = [
-      {
-        _id: "default-1",
-        title: t?.("banner.title1") || "Summer Sale 2024",
-        subtitle: t?.("banner.subtitle1") || "Up to 50% off",
-        description: t?.("banner.description1") || "Don't miss out",
-        image: "/placeholder.svg?height=600&width=1200",
-        buttonText: t?.("banner.shopNow") || "Shop Now",
-        buttonLink: "/products",
-        backgroundColor: "",
-        textColor: "",
-      },
-    ]
+    return null
   }
-
   // Optionally filter `banners` or manipulate based on `settings`
   const selectedDesign = bannerDesign || settings?.bannerDesign || "banner-1"
 

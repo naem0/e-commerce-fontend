@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
+import { useSiteSettings } from "@/components/site-settings-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -231,6 +232,8 @@ export default function PaymentPage() {
     )
   }
 
+  const { settings } = useSiteSettings()
+
   const getPaymentInstructions = () => {
     switch (order.paymentMethod) {
       case "bkash":
@@ -239,7 +242,7 @@ export default function PaymentPage() {
           instructions: [
             "Open your bKash app or dial *247#",
             "Select 'Send Money'",
-            "Enter Merchant Number: 01712345678",
+            "Enter Merchant Number: " + (settings?.paymentMethods?.bkash || "017XXXXXXXX"),
             `Enter Amount: ${paymentData.amount ? formatPrice(Number.parseFloat(paymentData.amount)) : formatPrice(dueAmount)}`,
             "Enter your bKash PIN to confirm",
             "Save the transaction ID and screenshot",
@@ -252,7 +255,7 @@ export default function PaymentPage() {
           instructions: [
             "Open your Nagad app or dial *167#",
             "Select 'Send Money'",
-            "Enter Merchant Number: 01712345678",
+            "Enter Merchant Number: " + (settings?.paymentMethods?.nagad || "017XXXXXXXX"),
             `Enter Amount: ${paymentData.amount ? formatPrice(Number.parseFloat(paymentData.amount)) : formatPrice(dueAmount)}`,
             "Enter your Nagad PIN to confirm",
             "Save the transaction ID and screenshot",

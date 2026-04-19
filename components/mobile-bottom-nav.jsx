@@ -4,9 +4,11 @@ import Link from "next/link";
 import { Home, LayoutGrid, ShoppingCart, User, Phone, MessageCircle, Mail } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSession } from "next-auth/react";
+import { useSiteSettings } from "@/components/site-settings-provider";
 
 const MobileBottomNav = () => {
   const { data: session } = useSession()
+  const { settings } = useSiteSettings()
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700 md:hidden">
       <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
@@ -23,15 +25,15 @@ const MobileBottomNav = () => {
           </PopoverTrigger>
           <PopoverContent className="w-48">
             <div className="grid gap-4">
-              <a href="tel:+1234567890" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+              <a href={`tel:${settings?.contactInfo?.phone || "09658-405962"}`} className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
                 <Phone className="w-5 h-5" />
                 <span>Call</span>
               </a>
-              <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+              <a href={`https://wa.me/${settings?.socialLinks?.whatsapp || "01410558889"}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
                 <MessageCircle className="w-5 h-5" />
                 <span>WhatsApp</span>
               </a>
-              <a href="mailto:support@example.com" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+              <a href={settings?.socialLinks?.messenger || "https://facebook.com/equalfashion.bd"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
                 <Mail className="w-5 h-5" />
                 <span>Messenger</span>
               </a>

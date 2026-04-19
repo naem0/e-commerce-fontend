@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Star } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { getImageUrl } from "@/lib/utils"
 
 // Create testimonial service
 const testimonialService = {
@@ -42,7 +43,7 @@ const testimonialDesigns = [
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="relative h-10 w-10 rounded-full overflow-hidden">
                       <Image
-                        src={ testimonial?.avatar ? process.env.NEXT_PUBLIC_API_URL + testimonial.avatar : "/placeholder.svg?height=40&width=40"}
+                        src={getImageUrl(testimonial?.avatar, '40', '40')}
                         alt={testimonial.name}
                         fill
                         className="object-cover"
@@ -95,7 +96,7 @@ const testimonialDesigns = [
                       <div className="flex items-center gap-4">
                         <div className="relative h-12 w-12 rounded-full overflow-hidden">
                           <Image
-                            src={testimonial?.avatar ? process.env.NEXT_PUBLIC_API_URL + testimonial.avatar : "/placeholder.svg?height=48&width=48"}
+                            src={getImageUrl(testimonial?.avatar, '48', '48')}
                             alt={testimonial.name}
                             fill
                             className="object-cover"

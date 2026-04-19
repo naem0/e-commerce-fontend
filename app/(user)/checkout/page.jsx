@@ -16,7 +16,7 @@ import { Loader2, CreditCard, Truck, MapPin, Plus, User } from "lucide-react"
 import { formatPrice } from "@/services/utils"
 import { createOrder } from "@/services/order.service"
 import { register } from "@/services/auth.service"
-import { getUserAddresses } from "@/services/user.service"
+import { getUserAddresses, updateProfile } from "@/services/user.service"
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -45,6 +45,7 @@ export default function CheckoutPage() {
 
     // Payment
     paymentMethod: "cash_on_delivery",
+    shippingArea: "inside_dhaka",
 
     // Notes
     notes: "",
@@ -88,6 +89,8 @@ export default function CheckoutPage() {
           state: defaultAddress.state,
           zipCode: defaultAddress.zipCode,
           country: defaultAddress.country,
+          phone: defaultAddress.phone || prev.phone,
+          shippingArea: defaultAddress.shippingArea || "inside_dhaka",
         }))
       }
     } catch (error) {
@@ -106,6 +109,8 @@ export default function CheckoutPage() {
         state: address.state,
         zipCode: address.zipCode,
         country: address.country,
+        phone: address.phone || prev.phone,
+        shippingArea: address.shippingArea || "inside_dhaka",
       }))
     }
   }
@@ -127,15 +132,30 @@ export default function CheckoutPage() {
 
   const calculateTotals = () => {
     const subtotal = getCartTotal()
-    const tax = subtotal * 0.05 // 5% tax
-    const shipping = subtotal > 1000 ? 0 : 60 // Free shipping over 1000 BDT
+    const tax = 0 // Removed tax as per user request
+    const shipping = formData.shippingArea === "inside_dhaka" ? 70 : 120
     const total = subtotal + tax + shipping
 
     return { subtotal, tax, shipping, total }
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    if (e) e.preventDefault()
+    
+    // Manual Validation
+    if (!formData.name.trim()) {
+      toast({ title: "Validation Error", description: "Name is required", variant: "destructive" })
+      return
+    }
+    if (!formData.phone.trim() || formData.phone.trim().length < 11) {
+      toast({ title: "Validation Error", description: "Valid phone number is required (min 11 digits)", variant: "destructive" })
+      return
+    }
+    if (!formData.street.trim() || !formData.city.trim()) {
+      toast({ title: "Validation Error", description: "Shipping address (street and city) is required", variant: "destructive" })
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -224,6 +244,7 @@ export default function CheckoutPage() {
           state: formData.state,
           zipCode: formData.zipCode,
           country: formData.country,
+          shippingArea: formData.shippingArea,
         },
         paymentMethod: formData.paymentMethod,
         subtotal,
@@ -232,6 +253,46 @@ export default function CheckoutPage() {
         total,
         notes: formData.notes,
         userId: userId || null, // null for guest orders
+      }
+
+      // Automatically save new address to address book if logged in
+      if (userId && (showNewAddressForm || createAccount)) {
+        try {
+          // Get current addresses first to avoid overwriting (addresses state might be old if just registered)
+          let currentAddresses = addresses;
+          if (createAccount) {
+             currentAddresses = []; // New account has no addresses
+          } else {
+             // Refresh addresses to be sure
+             const addrRes = await getUserAddresses();
+             if (addrRes.success) currentAddresses = addrRes.addresses;
+          }
+
+          const isDuplicate = currentAddresses.some(addr => 
+            addr.street === formData.street && 
+            addr.city === formData.city && 
+            addr.shippingArea === formData.shippingArea
+          );
+
+          if (!isDuplicate) {
+            const newAddress = {
+              name: formData.name,
+              phone: formData.phone,
+              street: formData.street,
+              city: formData.city,
+              state: formData.state,
+              zipCode: formData.zipCode,
+              country: formData.country,
+              shippingArea: formData.shippingArea,
+              isDefault: currentAddresses.length === 0
+            };
+            await updateProfile({ addresses: [...currentAddresses, newAddress] });
+            console.log("Address saved to address book");
+          }
+        } catch (addrError) {
+          console.error("Failed to save address to book:", addrError);
+          // Don't fail the order if address saving fails
+        }
       }
 
       const response = await createOrder(orderData)
@@ -322,10 +383,6 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="phone">Phone Number *</Label>
-                  <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} required />
-                </div>
 
                 {/* Create Account Option for Guest Users */}
                 {!session && (
@@ -411,6 +468,10 @@ export default function CheckoutPage() {
                 {(showNewAddressForm || !session || addresses.length === 0) && (
                   <div className="space-y-4">
                     <div>
+                      <Label htmlFor="phone">Phone Number *</Label>
+                      <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} required />
+                    </div>
+                    <div>
                       <Label htmlFor="street">Street Address *</Label>
                       <Input id="street" name="street" value={formData.street} onChange={handleInputChange} required />
                     </div>
@@ -431,6 +492,25 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 )}
+
+                {/* Shipping Area Selection */}
+                <div className="space-y-4 pt-4 border-t">
+                  <Label className="text-base font-semibold">Shipping Area *</Label>
+                  <RadioGroup 
+                    value={formData.shippingArea} 
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, shippingArea: value }))}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  >
+                    <div className="flex items-center space-x-2 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                      <RadioGroupItem value="inside_dhaka" id="inside_dhaka" />
+                      <Label htmlFor="inside_dhaka" className="flex-1 cursor-pointer">Inside Dhaka (৳70)</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                      <RadioGroupItem value="outside_dhaka" id="outside_dhaka" />
+                      <Label htmlFor="outside_dhaka" className="flex-1 cursor-pointer">Outside Dhaka (৳120)</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
               </CardContent>
             </Card>
 
@@ -530,12 +610,8 @@ export default function CheckoutPage() {
                   <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Tax (5%)</span>
-                  <span>{formatPrice(tax)}</span>
-                </div>
-                <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
+                  <span>{formatPrice(shipping)}</span>
                 </div>
                 <hr />
                 <div className="flex justify-between font-bold text-lg">

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Layers } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel"
 import { getSiteSettings } from "@/services/settings.service"
+import { getImageUrl } from "@/lib/utils"
 
 export default async function Categories() {
   let categories = []
@@ -124,11 +125,7 @@ export default async function Categories() {
                     <Link href={`/products?category=${category._id}`} className="block text-center">
                       <div className="relative w-24 h-24 mx-auto">
                         <Image
-                          src={
-                            category.image
-                              ? process.env.NEXT_PUBLIC_API_URL + category.image
-                              : "/placeholder.svg?height=96&width=96"
-                          }
+                          src={getImageUrl(category.image, '96', '96')}
                           alt={category.name}
                           fill
                           className="rounded-full object-cover border-2 border-transparent hover:border-primary-custom transition-all"
@@ -163,11 +160,7 @@ export default async function Categories() {
               <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="relative h-40 w-full">
                   <Image
-                    src={
-                      category.image
-                        ? process.env.NEXT_PUBLIC_API_URL + category.image
-                        : "/placeholder.svg?height=160&width=256"
-                    }
+                    src={getImageUrl(category.image, '160', '256')}
                     alt={category.name}
                     fill
                     className="object-cover"

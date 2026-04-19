@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react"
 import { formatPrice } from "@/services/utils"
+import { getImageUrl } from "@/lib/utils"
 
 export default function CartPage() {
   const { data: session, status } = useSession()
@@ -129,7 +130,7 @@ export default function CartPage() {
               <div className="divide-y">
                 {cart.items.map((item, index) => {
                   const price = item.variation ? item.variation.price : (item.product.salePrice || item.product.price)
-                  const image = item.variation?.image ? process.env.NEXT_PUBLIC_API_URL + item.variation.image : (item.product.images?.[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg?height=96&width=96")
+                  const image = getImageUrl(item.variation?.image || item.product.images?.[0], '96', '96')
 
                   return (
                     <div key={`${item.product._id}-${item.variation ? item.variation._id : ''}`} className="flex py-4 px-6">

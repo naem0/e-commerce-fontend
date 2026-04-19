@@ -29,14 +29,17 @@ export function Footer() {
               Equal Fashion একটি আধুনিক ও বিশ্বস্ত অনলাইন শপিং প্ল্যাটফর্ম। আমাদের লক্ষ্য সাশ্রয়ী মূল্যে মানসম্মত পণ্য পৌঁছে দেওয়া।
             </p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com/equalfashion.bd" target="_blank" style={linkStyle} className="hover:text-primary-custom">
+              <a href={settings?.socialLinks?.facebook || "https://facebook.com/equalfashion.bd"} target="_blank" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-facebook-f text-xl"></i>
               </a>
-              <a href="#" style={linkStyle} className="hover:text-primary-custom">
+              <a href={settings?.socialLinks?.instagram || "#"} target="_blank" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-instagram text-xl"></i>
               </a>
-              <a href="https://wa.me/01410558889" target="_blank" style={linkStyle} className="hover:text-primary-custom">
+              <a href={`https://wa.me/${settings?.socialLinks?.whatsapp || "01410558889"}`} target="_blank" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-whatsapp text-xl"></i>
+              </a>
+              <a href={settings?.socialLinks?.messenger || "https://facebook.com/equalfashion.bd"} target="_blank" style={linkStyle} className="hover:text-primary-custom">
+                <i className="fab fa-facebook-messenger text-xl"></i>
               </a>
             </div>
           </div>
@@ -89,11 +92,11 @@ export function Footer() {
               </li>
               <li className="flex items-center">
                 <i className="fas fa-phone-alt mr-3 text-primary-custom"></i>
-                <span>09658-405962</span>
+                <span>{settings?.contactInfo?.phone || "09658-405962"}</span>
               </li>
               <li className="flex items-center">
                 <i className="fas fa-envelope mr-3 text-primary-custom"></i>
-                <span className="text-sm">info.equalfashionltd@gmail.com</span>
+                <span className="text-sm">{settings?.contactInfo?.email || "info.equalfashionltd@gmail.com"}</span>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-clock mt-1 mr-3 text-primary-custom"></i>

@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
+import { getImageUrl } from "@/lib/utils"
 
 export function Header() {
   const pathname = usePathname()
@@ -62,7 +63,7 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             {/* {settings?.logo ? ( */}
               <Image
-                src={settings.logo || "/logo.png"}
+                src={getImageUrl(settings.logo || "/logo.png")}
                 alt={settings.siteName}
                 width={50}
                 height={100}
@@ -190,7 +191,7 @@ export function Header() {
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/auth/login" })}>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

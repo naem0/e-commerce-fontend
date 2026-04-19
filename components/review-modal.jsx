@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Star, Upload, X, Loader2 } from "lucide-react"
 import { createReview } from "@/services/review.service"
+import { getImageUrl } from "@/lib/utils"
 
 export function ReviewModal({ isOpen, onClose, product, orderId }) {
   const { data: session } = useSession()
@@ -131,11 +132,7 @@ export function ReviewModal({ isOpen, onClose, product, orderId }) {
           <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
             <div className="relative h-16 w-16">
               <Image
-                src={
-                  product?.images?.[0]
-                    ? process.env.NEXT_PUBLIC_API_URL + product.images[0]
-                    : "/placeholder.svg?height=64&width=64"
-                }
+                src={getImageUrl(product?.images?.[0], '64', '64')}
                 alt={product?.name}
                 fill
                 className="object-cover rounded"

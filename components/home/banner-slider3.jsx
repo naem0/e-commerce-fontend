@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
+import { getImageUrl } from "@/lib/utils"
 
 export default function BannerSlider3({ banners, design, settings }) {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -26,9 +27,8 @@ export default function BannerSlider3({ banners, design, settings }) {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div className="lg:col-span-3 relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
             {banners.map((banner, index) => {
-              let imageUrl = banner.image.startsWith("/uploads")
-                ? `${process.env.NEXT_PUBLIC_API_URL}${banner.image}`
-                : banner.image
+              let imageUrl = getImageUrl(banner.image, '600', '1200')
+              if (!banner.image) imageUrl = null;
 
               return (
                 <div
@@ -41,34 +41,40 @@ export default function BannerSlider3({ banners, design, settings }) {
                     }`}
                   style={{
                     backgroundColor: banner.backgroundColor || "#f8fafc",
-                    backgroundImage: `url(${imageUrl})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
+                    ...(imageUrl && {
+                      backgroundImage: `url(${imageUrl})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    })
                   }}
                 >
                   <div className="h-full flex items-center">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full px-6">
                       <div className="space-y-4" style={{ color: banner.textColor || "#1e293b" }}>
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-primary-custom">
-                          {banner.title}
-                        </h1>
+                        {banner.title && (
+                          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-primary-custom">
+                            {banner.title}
+                          </h1>
+                        )}
                         {banner.subtitle && (
                           <h2 className="text-xl md:text-2xl font-semibold opacity-90">{banner.subtitle}</h2>
                         )}
                         {banner.description && (
                           <p className="text-base md:text-lg opacity-80 max-w-md">{banner.description}</p>
                         )}
-                        <Button
-                          variant="default"
-                          size="lg"
-                          className="text-lg px-8 py-3 mt-6"
-                          style={{
-                            backgroundColor: banner.textColor ?? "",
-                            color: banner.backgroundColor ?? "",
-                          }}
-                        >
-                          <Link href={banner.buttonLink || "/products"}>{banner.buttonText || "Shop Now"}</Link>
-                        </Button>
+                        {banner.buttonText && banner.buttonLink && (
+                          <Button
+                            variant="default"
+                            size="lg"
+                            className="text-lg px-8 py-3 mt-6"
+                            style={{
+                              backgroundColor: banner.textColor ?? "",
+                              color: banner.backgroundColor ?? "",
+                            }}
+                          >
+                            <Link href={banner.buttonLink}>{banner.buttonText}</Link>
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -3,6 +3,7 @@ const Product = require("../models/Product")
 const User = require("../models/User")
 const Category = require("../models/Category")
 const Brand = require("../models/Brand")
+const Review = require("../models/Review")
 
 // @desc    Get dashboard analytics
 // @route   GET /api/analytics/dashboard

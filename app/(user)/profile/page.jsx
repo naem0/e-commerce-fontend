@@ -40,6 +40,7 @@ import { formatPrice, formatDate } from "@/services/utils"
 import { getProfile, updateProfile } from "@/services/user.service"
 import { getOrders } from "@/services/order.service"
 import Image from "next/image"
+import { getImageUrl } from "@/lib/utils"
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
@@ -71,6 +72,7 @@ export default function ProfilePage() {
     zipCode: "",
     country: "Bangladesh",
     isDefault: false,
+    shippingArea: "inside_dhaka",
   })
 
   const [passwordForm, setPasswordForm] = useState({
@@ -218,6 +220,7 @@ export default function ProfilePage() {
           zipCode: "",
           country: "Bangladesh",
           isDefault: false,
+          shippingArea: "inside_dhaka",
         })
         toast({
           title: "Success",
@@ -305,7 +308,7 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="relative">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={user?.avatar} alt={user?.name} />
+                <AvatarImage src={getImageUrl(user?.avatar, '100', '100')} alt={user?.name} />
                 <AvatarFallback className="text-2xl font-bold bg-primary-custom text-primary-foreground">
                   {getInitials(user?.name)}
                 </AvatarFallback>
@@ -597,6 +600,32 @@ export default function ProfilePage() {
                         />
                         <Label htmlFor="isDefault">Set as default address</Label>
                       </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Shipping Area</Label>
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="shippingArea"
+                              value="inside_dhaka"
+                              checked={addressForm.shippingArea === "inside_dhaka"}
+                              onChange={(e) => setAddressForm({ ...addressForm, shippingArea: e.target.value })}
+                            />
+                            <span>Inside Dhaka</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="shippingArea"
+                              value="outside_dhaka"
+                              checked={addressForm.shippingArea === "outside_dhaka"}
+                              onChange={(e) => setAddressForm({ ...addressForm, shippingArea: e.target.value })}
+                            />
+                            <span>Outside Dhaka</span>
+                          </label>
+                        </div>
+                      </div>
                       <Button type="submit" disabled={updating} className="w-full">
                         {updating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         {editingAddress !== null ? "Update Address" : "Add Address"}
@@ -707,7 +736,7 @@ export default function ProfilePage() {
                                 >
                                   {item.product?.images?.[0] ? (
                                     <Image
-                                      src={item.product.images[0] ? process.env.NEXT_PUBLIC_API_URL + item.product.images[0] : "/placeholder.svg"}
+                                      src={getImageUrl(item.product.images[0], '64', '64')}
                                       alt={item.product.name}
                                       className="rounded-lg"
                                       width={64}
