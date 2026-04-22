@@ -34,7 +34,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">অফিস ঠিকানা</h4>
-                      <p className="text-gray-600 dark:text-gray-400">ঢাকা, বাংলাদেশ</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">H A plaza section-11, block c, avenue-3, lane-12, house-8, mirpur 1216 (মোহাম্মদীয়া মার্কেটের দক্ষিন পার্শ্বে)</p>
                     </div>
                   </div>
 

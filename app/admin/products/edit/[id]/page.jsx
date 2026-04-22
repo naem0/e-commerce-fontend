@@ -265,9 +265,13 @@ export default function EditProductPage({ params }) {
       if (res.success) {
         toast({ title: "Success", description: "Product updated successfully" })
         router.push("/admin/products")
+      } else {
+        setError(res.message || "Failed to update product.")
+        toast({ title: "Error", description: res.message || "Failed to update product.", variant: "destructive" })
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update product.")
+      setError(err.message || "Failed to update product.")
+      toast({ title: "Error", description: err.message || "Failed to update product.", variant: "destructive" })
     } finally {
       setSubmitting(false)
     }

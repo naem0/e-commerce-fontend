@@ -26,19 +26,22 @@ export function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4">About Equal Fashion</h3>
             <p className="mb-4 text-gray-200">
-              Equal Fashion একটি আধুনিক ও বিশ্বস্ত অনলাইন শপিং প্ল্যাটফর্ম। আমাদের লক্ষ্য সাশ্রয়ী মূল্যে মানসম্মত পণ্য পৌঁছে দেওয়া।
+              Welcome to Equal Fashion – Style for Everyone. A trusted online platform delivering trendy fashion, quality products, and reliable retail & wholesale services all over Bangladesh.
             </p>
             <div className="flex space-x-4">
-              <a href={settings?.socialLinks?.facebook || "https://facebook.com/equalfashion.bd"} target="_blank" style={linkStyle} className="hover:text-primary-custom">
+              <a href="https://facebook.com/equalfashion.bd" target="_blank" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-facebook-f text-xl"></i>
               </a>
-              <a href={settings?.socialLinks?.instagram || "#"} target="_blank" style={linkStyle} className="hover:text-primary-custom">
+              <a href="https://instagram.com/equal_fashion_com" target="_blank" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-instagram text-xl"></i>
               </a>
-              <a href={`https://wa.me/${settings?.socialLinks?.whatsapp || "01410558889"}`} target="_blank" style={linkStyle} className="hover:text-primary-custom">
-                <i className="fab fa-whatsapp text-xl"></i>
+              <a href="https://tiktok.com/@equalfashion" target="_blank" style={linkStyle} className="hover:text-primary-custom">
+                <i className="fab fa-tiktok text-xl"></i>
               </a>
-              <a href={settings?.socialLinks?.messenger || "https://facebook.com/equalfashion.bd"} target="_blank" style={linkStyle} className="hover:text-primary-custom">
+              <a href="https://www.youtube.com/@equal_fashion" target="_blank" style={linkStyle} className="hover:text-primary-custom">
+                <i className="fab fa-youtube text-xl"></i>
+              </a>
+              <a href="https://m.me/equalfashion.bd" target="_blank" style={linkStyle} className="hover:text-primary-custom">
                 <i className="fab fa-facebook-messenger text-xl"></i>
               </a>
             </div>
@@ -88,15 +91,19 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-3 text-primary-custom"></i>
-                <span>ঢাকা, বাংলাদেশ</span>
+                <span className="text-sm">H A plaza section-11, block c, avenue-3, lane-12, house-8, mirpur 1216 (মোহাম্মদীয়া মার্কেটের দক্ষিন পার্শ্বে)</span>
               </li>
               <li className="flex items-center">
                 <i className="fas fa-phone-alt mr-3 text-primary-custom"></i>
-                <span>{settings?.contactInfo?.phone || "09658-405962"}</span>
+                <span>09658-405962</span>
+              </li>
+              <li className="flex items-center">
+                <i className="fab fa-whatsapp mr-3 text-primary-custom text-lg"></i>
+                <span>01410558889</span>
               </li>
               <li className="flex items-center">
                 <i className="fas fa-envelope mr-3 text-primary-custom"></i>
-                {/* <span className="text-sm text-wrap">{settings?.contactInfo?.email || "info.equalfashionltd@gmail.com"}</span> */}
+                <span className="text-sm break-all">info.equalfashionltd@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -106,7 +113,7 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center text-sm opacity-80">
           <p>
-            &copy; {new Date().getFullYear()} {settings?.siteName || "Equal Fashion"}. All Rights Reserved.
+            &copy; {new Date().getFullYear()} Equal Fashion. All Rights Reserved.
           </p>
           <div className="mt-4 md:mt-0 flex gap-6">
             <Link href="/privacy-policy" className="hover:underline">Privacy</Link>

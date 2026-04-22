@@ -17,7 +17,7 @@ export default function InventorySection({ formData, setFormData, handleChange }
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Stock hidden for now as per user request */}
-            <div className="hidden">
+            <div>
               <Label htmlFor="stock">Stock Quantity</Label>
               <Input
                 id="stock"

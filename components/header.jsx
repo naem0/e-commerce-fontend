@@ -51,13 +51,35 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="marquee pt-1 container mx-auto flex gap-3 items-center border-b px-3">
-        <PhoneIcon className="h-4 w-4" /> 
-        <span>01310881055</span>
-        <marquee behavior="scroll" direction="left">
-          {settings?.marqueeText || "🛡️ডেলিভারি ও রিটার্ন নীতিমালা। 💬 ঢাকার ভেতরে ডেলিভারি: অর্ডার কনফার্ম করার পর ৪৮ ঘণ্টার মধ্যে পণ্য ডেলিভারি করা হবে। 💬 ঢাকার বাইরে ডেলিভারি: দেশের ৬৪ জেলায় অর্ডার কনফার্ম করার পর ৩ থেকে ৫ কর্মদিবসের মধ্যে পণ্য ডেলিভারি করা হবে। রিটার্ন নীতিমালা: পণ্য ডেলিভারির তারিখ থেকে ৭ দিনের মধ্যে রিটার্নের অনুরোধ করতে হবে।"}
-        </marquee>
+      <div className="bg-primary text-primary-foreground py-2 overflow-hidden">
+        <div className="container mx-auto px-3 flex flex-col md:flex-row items-center justify-between gap-2 text-[13px] md:text-sm font-medium">
+          <div className="flex items-center gap-2">
+            <PhoneIcon className="h-3 w-3 md:h-4 md:w-4" />
+            <span>09658-405962</span>
+          </div>
+          <div className="flex-1 w-full max-w-3xl overflow-hidden relative group">
+            <div className="flex whitespace-nowrap animate-marquee hover:pause whitespace-nowrap">
+              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at Equal Fashion | Call: 09658-405962</span>
+              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at Equal Fashion | Call: 09658-405962</span>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            style for everyone
+          </div>
+        </div>
       </div>
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 15s linear infinite;
+        }
+        .hover\:pause:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
       <div className="container flex h-16 items-center justify-between mx-auto px-3">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">

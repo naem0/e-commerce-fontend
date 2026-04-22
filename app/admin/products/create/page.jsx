@@ -203,9 +203,13 @@ export default function CreateProductPage() {
       if (res.success) {
         toast({ title: "Success", description: "Product created successfully" })
         router.push("/admin/products")
+      } else {
+        setError(res.message || "Failed to create product.")
+        toast({ title: "Error", description: res.message || "Failed to create product.", variant: "destructive" })
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create product.")
+      setError(err.message || "Failed to create product.")
+      toast({ title: "Error", description: err.message || "Failed to create product.", variant: "destructive" })
     } finally {
       setSubmitting(false)
     }
