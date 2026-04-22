@@ -87,21 +87,21 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
             <Badge className="absolute top-2 left-2 bg-orange-500 hover:bg-orange-600">Flash Sale</Badge>
           )}
         </div>
-        <CardContent className="p-4">
+        <CardContent className="p-2 md:p-4">
           <h3 className="font-medium line-clamp-2 min-h-[3rem]">{product.name}</h3>
-          <div className="mt-2 flex items-center justify-between">
+          <div className="mt-2 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
               {product.comparePrice && product.comparePrice > product.price ? (
                 <>
-                  <span className="font-bold">৳{finalPrice?.toFixed(2)}</span>
-                  <span className="text-sm text-muted-foreground line-through">৳{originalPrice?.toFixed(2)}</span>
+                  <span className="font-bold whitespace-nowrap">৳{finalPrice?.toFixed(2)}</span>
+                  <span className="text-sm text-muted-foreground line-through whitespace-nowrap">৳{originalPrice?.toFixed(2)}</span>
                 </>
               ) : (
-                <span className="font-bold">৳{finalPrice?.toFixed(2)}</span>
+                <span className="font-bold whitespace-nowrap">৳{finalPrice?.toFixed(2)}</span>
               )}
             </div>
             {product.rating ? (
-              <div className="flex items-center text-sm text-muted-foreground">
+              <div className="flex items-center text-sm text-muted-foreground whitespace-nowrap">
                 <span className="text-yellow-500">★</span>
                 <span className="ml-1">{product.rating.toFixed(1)}</span>
               </div>
@@ -109,24 +109,13 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
           </div>
         </CardContent>
       </Link>
-      <CardFooter className="p-4 pt-0 flex gap-2">
+      <CardFooter className="p-2 md:p-4 pt-0 flex gap-2">
         <Button variant="outline" size="sm" className="flex-1" asChild>
           <Link href={`/products/${product.slug}`}>
             <Eye className="mr-2 h-4 w-4" />
             View
           </Link>
         </Button>
-        {/* <Button
-          size="sm"
-          className="flex-1"
-          onClick={(e) => { e.preventDefault(); handleAddToCart(product) }}
-          disabled={loading || product.stock <= 0}
-          data-testid="add-to-cart-button"
-        >
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
-          Add
-        </Button> */}
-        {/* wishlist button */}
         <Button
           size="sm"
           className="flex-2"
@@ -134,7 +123,7 @@ export function ProductCard({ product,  showDiscount = false, discountPercentage
           disabled={loading}
           data-testid="add-to-wishlist-button"
         >
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4" />}
+          {loading ? <Loader2 className="animate-spin" /> : <Heart/>}
         </Button>
       </CardFooter>
     </Card>

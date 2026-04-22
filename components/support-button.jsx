@@ -14,7 +14,7 @@ export default function SupportButton() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="fixed bottom-6 right-6 z-50 bg-primary-custom hover:bg-primary-custom/90 text-white px-4 py-6 rounded-full shadow-lg transition-all duration-300"
+          className="fixed bottom-20 right-20 z-50 bg-primary-custom hover:bg-primary-custom/90 text-white px-4 py-6 rounded-full shadow-lg transition-all duration-300"
         >
           <Headset className="w-10 h-10" />
         </Button>

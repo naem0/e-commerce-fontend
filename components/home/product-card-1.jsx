@@ -35,8 +35,8 @@ const ProductCard1 = ({ product, handleAddToCart }) => {
                     <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">{product.name}</h3>
                 </Link>
                 
-                <div className="mt-1 flex items-center justify-between">
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">${product.price}</span>
+                <div className="mt-1 flex items-center justify-between flex-wrap gap-2">
+                    <span className="font-semibold text-gray-900 dark:text-gray-100 whitespace-nowrap">${product.price}</span>
                     <StarRating rating={product.rating} size={14} />
                 </div>
                 

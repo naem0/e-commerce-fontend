@@ -388,7 +388,7 @@ export default function ProductPageClient({ product }) {
                 </Button>
               </div>
             </div>
-            <div className="flex items-center space-x-4 mt-3">
+            <div className="flex items-center flex-wrap gap-4 mt-3">
               <Button
                 variant="default"
                 onClick={handleAddToCart}

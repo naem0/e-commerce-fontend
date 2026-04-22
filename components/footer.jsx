@@ -96,11 +96,7 @@ export function Footer() {
               </li>
               <li className="flex items-center">
                 <i className="fas fa-envelope mr-3 text-primary-custom"></i>
-                <span className="text-sm">{settings?.contactInfo?.email || "info.equalfashionltd@gmail.com"}</span>
-              </li>
-              <li className="flex items-start">
-                <i className="fas fa-clock mt-1 mr-3 text-primary-custom"></i>
-                <span>প্রতিদিন সকাল ১০টা - রাত ১০টা</span>
+                {/* <span className="text-sm text-wrap">{settings?.contactInfo?.email || "info.equalfashionltd@gmail.com"}</span> */}
               </li>
             </ul>
           </div>
