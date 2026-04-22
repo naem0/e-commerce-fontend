@@ -16,7 +16,7 @@ export default function BannerSliderClient({ banners = [], design, settings }) {
 
   useEffect(() => {
     if (banners.length > 1) {
-      const interval = setInterval(nextSlide, 5000)
+      const interval = setInterval(nextSlide, 8000)
       return () => clearInterval(interval)
     }
   }, [banners])
@@ -34,7 +34,7 @@ export default function BannerSliderClient({ banners = [], design, settings }) {
         return (
           <div
             key={banner._id}
-            className={`absolute inset-0 transition-all duration-500 ease-in-out ${index === currentSlide ? "opacity-100 translate-x-0" : index < currentSlide ? "opacity-0 -translate-x-full" : "opacity-0 translate-x-full"}`}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${index === currentSlide ? "opacity-100 translate-x-0" : index < currentSlide ? "opacity-0 -translate-x-full" : "opacity-0 translate-x-full"}`}
             style={{
               backgroundColor: banner.backgroundColor || "#f8fafc",
               ...(imageUrl && {

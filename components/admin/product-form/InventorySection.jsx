@@ -27,8 +27,7 @@ export default function InventorySection({ formData, setFormData, handleChange }
                 value={formData.stock}
                 onChange={handleChange}
                 placeholder="0"
-                disabled={formData.hasVariations}
-                className={formData.hasVariations ? "bg-muted" : "bg-background"}
+                className="bg-background"
               />
             </div>
             <div className="md:col-span-2">

@@ -11,7 +11,10 @@ export default function RelatedProducts({ categoryId, currentProductId }) {
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
-      if (!categoryId) return
+      if (!categoryId) {
+        setLoading(false)
+        return
+      }
 
       try {
         setLoading(true)

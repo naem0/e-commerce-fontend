@@ -338,27 +338,27 @@ export default function ProductPageClient({ product }) {
                 SKU: <span className="font-medium">{product.sku}</span>
               </p>
             )}
-            <p className="text-sm text-gray-500">
-              Return Policy: <Link href="/return-policy" className="font-medium">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Return Policy: <Link href="/return-policy" className="font-medium text-gray-900 dark:text-gray-200 hover:underline">
                 {product.returnPolicy || "7 days return policy"}
               </Link>
             </p>
             {product.shipping && (
-              <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col gap-2">
-                <p className="text-sm font-semibold flex items-center gap-2">
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl flex flex-col gap-3">
+                <p className="text-sm font-bold flex items-center gap-2 text-gray-900 dark:text-gray-100">
                   <Package className="h-4 w-4 text-primary" /> Delivery Charges
                 </p>
                 {product.shipping.free ? (
-                  <p className="text-sm text-green-600 font-medium">Free Shipping</p>
+                  <p className="text-sm text-green-600 dark:text-green-500 font-bold">Free Shipping</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-xs text-gray-500">Inside Dhaka</p>
-                      <p className="text-sm font-medium">{formatPrice(product.shipping.insideDhakaCharge || 70)}</p>
+                    <div className="bg-white dark:bg-gray-800 p-2 px-3 rounded-lg border border-gray-100 dark:border-gray-700">
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 dark:text-gray-500">Inside Dhaka</p>
+                      <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{formatPrice(product.shipping.insideDhakaCharge || 70)}</p>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Outside Dhaka</p>
-                      <p className="text-sm font-medium">{formatPrice(product.shipping.outsideDhakaCharge || 120)}</p>
+                    <div className="bg-white dark:bg-gray-800 p-2 px-3 rounded-lg border border-gray-100 dark:border-gray-700">
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 dark:text-gray-500">Outside Dhaka</p>
+                      <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{formatPrice(product.shipping.outsideDhakaCharge || 120)}</p>
                     </div>
                   </div>
                 )}
