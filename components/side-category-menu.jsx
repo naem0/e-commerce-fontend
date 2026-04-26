@@ -29,7 +29,7 @@ export default async function SideCategoryMenu({ className }) {
         {categories.map((category) => (
           <li key={category._id} className="relative group">
             <Link
-              href={`/categories/${category.slug}`}
+              href={`/products?category=${category._id}`}
               className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -51,13 +51,16 @@ export default async function SideCategoryMenu({ className }) {
 
             {/* Hover dropdown for child categories */}
             {category.children && category.children.length > 0 && (
-              <div className="absolute left-full top-0 min-w-[200px] bg-white dark:bg-gray-900 border shadow-md rounded-r-lg hidden group-hover:block z-10">
-                <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+              <div className="absolute left-[calc(100%-1px)] top-0 min-w-[220px] bg-white dark:bg-gray-900 border shadow-xl rounded-r-lg hidden group-hover:block z-50 animate-in fade-in slide-in-from-left-1 duration-200">
+                <ul className="py-2">
+                  <li className="px-4 py-2 border-b dark:border-gray-800">
+                    <span className="text-xs font-bold uppercase tracking-wider text-primary-custom">{category.name}</span>
+                  </li>
                   {category.children.map((subCategory) => (
                     <li key={subCategory._id}>
                       <Link
-                        href={`/categories/${subCategory.slug}`}
-                        className="block px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        href={`/products?category=${subCategory._id}`}
+                        className="block px-4 py-2.5 text-sm hover:text-primary-custom hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                       >
                         {subCategory.name}
                       </Link>
@@ -66,6 +69,7 @@ export default async function SideCategoryMenu({ className }) {
                 </ul>
               </div>
             )}
+
           </li>
         ))}
       </ul>

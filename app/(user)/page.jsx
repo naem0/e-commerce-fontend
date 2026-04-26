@@ -37,6 +37,20 @@ export default async function Home() {
     })
   }
 
+  if (homePageSections.categories?.enabled) {
+    sections.push({
+      component: (
+        <Categories
+          key="categories"
+          title={homePageSections.categories.title}
+          limit={homePageSections.categories.limit}
+          design={homePageSections.categories.design}
+        />
+      ),
+      order: homePageSections.categories.order || 2,
+    })
+  }
+
   if (homePageSections.featuredProducts?.enabled) {
     sections.push({
       component: (
@@ -48,23 +62,10 @@ export default async function Home() {
           design={homePageSections.featuredProducts.design}
         />
       ),
-      order: homePageSections.featuredProducts.order || 2,
+      order: homePageSections.featuredProducts.order || 3,
     })
   }
 
-  if (homePageSections.categories?.enabled) {
-    sections.push({
-      component: (
-        <Categories
-          key="categories"
-          title={homePageSections.categories.title}
-          limit={homePageSections.categories.limit}
-          design={homePageSections.categories.design}
-        />
-      ),
-      order: homePageSections.categories.order || 3,
-    })
-  }
 
   if (homePageSections.categoryProducts && Array.isArray(homePageSections.categoryProducts)) {
     homePageSections.categoryProducts.forEach((categorySection, index) => {

@@ -22,6 +22,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { getImageUrl } from "@/lib/utils"
+import { NotificationDropdown } from "@/components/notification-dropdown"
 
 export function Header() {
   const pathname = usePathname()
@@ -87,9 +88,9 @@ export function Header() {
               <Image
                 src={getImageUrl(settings.logo || "/logo.png")}
                 alt={settings.siteName}
-                width={50}
-                height={100}
-                className="h-10 w-auto"
+                width={150}
+                height={50}
+                className="h-12 w-auto object-contain"
               />
             {/* ) : (
               <span className="font-bold text-xl" style={{ color: settings?.primaryColor }}>
@@ -169,6 +170,9 @@ export function Header() {
               </Button>
             </Link>
           )}
+
+          {/* Notifications */}
+          {session && <NotificationDropdown />}
 
           {/* Cart */}
           <Link href="/cart">

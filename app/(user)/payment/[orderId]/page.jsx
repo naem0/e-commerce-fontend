@@ -33,13 +33,8 @@ export default function PaymentPage() {
   const [screenshotPreview, setScreenshotPreview] = useState(null)
 
   useEffect(() => {
-    if (!session) {
-      router.push("/auth/login")
-      return
-    }
-
     fetchOrder()
-  }, [session, orderId])
+  }, [orderId])
 
   const fetchOrder = async () => {
     try {

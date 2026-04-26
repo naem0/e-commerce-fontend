@@ -21,6 +21,7 @@ export function PartialPaymentModal({ isOpen, onClose, orderId, dueAmount, onPay
     transactionId: "",
     notes: "",
   })
+  const [screenshot, setScreenshot] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -47,12 +48,16 @@ export function PartialPaymentModal({ isOpen, onClose, orderId, dueAmount, onPay
     try {
       setLoading(true)
 
-      const response = await addPartialPayment(orderId, {
-        amount,
-        method: paymentForm.method,
-        transactionId: paymentForm.transactionId,
-        notes: paymentForm.notes,
-      })
+      const formData = new FormData()
+      formData.append("amount", amount)
+      formData.append("method", paymentForm.method)
+      formData.append("transactionId", paymentForm.transactionId)
+      formData.append("notes", paymentForm.notes)
+      if (screenshot) {
+        formData.append("screenshot", screenshot)
+      }
+
+      const response = await addPartialPayment(orderId, formData)
 
       if (response.success) {
         toast({
@@ -67,6 +72,7 @@ export function PartialPaymentModal({ isOpen, onClose, orderId, dueAmount, onPay
           transactionId: "",
           notes: "",
         })
+        setScreenshot(null)
 
         onClose()
         onPaymentAdded()
@@ -142,6 +148,17 @@ export function PartialPaymentModal({ isOpen, onClose, orderId, dueAmount, onPay
               onChange={(e) => setPaymentForm({ ...paymentForm, transactionId: e.target.value })}
               placeholder="Enter transaction ID (if applicable)"
             />
+          </div>
+
+          <div>
+            <Label htmlFor="screenshot">Payment Screenshot</Label>
+            <Input
+              id="screenshot"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setScreenshot(e.target.files[0])}
+            />
+            <p className="text-[10px] text-gray-500 mt-1">Upload bKash/Nagad success screenshot</p>
           </div>
 
           <div>

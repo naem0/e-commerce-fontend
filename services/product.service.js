@@ -191,9 +191,10 @@ export const createProduct = async (productData) => {
       }
     }
 
-    // Add main product images
-    if (productData.images && Array.isArray(productData.images)) {
-      productData.images.forEach((image, index) => {
+    // Add main product images (support both 'images' and 'newImages' field names)
+    const mainImages = productData.newImages || productData.images || []
+    if (Array.isArray(mainImages)) {
+      mainImages.forEach((image) => {
         if (image instanceof File) {
           formData.append("images", image)
         }
@@ -203,8 +204,10 @@ export const createProduct = async (productData) => {
     // Add variant images
     if (productData.variants && Array.isArray(productData.variants)) {
       productData.variants.forEach((variant, variantIndex) => {
-        if (variant.images && Array.isArray(variant.images)) {
-          variant.images.forEach((image, imageIndex) => {
+        // Support both 'images' and 'newImages' on variant
+        const vImages = variant.newImages || variant.images || []
+        if (Array.isArray(vImages)) {
+          vImages.forEach((image) => {
             if (image instanceof File) {
               formData.append(`variantImages_${variantIndex}`, image)
             }

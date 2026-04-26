@@ -340,7 +340,11 @@ export default function ProductsPage() {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="font-medium">{product.name}</TableCell>
+                        <TableCell className="font-medium">
+                          <Link href={`/products/${product.slug}`} target="_blank" className="hover:underline text-primary">
+                            {product.name}
+                          </Link>
+                        </TableCell>
                         <TableCell>{formatPrice(product.price)}</TableCell>
                         <TableCell>{product.stock}</TableCell>
                         <TableCell>{product.category?.name || "Uncategorized"}</TableCell>
@@ -357,9 +361,9 @@ export default function ProductsPage() {
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem asChild>
-                                <Link href={`/admin/products/${product._id}`}>
-                                  <Eye className="mr-2 h-4 w-4" /> View
-                                </Link>
+                                <a href={`/products/${product.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center w-full px-2 py-1.5 text-sm cursor-pointer">
+                                  <Eye className="mr-2 h-4 w-4" /> View on Site
+                                </a>
                               </DropdownMenuItem>
                               <DropdownMenuItem asChild>
                                 <Link href={`/admin/products/edit/${product._id}`}>

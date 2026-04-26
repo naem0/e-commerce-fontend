@@ -4,7 +4,7 @@ import SideCategoryMenu from "../side-category-menu"
 
 export default function BannerSlider({ banners, design, settings }) {
   return (
-    <section className="relative w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <section className="relative w-full bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div className="hidden lg:block h-[400px] md:h-[500px] relative z-20">

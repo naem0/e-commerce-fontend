@@ -90,7 +90,7 @@ export default function AdminDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {session?.user?.name}</p>
+          <p className="text-muted-foreground">Welcome back, {session?.user?.name}</p>
         </div>
         <div className="flex gap-2">
           <Button variant={period === "7" ? "default" : "outline"} size="sm" onClick={() => setPeriod("7")}>

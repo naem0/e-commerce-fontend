@@ -18,6 +18,7 @@ import {
 
 export default function RichTextEditor({ value = "", onChange, placeholder = "Enter description..." }) {
   const editorRef = useRef(null)
+  const imageInputRef = useRef(null)
 
   useEffect(() => {
     if (editorRef.current && value !== editorRef.current.innerHTML) {
@@ -47,11 +48,25 @@ export default function RichTextEditor({ value = "", onChange, placeholder = "En
     }
   }
 
+  // Trigger the hidden file input
   const insertImage = () => {
-    const url = prompt("Enter image URL:")
-    if (url) {
-      execCommand("insertImage", url)
+    imageInputRef.current?.click()
+  }
+
+  // Handle local file selected from disk — embed as base64 data URL
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      editorRef.current?.focus()
+      document.execCommand("insertImage", false, ev.target.result)
+      handleContentChange()
     }
+    reader.readAsDataURL(file)
+    // Reset so the same file can be re-selected
+    e.target.value = ""
   }
 
   const changeFontSize = (size) => {
@@ -166,12 +181,20 @@ export default function RichTextEditor({ value = "", onChange, placeholder = "En
 
           {/* Links and Images */}
           <div className="flex gap-1 border-r pr-2 mr-2">
-            <Button type="button" variant="ghost" size="sm" onClick={insertLink} className="h-8 w-8 p-0">
+            <Button type="button" variant="ghost" size="sm" onClick={insertLink} className="h-8 w-8 p-0" title="Insert Link">
               <LinkIcon className="h-4 w-4" />
             </Button>
-            <Button type="button" variant="ghost" size="sm" onClick={insertImage} className="h-8 w-8 p-0">
+            <Button type="button" variant="ghost" size="sm" onClick={insertImage} className="h-8 w-8 p-0" title="Insert Image from device">
               <ImageIcon className="h-4 w-4" />
             </Button>
+            {/* Hidden file input for image upload */}
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageFileChange}
+            />
           </div>
 
           {/* Colors */}

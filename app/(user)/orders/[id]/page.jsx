@@ -100,6 +100,8 @@ export default function OrderDetailsPage() {
     switch (status) {
       case "paid":
         return "bg-green-100 text-green-800"
+      case "partial":
+        return "bg-blue-100 text-blue-800"
       case "pending":
         return "bg-yellow-100 text-yellow-800"
       case "failed":
@@ -107,6 +109,20 @@ export default function OrderDetailsPage() {
       default:
         return "bg-gray-100 text-gray-800"
     }
+  }
+
+  const calculateTotalPaid = (order) => {
+    if (!order?.payments) return 0
+    return order.payments.reduce((total, payment) => {
+      return payment.status === "confirmed" ? total + payment.amount : total
+    }, 0)
+  }
+
+  const canMakePayment = (order) => {
+    if (!order) return false
+    const totalPaid = calculateTotalPaid(order)
+    const dueAmount = order.total - totalPaid
+    return dueAmount > 0 && order.status !== "cancelled" && order.paymentStatus !== "paid"
   }
 
   const canReview = (order) => {
@@ -374,7 +390,9 @@ export default function OrderDetailsPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Payment Status</span>
-                  <Badge className={getPaymentStatusColor(order.paymentStatus)}>{order.paymentStatus}</Badge>
+                  <Badge className={getPaymentStatusColor(order.paymentStatus)}>
+                    <span className="capitalize">{order.paymentStatus}</span>
+                  </Badge>
                 </div>
                 {order.paymentDetails?.transactionId && (
                   <div className="flex justify-between">
@@ -382,11 +400,61 @@ export default function OrderDetailsPage() {
                     <span className="font-mono text-sm">{order.paymentDetails.transactionId}</span>
                   </div>
                 )}
+                {/* Paid / Due breakdown */}
+                {order.payments && order.payments.length > 0 && (
+                  <>
+                    <hr className="my-2" />
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Paid Amount</span>
+                      <span className="font-medium text-green-600">
+                        {new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT", minimumFractionDigits: 0 }).format(calculateTotalPaid(order))}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Due Amount</span>
+                      <span className="font-medium text-red-600">
+                        {new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT", minimumFractionDigits: 0 }).format(Math.max(0, order.total - calculateTotalPaid(order)))}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
 
-              {order.paymentStatus === "pending" && order.paymentMethod !== "cash_on_delivery" && (
-                <Button className="w-full mt-4" onClick={() => router.push(`/payment/${order._id}`)}>
-                  Complete Payment
+              {/* Payment history */}
+              {order.payments && order.payments.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Payment History</p>
+                  {order.payments.map((payment, index) => (
+                    <div key={index} className="text-xs bg-gray-50 rounded p-2 flex justify-between items-center">
+                      <div>
+                        <span className="font-medium capitalize">{payment.method}</span>
+                        {payment.transactionId && <span className="text-gray-500 ml-1">#{payment.transactionId}</span>}
+                      </div>
+                      <div className="text-right">
+                        <span className="font-medium">
+                          {new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT", minimumFractionDigits: 0 }).format(payment.amount)}
+                        </span>
+                        <Badge className={`ml-1 text-xs ${
+                          payment.status === "confirmed" ? "bg-green-100 text-green-800" :
+                          payment.status === "rejected" ? "bg-red-100 text-red-800" :
+                          "bg-yellow-100 text-yellow-800"
+                        }`}>
+                          {payment.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pay Now button */}
+              {canMakePayment(order) && order.paymentMethod !== "cash_on_delivery" && (
+                <Button
+                  className="w-full mt-4"
+                  onClick={() => router.push(`/payment/${order._id}`)}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  {order.paymentStatus === "partial" ? "Pay Remaining Amount" : "Complete Payment"}
                 </Button>
               )}
             </CardContent>

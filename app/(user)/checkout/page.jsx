@@ -12,17 +12,19 @@ import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, CreditCard, Truck, MapPin, Plus, User } from "lucide-react"
+import { Loader2, CreditCard, Truck, MapPin, Plus, User, Copy, CheckCircle2 } from "lucide-react"
 import { formatPrice } from "@/services/utils"
-import { createOrder } from "@/services/order.service"
+import { createOrder, addPartialPayment } from "@/services/order.service"
 import { register } from "@/services/auth.service"
 import { getUserAddresses, updateProfile } from "@/services/user.service"
+import { useSiteSettings } from "@/components/site-settings-provider"
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
   const { cart, clearCart, getCartTotal } = useCart()
   const { toast } = useToast()
+  const { settings } = useSiteSettings()
 
   const [loading, setLoading] = useState(false)
   const [addresses, setAddresses] = useState([])
@@ -46,6 +48,8 @@ export default function CheckoutPage() {
     // Payment
     paymentMethod: "cash_on_delivery",
     shippingArea: "inside_dhaka",
+    paymentAccountNumber: "",
+    transactionId: "",
 
     // Notes
     notes: "",
@@ -154,6 +158,17 @@ export default function CheckoutPage() {
     if (!formData.street.trim() || !formData.city.trim()) {
       toast({ title: "Validation Error", description: "Shipping address (street and city) is required", variant: "destructive" })
       return
+    }
+
+    if (formData.paymentMethod !== "cash_on_delivery") {
+      if (!formData.paymentAccountNumber.trim()) {
+        toast({ title: "Validation Error", description: "Account Number is required for " + formData.paymentMethod, variant: "destructive" })
+        return
+      }
+      if (!formData.transactionId.trim()) {
+        toast({ title: "Validation Error", description: "Transaction ID is required for " + formData.paymentMethod, variant: "destructive" })
+        return
+      }
     }
 
     setLoading(true)
@@ -308,6 +323,26 @@ export default function CheckoutPage() {
         if (formData.paymentMethod === "cash_on_delivery") {
           router.push(`/orders/${response.order._id}`)
         } else {
+          // Automatically submit payment info if provided
+          if (formData.paymentAccountNumber && formData.transactionId) {
+            try {
+              const paymentFormData = new FormData()
+              paymentFormData.append("amount", total.toString())
+              paymentFormData.append("method", formData.paymentMethod)
+              paymentFormData.append("accountNumber", formData.paymentAccountNumber)
+              paymentFormData.append("transactionId", formData.transactionId)
+              paymentFormData.append("notes", "Automatically submitted during checkout")
+              
+              await addPartialPayment(response.order._id, paymentFormData)
+              toast({
+                title: "Payment Info Submitted",
+                description: "Your payment details have been sent for verification.",
+              })
+            } catch (payError) {
+              console.error("Failed to add initial payment info:", payError)
+              // We still redirect to the payment page so they can try again
+            }
+          }
           router.push(`/payment/${response.order._id}`)
         }
       } else {
@@ -546,6 +581,107 @@ export default function CheckoutPage() {
                     </Label>
                   </div>
                 </RadioGroup>
+
+                {/* Payment Instructions for bKash/Nagad */}
+                {formData.paymentMethod !== "cash_on_delivery" && (
+                  <div className="mt-6 p-4 border rounded-xl bg-primary/5 border-primary/20 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-center mb-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <CreditCard className="h-4 w-4 text-primary" />
+                      </div>
+                      <h3 className="font-bold text-lg">
+                        {formData.paymentMethod === "bkash" ? "bKash" : "Nagad"} Payment
+                      </h3>
+                    </div>
+                    
+                    <p className="text-sm text-gray-600 mb-4">
+                      Please send money to our official {formData.paymentMethod === "bkash" ? "bKash" : "Nagad"} number below:
+                    </p>
+
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border flex items-center justify-between mb-4 shadow-sm">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Account Number</span>
+                        <span className="text-xl font-bold font-mono tracking-tight text-primary">
+                          {formData.paymentMethod === "bkash" 
+                            ? (settings?.paymentMethods?.bkash || "017XXXXXXXX") 
+                            : (settings?.paymentMethods?.nagad || "017XXXXXXXX")}
+                        </span>
+                      </div>
+                      <Button 
+                        type="button" 
+                        size="sm" 
+                        variant="secondary"
+                        className="h-10 px-4"
+                        onClick={() => {
+                          const num = formData.paymentMethod === "bkash" 
+                            ? (settings?.paymentMethods?.bkash || "017XXXXXXXX") 
+                            : (settings?.paymentMethods?.nagad || "017XXXXXXXX");
+                          navigator.clipboard.writeText(num);
+                          toast({ title: "Copied!", description: "Number copied to clipboard" });
+                        }}
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </Button>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Steps to follow:</p>
+                      <div className="grid grid-cols-1 gap-2">
+                        <div className="flex items-start">
+                          <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center mr-2 mt-0.5 font-bold">1</span>
+                          <span className="text-xs text-gray-600">Open your {formData.paymentMethod === "bkash" ? "bKash" : "Nagad"} app</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center mr-2 mt-0.5 font-bold">2</span>
+                          <span className="text-xs text-gray-600">Select <span className="font-semibold text-gray-800">"Send Money"</span> option</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center mr-2 mt-0.5 font-bold">3</span>
+                          <span className="text-xs text-gray-600">Enter the number shown above and pay <span className="font-bold text-gray-800">{formatPrice(calculateTotals().total)}</span></span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center mr-2 mt-0.5 font-bold">4</span>
+                          <span className="text-xs text-gray-600">Complete the transaction and <span className="font-semibold text-gray-800">save the Transaction ID</span></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 p-3 bg-primary/10 rounded-lg flex items-center mb-6">
+                      <CheckCircle2 className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                      <p className="text-xs text-primary font-medium leading-tight">
+                        Please provide your payment details below to speed up the verification process.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="paymentAccountNumber" className="text-xs font-semibold uppercase tracking-wider text-gray-500">Your {formData.paymentMethod === "bkash" ? "bKash" : "Nagad"} Number *</Label>
+                        <Input
+                          id="paymentAccountNumber"
+                          name="paymentAccountNumber"
+                          value={formData.paymentAccountNumber}
+                          onChange={handleInputChange}
+                          placeholder="01XXXXXXXXX"
+                          className="bg-white"
+                          required={formData.paymentMethod !== "cash_on_delivery"}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="transactionId" className="text-xs font-semibold uppercase tracking-wider text-gray-500">Transaction ID *</Label>
+                        <Input
+                          id="transactionId"
+                          name="transactionId"
+                          value={formData.transactionId}
+                          onChange={handleInputChange}
+                          placeholder="8X7Y6Z..."
+                          className="bg-white"
+                          required={formData.paymentMethod !== "cash_on_delivery"}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

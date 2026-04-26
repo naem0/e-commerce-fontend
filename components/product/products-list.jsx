@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,15 +10,16 @@ import ProductFilters from "@/components/product/product-filters"
 import { productService } from "@/services/api"
 
 export default function ProductsList({ initialCategories, initialBrands }) {
+    const nextSearchParams = useSearchParams()
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
     const [filters, setFilters] = useState({
-        search: "",
-        category: "",
-        brand: "",
-        sort: "newest",
+        search: nextSearchParams.get("search") || "",
+        category: nextSearchParams.get("category") || "",
+        brand: nextSearchParams.get("brand") || "",
+        sort: nextSearchParams.get("sort") || "newest",
     })
 
     const [pagination, setPagination] = useState({
@@ -26,6 +28,17 @@ export default function ProductsList({ initialCategories, initialBrands }) {
         total: 0,
         totalPages: 0,
     })
+
+    // Update filters when URL search parameters change
+    useEffect(() => {
+        setFilters({
+            search: nextSearchParams.get("search") || "",
+            category: nextSearchParams.get("category") || "",
+            brand: nextSearchParams.get("brand") || "",
+            sort: nextSearchParams.get("sort") || "newest",
+        })
+        setPagination(prev => ({ ...prev, page: 1 }))
+    }, [nextSearchParams])
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -111,6 +124,7 @@ export default function ProductsList({ initialCategories, initialBrands }) {
                 categories={initialCategories}
                 brands={initialBrands}
                 onFilterChange={handleFilterChange}
+                initialFilters={filters}
             />
 
             {/* Products Grid */}

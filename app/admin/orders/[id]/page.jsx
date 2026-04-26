@@ -54,6 +54,7 @@ export default function AdminOrderDetailsPage() {
     phoneNumber: "",
     notes: "",
   })
+  const [savingNotes, setSavingNotes] = useState(false)
 
   useEffect(() => {
     if (session?.accessToken && id) {
@@ -187,6 +188,34 @@ export default function AdminOrderDetailsPage() {
         description: error.message || `Failed to ${status} payment`,
         variant: "destructive",
       })
+    }
+  }
+
+  const handleSaveTrackingAndNotes = async () => {
+    try {
+      setSavingNotes(true)
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+      const sessionData = await import("next-auth/react").then(m => m.getSession())
+      const token = sessionData?.accessToken
+      const res = await fetch(`${API_URL}/api/orders/${id}/notes`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ trackingInfo, adminNotes }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setOrder(data.order)
+        toast({ title: "Saved", description: "Tracking info and notes saved" })
+      } else {
+        throw new Error(data.message || "Save failed")
+      }
+    } catch (error) {
+      toast({ title: "Error", description: error.message || "Failed to save", variant: "destructive" })
+    } finally {
+      setSavingNotes(false)
     }
   }
 
@@ -652,31 +681,45 @@ export default function AdminOrderDetailsPage() {
           </Card>
 
           {/* Tracking Info */}
-          {order.trackingInfo && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Truck className="mr-2 h-5 w-5" />
-                  Tracking Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">{order.trackingInfo}</p>
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Truck className="mr-2 h-5 w-5" />
+                Tracking Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <textarea
+                className="w-full border rounded-md p-2 text-sm min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Enter tracking number or courier info..."
+                value={trackingInfo}
+                onChange={(e) => setTrackingInfo(e.target.value)}
+              />
+              <Button size="sm" className="w-full" onClick={handleSaveTrackingAndNotes} disabled={savingNotes}>
+                {savingNotes ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : null}
+                Save Tracking Info
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Admin Notes */}
-          {order.adminNotes && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Admin Notes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">{order.adminNotes}</p>
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin Notes</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <textarea
+                className="w-full border rounded-md p-2 text-sm min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Internal notes (not visible to customer)..."
+                value={adminNotes}
+                onChange={(e) => setAdminNotes(e.target.value)}
+              />
+              <Button size="sm" className="w-full" onClick={handleSaveTrackingAndNotes} disabled={savingNotes}>
+                {savingNotes ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : null}
+                Save Notes
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

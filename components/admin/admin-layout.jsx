@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboard, ShoppingBag, Users, Package, Settings, BarChart, LogOut, Menu, X, Tag, Tags, GalleryHorizontal, Layers, MonitorCog } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 export function AdminLayout({ children }) {
   const pathname = usePathname()
@@ -15,6 +16,23 @@ export function AdminLayout({ children }) {
   const isActive = (path) => {
     return pathname === path
   }
+
+  const [counts, setCounts] = useState({ orders: 0, reviews: 0 })
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const orderService = await import("@/services/order.service")
+        const orderData = await orderService.getAllOrders({ status: "pending", limit: 1 })
+        setCounts(prev => ({ ...prev, orders: orderData.total || 0 }))
+      } catch (error) {
+        console.error("Failed to fetch counts", error)
+      }
+    }
+    fetchCounts()
+    const interval = setInterval(fetchCounts, 60000) // Refresh every minute
+    return () => clearInterval(interval)
+  }, [])
 
   const navigation = [
     {
@@ -46,6 +64,7 @@ export function AdminLayout({ children }) {
       href: "/admin/orders",
       icon: ShoppingBag,
       current: isActive("/admin/orders"),
+      count: counts.orders,
     },
     {
       name: "Reviews",
@@ -85,6 +104,7 @@ export function AdminLayout({ children }) {
     },
   ]
 
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar for mobile */}
@@ -101,7 +121,7 @@ export function AdminLayout({ children }) {
       >
         <div className="flex h-16 items-center justify-between px-4 border-b">
           <Link href="/admin/dashboard" className="flex items-center">
-            <span className="text-xl font-bold">Admin Panel</span>
+            <span className="text-xl font-bold text-primary-custom">Equal Fashion</span>
           </Link>
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="lg:hidden">
             <X className="h-6 w-6" />
@@ -114,17 +134,25 @@ export function AdminLayout({ children }) {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                className={`flex items-center justify-between px-2 py-2 text-sm font-medium rounded-md ${
                   item.current
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
-                <item.icon className="mr-3 h-5 w-5" aria-hidden="true" />
-                {item.name}
+                <div className="flex items-center">
+                  <item.icon className="mr-3 h-5 w-5" aria-hidden="true" />
+                  {item.name}
+                </div>
+                {item.count > 0 && (
+                  <Badge variant="destructive" className="ml-auto h-5 w-5 rounded-full p-0 flex items-center justify-center text-[10px]">
+                    {item.count}
+                  </Badge>
+                )}
               </Link>
             ))}
           </nav>
+
           <div className="p-4 border-t">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -153,7 +181,7 @@ export function AdminLayout({ children }) {
             <span className="sr-only">Open sidebar</span>
           </Button>
           <div className="ml-4 lg:ml-0">
-            <h1 className="text-xl font-semibold">E-Commerce Admin</h1>
+            <h1 className="text-xl font-semibold">Equal Fashion</h1>
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 bg-gray-100 dark:bg-gray-900">{children}</main>

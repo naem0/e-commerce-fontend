@@ -180,7 +180,7 @@ export default function VariationSection({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor={`v-price-${index}`}>Variant Price</Label>
+                  <Label htmlFor={`v-price-${index}`}>Variant Price (৳)</Label>
                   <Input
                     id={`v-price-${index}`}
                     type="number"
@@ -191,19 +191,21 @@ export default function VariationSection({
                     className="bg-background font-bold text-lg"
                   />
                 </div>
-                {/* Variant Stock hidden for now */}
-                <div className="hidden">
-                  <Label htmlFor={`v-stock-${index}`}>Stock</Label>
+
+                <div className="space-y-2">
+                  <Label htmlFor={`v-stock-${index}`}>Stock Quantity</Label>
                   <Input
                     id={`v-stock-${index}`}
                     type="number"
+                    min="0"
                     value={variant.stock}
-                    onChange={(e) => handleVariantChange(index, "stock", parseInt(e.target.value))}
+                    onChange={(e) => handleVariantChange(index, "stock", parseInt(e.target.value) || 0)}
                     placeholder="0"
                     className="bg-background font-bold text-lg"
                   />
                 </div>
-                <div className="space-y-2 md:col-span-2">
+
+                <div className="space-y-2">
                   <Label htmlFor={`v-sku-${index}`}>Variant SKU / Code</Label>
                   <Input
                     id={`v-sku-${index}`}

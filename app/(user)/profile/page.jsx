@@ -39,6 +39,7 @@ import {
 import { formatPrice, formatDate } from "@/services/utils"
 import { getProfile, updateProfile } from "@/services/user.service"
 import { getOrders } from "@/services/order.service"
+import { ReviewModal } from "@/components/review-modal"
 import Image from "next/image"
 import { getImageUrl } from "@/lib/utils"
 
@@ -54,6 +55,9 @@ export default function ProfilePage() {
   const [addressModalOpen, setAddressModalOpen] = useState(false)
   const [editingAddress, setEditingAddress] = useState(null)
   const [activeTab, setActiveTab] = useState("profile")
+  const [reviewModalOpen, setReviewModalOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [selectedOrderId, setSelectedOrderId] = useState(null)
 
   const [profileForm, setProfileForm] = useState({
     name: "",
@@ -347,7 +351,7 @@ export default function ProfilePage() {
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button> */}
-              <Button onClick={() => signOut()} variant="outline" size="sm">
+              <Button onClick={() => signOut({ callbackUrl: "/auth/login" })} variant="outline" size="sm">
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
@@ -770,10 +774,27 @@ export default function ProfilePage() {
                             Download Invoice
                           </Button>
                           {order.status === "delivered" && (
-                            <Button size="sm" variant="outline">
-                              <Star className="mr-1 h-3 w-3" />
-                              Write Review
-                            </Button>
+                            <div className="mt-4 border-t pt-4">
+                              <p className="text-sm font-medium mb-2">Review items from this order:</p>
+                              <div className="flex flex-wrap gap-2">
+                                {order.items?.map((item, idx) => (
+                                  <Button 
+                                    key={idx}
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="text-xs"
+                                    onClick={() => {
+                                      setSelectedProduct(item.product)
+                                      setSelectedOrderId(order._id)
+                                      setReviewModalOpen(true)
+                                    }}
+                                  >
+                                    <Star className="mr-1 h-3 w-3" />
+                                    Review {item.name.slice(0, 20)}...
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -905,6 +926,19 @@ export default function ProfilePage() {
             </div>
           </TabsContent>
         </Tabs>
+        {/* Review Modal */}
+        {selectedProduct && (
+          <ReviewModal
+            isOpen={reviewModalOpen}
+            onClose={() => {
+              setReviewModalOpen(false)
+              setSelectedProduct(null)
+              setSelectedOrderId(null)
+            }}
+            product={selectedProduct}
+            orderId={selectedOrderId}
+          />
+        )}
       </div>
     </div>
   )

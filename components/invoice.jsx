@@ -49,122 +49,110 @@ export default function Invoice({ order, siteSettings }) {
     }
   }
 
+  const companyName = siteSettings?.siteName || "Equal Fashion"
+  const companyAddress = siteSettings?.address || "Uttara, Dhaka, Bangladesh"
+  const companyPhone = siteSettings?.phone || "09658-405962"
+  const companyEmail = siteSettings?.email || "info@equalfashion.com"
+
   return (
-    <div className="max-w-4xl mx-auto bg-white shadow-lg print:shadow-none p-8 print:p-0">
+    <div className="max-w-4xl mx-auto bg-white text-slate-900 shadow-lg print:shadow-none p-6 md:p-8 print:p-0">
       {/* Header */}
-      <div className="border-b-2 border-gray-200 pb-8 mb-8">
+      <div className="border-b-2 border-slate-200 pb-6 mb-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{siteSettings?.siteName || "Your Store"}</h1>
-            <p className="text-gray-600 mt-2">{siteSettings?.address || "Store Address"}</p>
-            <p className="text-gray-600">
-              Phone: {siteSettings?.phone || "N/A"} | Email: {siteSettings?.email || "N/A"}
+            <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">{companyName}</h1>
+            <p className="text-slate-600 mt-1 text-sm font-medium">{companyAddress}</p>
+            <p className="text-slate-600 text-sm">
+              <span className="font-semibold text-slate-800">Phone:</span> {companyPhone} | <span className="font-semibold text-slate-800">Email:</span> {companyEmail}
             </p>
           </div>
           <div className="text-right">
-            <h2 className="text-2xl font-bold text-gray-900">INVOICE</h2>
-            <p className="text-gray-600 mt-2">Invoice #: {order._id.slice(-8).toUpperCase()}</p>
-            <p className="text-gray-600">Date: {formatDate(order.createdAt)}</p>
+            <h2 className="text-2xl font-bold text-slate-900">INVOICE</h2>
+            <p className="text-slate-600 mt-1 text-sm">Invoice #: <span className="font-mono font-bold text-slate-800">{order.orderNumber || order._id.slice(-8).toUpperCase()}</span></p>
+            <p className="text-slate-600 text-sm">Date: <span className="font-medium text-slate-800">{formatDate(order.createdAt)}</span></p>
           </div>
         </div>
       </div>
 
       {/* Customer & Order Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-2 gap-8 mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Bill To:</h3>
-          <div className="text-gray-600">
-            <p className="font-medium">{order.user.name}</p>
-            <p>{order.user.email}</p>
-            <p>{order.user.phone}</p>
-            <div className="mt-2">
-              <p>{order.shippingAddress.street}</p>
-              <p>
-                {order.shippingAddress.city}, {order.shippingAddress.state}
-              </p>
-              <p>{order.shippingAddress.zipCode}</p>
-              <p>{order.shippingAddress.country}</p>
-            </div>
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2 border-b border-slate-100 pb-1">Bill To:</h3>
+          <div className="text-slate-700 text-sm space-y-0.5">
+            <p className="font-bold text-slate-900">{order.shippingAddress?.name || order.user?.name}</p>
+            <p>{order.shippingAddress?.phone || order.user?.phone}</p>
+            <p>{order.shippingAddress?.street}</p>
+            <p>{order.shippingAddress?.city}{order.shippingAddress?.state ? `, ${order.shippingAddress.state}` : ""}</p>
+            <p>{order.shippingAddress?.country}</p>
           </div>
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Details:</h3>
-          <div className="text-gray-600 space-y-2">
-            <div className="flex justify-between">
-              <span>Order Status:</span>
-              <Badge className={getStatusColor(order.status)}>
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2 border-b border-slate-100 pb-1 text-right">Order Info:</h3>
+          <div className="text-slate-700 text-sm space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500">Order Status:</span>
+              <Badge className={`${getStatusColor(order.status)} border-none shadow-none text-[10px] py-0 h-5`}>
+                {order.status.toUpperCase()}
+              </Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500">Payment Status:</span>
+              <Badge className={`${getPaymentStatusColor(order.paymentStatus)} border-none shadow-none text-[10px] py-0 h-5`}>
+                {order.paymentStatus.toUpperCase()}
               </Badge>
             </div>
             <div className="flex justify-between">
-              <span>Payment Status:</span>
-              <Badge className={getPaymentStatusColor(order.paymentStatus)}>
-                {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
-              </Badge>
+              <span className="text-slate-500">Payment Method:</span>
+              <span className="font-medium uppercase">{order.paymentMethod.replace("_", " ")}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Payment Method:</span>
-              <span>{order.paymentMethod}</span>
-            </div>
-            {order.trackingNumber && (
-              <div className="flex justify-between">
-                <span>Tracking Number:</span>
-                <span className="font-mono">{order.trackingNumber}</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
       {/* Items Table */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Items:</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-300 px-4 py-2 text-left">Item</th>
-                <th className="border border-gray-300 px-4 py-2 text-center">Qty</th>
-                <th className="border border-gray-300 px-4 py-2 text-right">Unit Price</th>
-                <th className="border border-gray-300 px-4 py-2 text-right">Total</th>
+      <div className="mb-6">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-slate-50 text-slate-600 uppercase text-[10px] tracking-widest border-y border-slate-200">
+              <th className="px-4 py-3 text-left font-bold">Item Description</th>
+              <th className="px-4 py-3 text-center font-bold">Qty</th>
+              <th className="px-4 py-3 text-right font-bold">Price</th>
+              <th className="px-4 py-3 text-right font-bold">Total</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {order.items.map((item, index) => (
+              <tr key={index} className="text-slate-700">
+                <td className="px-4 py-3">
+                  <div>
+                    <p className="font-bold text-slate-900">{item.name}</p>
+                    {item.variation && (
+                      <p className="text-[11px] text-slate-500 italic">
+                        {item.variation.options?.map(o => `${o.type}: ${o.value}`).join(", ")}
+                      </p>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-center">{item.quantity}</td>
+                <td className="px-4 py-3 text-right">{formatCurrency(item.price)}</td>
+                <td className="px-4 py-3 text-right font-bold">{formatCurrency(item.price * item.quantity)}</td>
               </tr>
-            </thead>
-            <tbody>
-              {order.items.map((item, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <div>
-                      <p className="font-medium">{item.product.name}</p>
-                      {item.variation && <p className="text-sm text-gray-600">Variation: {item.variation.name}</p>}
-                    </div>
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">{item.quantity}</td>
-                  <td className="border border-gray-300 px-4 py-2 text-right">{formatCurrency(item.price)}</td>
-                  <td className="border border-gray-300 px-4 py-2 text-right">
-                    {formatCurrency(item.price * item.quantity)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {/* Totals */}
+      {/* Summary */}
       <div className="flex justify-end mb-8">
-        <div className="w-full max-w-sm">
-          <div className="space-y-2">
-            <div className="flex justify-between">
+        <div className="w-full max-w-[250px]">
+          <div className="space-y-1.5 text-sm">
+            <div className="flex justify-between text-slate-500">
               <span>Subtotal:</span>
-              <span>{formatCurrency(order.subtotal)}</span>
+              <span className="text-slate-900">{formatCurrency(order.subtotal)}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between text-slate-500">
               <span>Shipping:</span>
-              <span>{formatCurrency(order.shippingCost)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Tax:</span>
-              <span>{formatCurrency(order.tax)}</span>
+              <span className="text-slate-900">{formatCurrency(order.shippingCost)}</span>
             </div>
             {order.discount > 0 && (
               <div className="flex justify-between text-green-600">
@@ -172,66 +160,32 @@ export default function Invoice({ order, siteSettings }) {
                 <span>-{formatCurrency(order.discount)}</span>
               </div>
             )}
-            <div className="border-t pt-2 flex justify-between font-bold text-lg">
-              <span>Total:</span>
+            <div className="border-t-2 border-slate-900 pt-2 flex justify-between font-black text-lg text-slate-900">
+              <span>TOTAL:</span>
               <span>{formatCurrency(order.total)}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Payment History */}
-      {order.payments && order.payments.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment History:</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Date</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Method</th>
-                  <th className="border border-gray-300 px-4 py-2 text-right">Amount</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Transaction ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.payments.map((payment, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-300 px-4 py-2">{formatDate(payment.date)}</td>
-                    <td className="border border-gray-300 px-4 py-2">{payment.method}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-right">{formatCurrency(payment.amount)}</td>
-                    <td className="border border-gray-300 px-4 py-2">{payment.transactionId || "N/A"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Footer */}
+      <div className="border-t border-slate-200 pt-6 mt-auto">
+        <div className="grid grid-cols-2 gap-4 text-[11px] text-slate-500">
+          <div>
+            <p className="font-bold text-slate-700 uppercase mb-1">Notes:</p>
+            <p>Thank you for shopping with Equal Fashion. Please keep this invoice for your records. For any queries, call us at {companyPhone}.</p>
           </div>
-
-          {/* Payment Summary */}
-          <div className="mt-4 flex justify-end">
-            <div className="w-full max-w-sm space-y-2">
-              <div className="flex justify-between">
-                <span>Total Paid:</span>
-                <span className="text-green-600 font-medium">
-                  {formatCurrency(order.payments.reduce((sum, p) => sum + p.amount, 0))}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Due Amount:</span>
-                <span className="text-red-600 font-medium">
-                  {formatCurrency(order.total - order.payments.reduce((sum, p) => sum + p.amount, 0))}
-                </span>
-              </div>
-            </div>
+          <div className="text-right flex flex-col justify-end">
+            <p className="font-bold text-slate-900 text-sm">Authorized Signature</p>
+            <div className="mt-4 border-t border-slate-400 w-32 ml-auto"></div>
           </div>
         </div>
-      )}
-
-      {/* Footer */}
-      <div className="border-t pt-8 text-center text-gray-600">
-        <p>Thank you for your business!</p>
-        <p className="text-sm mt-2">This is a computer-generated invoice. No signature required.</p>
+      </div>
+      
+      <div className="mt-8 text-center text-[10px] text-slate-400 uppercase tracking-widest print:hidden">
+        Powered by Equal Fashion
       </div>
     </div>
   )
 }
+

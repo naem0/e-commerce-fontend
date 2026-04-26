@@ -6,7 +6,8 @@ export const metadata = {
   description: "Browse our complete collection of products",
 }
 
-export default async function ProductsPage() {
+export default async function ProductsPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
   // Fetch initial data server-side
   let categories = []
   let brands = []
@@ -31,7 +32,11 @@ export default async function ProductsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">All Products</h1>
-      <ProductsList initialCategories={categories} initialBrands={brands} />
+      <ProductsList 
+        initialCategories={categories} 
+        initialBrands={brands} 
+        searchParams={resolvedSearchParams}
+      />
     </div>
   )
 }

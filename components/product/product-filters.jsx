@@ -5,13 +5,25 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search } from "lucide-react"
 
-export default function ProductFilters({ categories, brands, onFilterChange }) {
+export default function ProductFilters({ categories, brands, onFilterChange, initialFilters }) {
     const [filters, setFilters] = useState({
-        search: "",
-        category: "",
-        brand: "",
-        sort: "newest",
+        search: initialFilters?.search || "",
+        category: initialFilters?.category || "",
+        brand: initialFilters?.brand || "",
+        sort: initialFilters?.sort || "newest",
     })
+
+    // Sync internal state with initialFilters prop
+    useEffect(() => {
+        if (initialFilters) {
+            setFilters({
+                search: initialFilters.search || "",
+                category: initialFilters.category || "",
+                brand: initialFilters.brand || "",
+                sort: initialFilters.sort || "newest",
+            })
+        }
+    }, [initialFilters])
 
     const [debouncedSearch, setDebouncedSearch] = useState("")
 
@@ -45,21 +57,17 @@ export default function ProductFilters({ categories, brands, onFilterChange }) {
 
     return (
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4 mb-6">
-            <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                    <div className="relative">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search products..."
-                            className="pl-8"
-                            value={filters.search}
-                            onChange={(e) => handleFilterChange("search", e.target.value)}
-                        />
-                    </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="relative col-span-2 md:col-span-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                        placeholder="Search products..."
+                        className="pl-9"
+                        value={filters.search}
+                        onChange={(e) => handleFilterChange("search", e.target.value)}
+                    />
                 </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
+                    <Select value={filters.category || "all"} onValueChange={(value) => handleFilterChange("category", value)}>
                         <SelectTrigger>
                             <SelectValue placeholder="Category" />
                         </SelectTrigger>
@@ -73,7 +81,7 @@ export default function ProductFilters({ categories, brands, onFilterChange }) {
                         </SelectContent>
                     </Select>
 
-                    <Select value={filters.brand} onValueChange={(value) => handleFilterChange("brand", value)}>
+                    <Select value={filters.brand || "all"} onValueChange={(value) => handleFilterChange("brand", value)}>
                         <SelectTrigger>
                             <SelectValue placeholder="Brand" />
                         </SelectTrigger>
@@ -101,6 +109,5 @@ export default function ProductFilters({ categories, brands, onFilterChange }) {
                     </Select>
                 </div>
             </div>
-        </div>
     )
 }
