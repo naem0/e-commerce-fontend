@@ -38,29 +38,7 @@ const RegisterPage = () => {
     return true
   }
 
-  // ✅ Test backend connection before registration
-  const testBackendConnection = async () => {
-    try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      })
 
-      // Even if it's 400 (validation error), backend is reachable
-      return response.ok || response.status === 400
-    } catch (error) {
-      console.error("Backend connection test failed:", error)
-      return false
-    }
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -71,10 +49,7 @@ const RegisterPage = () => {
     setError("")
 
     try {
-      const backendConnected = await testBackendConnection()
-      if (!backendConnected) {
-        throw new Error("Cannot connect to backend server. Please try again later.")
-      }
+
 
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
       const res = await fetch(`${API_URL}/api/auth/register`, {

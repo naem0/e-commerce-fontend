@@ -397,39 +397,18 @@ export default function AdminReviewsPage() {
                       Approve
                     </Button>
                   )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedReview(review)
+                      setResponseText(review.adminResponse?.message || "")
+                    }}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-1" />
+                    {review.adminResponse ? "Edit Response" : "Respond"}
+                  </Button>
 
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button size="sm" variant="outline" onClick={() => setSelectedReview(review)}>
-                        <MessageSquare className="h-4 w-4 mr-1" />
-                        Respond
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add Admin Response</DialogTitle>
-                      </DialogHeader>
-                      <form onSubmit={handleAddResponse} className="space-y-4">
-                        <div>
-                          <Label htmlFor="response">Your Response</Label>
-                          <Textarea
-                            id="response"
-                            value={responseText}
-                            onChange={(e) => setResponseText(e.target.value)}
-                            placeholder="Write your response to this review..."
-                            rows={4}
-                            required
-                          />
-                        </div>
-                        {/* <div className="flex space-x-2">
-                          <Button type="submit" disabled={responseLoading}>
-                            {responseLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                            Add Response
-                          </Button>
-                        </div> */}
-                      </form>
-                    </DialogContent>
-                  </Dialog>
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -484,6 +463,39 @@ export default function AdminReviewsPage() {
           </Button>
         </div>
       )}
+
+      {/* Response Dialog */}
+      <Dialog open={!!selectedReview} onOpenChange={(open) => !open && setSelectedReview(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {selectedReview?.adminResponse ? "Edit Admin Response" : "Add Admin Response"}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddResponse} className="space-y-4">
+            <div>
+              <Label htmlFor="response">Your Response</Label>
+              <Textarea
+                id="response"
+                value={responseText}
+                onChange={(e) => setResponseText(e.target.value)}
+                placeholder="Write your response to this review..."
+                rows={4}
+                required
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={() => setSelectedReview(null)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={responseLoading}>
+                {responseLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {selectedReview?.adminResponse ? "Update Response" : "Add Response"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

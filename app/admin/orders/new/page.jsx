@@ -77,10 +77,15 @@ export default function NewOrderPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    if (selectedProducts.length === 0) {
+      toast({ title: "Error", description: "Please add at least one product", variant: "destructive" })
+      return
+    }
+
     setLoading(true)
     try {
       const orderData = {
-        userType,
         items: selectedProducts.map((p) => ({ product: p.productId, quantity: p.quantity })),
         status,
         paymentMethod,
@@ -88,23 +93,47 @@ export default function NewOrderPage() {
       }
 
       if (userType === "registered") {
+        if (!selectedUser) {
+          toast({ title: "Error", description: "Please select a user", variant: "destructive" })
+          setLoading(false)
+          return
+        }
         orderData.user = selectedUser
+        
+        // Optional override address
+        const hasAddressOverride = Object.values(shippingAddress).some(val => val !== "")
+        if (hasAddressOverride) {
+          orderData.shippingAddress = shippingAddress
+        }
       } else {
-        orderData.customer = guestCustomer
-        orderData.shippingAddress = shippingAddress
+        // Guest order - must have address
+        if (!guestCustomer.name || !guestCustomer.phone || !shippingAddress.street || !shippingAddress.city) {
+          toast({ title: "Error", description: "Please fill all required guest fields", variant: "destructive" })
+          setLoading(false)
+          return
+        }
+        orderData.shippingAddress = {
+          ...shippingAddress,
+          ...guestCustomer
+        }
       }
 
-      await createOrderByAdmin(orderData)
-      toast({
-        title: "Order Created",
-        description: "The new order has been created successfully.",
-      })
-      router.push("/admin/orders")
+      const response = await createOrderByAdmin(orderData)
+      
+      if (response.success) {
+        toast({
+          title: "Order Created",
+          description: "The new order has been created successfully.",
+        })
+        router.push("/admin/orders")
+      } else {
+        throw new Error(response.message || "Failed to create order")
+      }
     } catch (error) {
       console.error("Error creating order:", error)
       toast({
         title: "Error",
-        description: "Failed to create order. Please try again.",
+        description: error.message || "Failed to create order. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -134,7 +163,7 @@ export default function NewOrderPage() {
               />
             </div>
 
-            {userType === "registered" ? (
+            {userType === "registered" && (
               <div className="space-y-2">
                 <label htmlFor="user">User</label>
                 <Select onValueChange={setSelectedUser} value={selectedUser}>
@@ -149,19 +178,29 @@ export default function NewOrderPage() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input placeholder="Full Name" name="name" value={guestCustomer.name} onChange={handleGuestChange} />
-                <Input placeholder="Email" name="email" value={guestCustomer.email} onChange={handleGuestChange} />
-                <Input placeholder="Phone" name="phone" value={guestCustomer.phone} onChange={handleGuestChange} />
-                <Input placeholder="Street" name="street" value={shippingAddress.street} onChange={handleAddressChange} />
-                <Input placeholder="City" name="city" value={shippingAddress.city} onChange={handleAddressChange} />
-                <Input placeholder="State" name="state" value={shippingAddress.state} onChange={handleAddressChange} />
-                <Input placeholder="Zip Code" name="zipCode" value={shippingAddress.zipCode} onChange={handleAddressChange} />
-                <Input placeholder="Country" name="country" value={shippingAddress.country} onChange={handleAddressChange} />
+                <p className="text-xs text-muted-foreground">User's default address will be used if fields below are empty.</p>
               </div>
             )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2 font-semibold">Shipping Address</div>
+              {userType === "guest" && (
+                <>
+                  <Input placeholder="Customer Name" name="name" value={guestCustomer.name} onChange={handleGuestChange} required />
+                  <Input placeholder="Email" name="email" value={guestCustomer.email} onChange={handleGuestChange} required />
+                  <Input placeholder="Phone" name="phone" value={guestCustomer.phone} onChange={handleGuestChange} required />
+                </>
+              )}
+              {userType === "registered" && !selectedUser && (
+                <p className="md:col-span-2 text-sm text-yellow-600">Please select a user first.</p>
+              )}
+              <Input placeholder="Street" name="street" value={shippingAddress.street} onChange={handleAddressChange} />
+              <Input placeholder="City" name="city" value={shippingAddress.city} onChange={handleAddressChange} />
+              <Input placeholder="State" name="state" value={shippingAddress.state} onChange={handleAddressChange} />
+              <Input placeholder="Zip Code" name="zipCode" value={shippingAddress.zipCode} onChange={handleAddressChange} />
+              <Input placeholder="Country" name="country" value={shippingAddress.country} onChange={handleAddressChange} />
+            </div>
+
 
             <div className="space-y-4">
               <label>Products</label>
@@ -189,7 +228,7 @@ export default function NewOrderPage() {
                     onChange={(e) => handleProductChange(index, "quantity", parseInt(e.target.value))}
                     className="w-24"
                   />
-                  <span>${(product.price * product.quantity)?.toFixed(2)}</span>
+                  <span>৳{(product.price * product.quantity)?.toFixed(2)}</span>
                 </div>
               ))}
               <Button type="button" onClick={handleAddProduct} variant="outline">
@@ -228,7 +267,7 @@ export default function NewOrderPage() {
               </div>
             </div>
 
-            <div className="text-2xl font-bold">Total: ${total?.toFixed(2)}</div>
+            <div className="text-2xl font-bold">Total: ৳{total?.toFixed(2)}</div>
 
             <Button type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create Order"}

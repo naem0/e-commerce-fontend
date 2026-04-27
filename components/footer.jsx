@@ -28,34 +28,32 @@ export function Footer() {
           <div className="col-span-2 lg:col-span-1 order-1 lg:order-1 flex flex-col items-center lg:items-start">
             <h3 className="text-2xl font-bold mb-8">Social link</h3>
             <div className="flex space-x-4 mb-10">
-              <a href="https://facebook.com/equalfashion.bd" target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
-                <Facebook className="w-6 h-6 text-white group-hover:text-blue-600" />
-              </a>
-              <a href="https://instagram.com/equal_fashion_com" target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
-                <Instagram className="w-6 h-6 text-white group-hover:text-pink-600" />
-              </a>
-              <a href="https://tiktok.com/@equalfashion" target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6 text-white group-hover:text-black"
-                >
-                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-                </svg>
-              </a>
-              <a href="https://www.youtube.com/@equal_fashion" target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
-                <Youtube className="w-6 h-6 text-white group-hover:text-red-600" />
-              </a>
+              {settings?.socialLinks?.facebook && (
+                <a href={settings.socialLinks.facebook} target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
+                  <Facebook className="w-6 h-6 text-white group-hover:text-blue-600" />
+                </a>
+              )}
+              {settings?.socialLinks?.instagram && (
+                <a href={settings.socialLinks.instagram} target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
+                  <Instagram className="w-6 h-6 text-white group-hover:text-pink-600" />
+                </a>
+              )}
+              {settings?.socialLinks?.youtube && (
+                <a href={settings.socialLinks.youtube} target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
+                  <Youtube className="w-6 h-6 text-white group-hover:text-red-600" />
+                </a>
+              )}
+              {settings?.socialLinks?.whatsapp && (
+                <a href={`https://wa.me/${settings.socialLinks.whatsapp}`} target="_blank" style={linkStyle} className="w-12 h-12 flex items-center justify-center border-2 border-white/50 rounded-lg hover:bg-white transition-all duration-300 shadow-sm group">
+                  <MessageCircle className="w-6 h-6 text-white group-hover:text-green-500" />
+                </a>
+              )}
             </div>
             
             <div className="hidden lg:block text-left">
-              <h3 className="text-xl font-bold mb-4">About Equal Fashion</h3>
+              <h3 className="text-xl font-bold mb-4">About {settings?.siteName || "Equal Fashion"}</h3>
               <p className="mb-4 text-gray-200">
-                Welcome to Equal Fashion – Style for Everyone. A trusted online platform delivering trendy fashion, quality products, and reliable retail & wholesale services all over Bangladesh.
+                {settings?.metaTags?.description || "Welcome to Equal Fashion – Style for Everyone. A trusted online platform delivering trendy fashion, quality products, and reliable retail & wholesale services all over Bangladesh."}
               </p>
             </div>
           </div>
@@ -107,19 +105,23 @@ export function Footer() {
             <ul className="space-y-4 flex flex-col items-center lg:items-start">
               <li className="flex flex-col lg:flex-row items-center lg:items-start gap-1 lg:gap-3">
                 <MapPin className="w-5 h-5 text-primary-custom shrink-0 lg:mt-1" />
-                <span className="text-sm max-w-[280px] lg:max-w-none">H A plaza section-11, block c, avenue-3, lane-12, house-8, mirpur 1216 (মোহাম্মদীয়া মার্কেটের দক্ষিন পার্শ্বে)</span>
+                <span className="text-sm max-w-[280px] lg:max-w-none">
+                  {settings?.contactInfo?.address || "H A plaza section-11, block c, avenue-3, lane-12, house-8, mirpur 1216"}
+                </span>
               </li>
               <li className="flex flex-col lg:flex-row items-center lg:items-start gap-1 lg:gap-3">
                 <Phone className="w-5 h-5 text-primary-custom shrink-0" />
-                <span>09658-405962</span>
+                <span>{settings?.contactInfo?.phone || "09658-405962"}</span>
               </li>
-              <li className="flex flex-col lg:flex-row items-center lg:items-start gap-1 lg:gap-3">
-                <MessageCircle className="w-5 h-5 text-primary-custom shrink-0" />
-                <span>01410558889</span>
-              </li>
+              {settings?.socialLinks?.whatsapp && (
+                <li className="flex flex-col lg:flex-row items-center lg:items-start gap-1 lg:gap-3">
+                  <MessageCircle className="w-5 h-5 text-primary-custom shrink-0" />
+                  <span>{settings.socialLinks.whatsapp}</span>
+                </li>
+              )}
               <li className="flex flex-col lg:flex-row items-center lg:items-start gap-1 lg:gap-3">
                 <Mail className="w-5 h-5 text-primary-custom shrink-0" />
-                <span className="text-sm break-all">info.equalfashionltd@gmail.com</span>
+                <span className="text-sm break-all">{settings?.contactInfo?.email || "info.equalfashionltd@gmail.com"}</span>
               </li>
             </ul>
           </div>
@@ -129,7 +131,7 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center text-sm opacity-80">
           <p>
-            &copy; {new Date().getFullYear()} Equal Fashion. All Rights Reserved.
+            &copy; {new Date().getFullYear()} {settings?.siteName || "Equal Fashion"}. All Rights Reserved.
           </p>
           <div className="mt-4 md:mt-0 flex gap-6">
             <Link href="/privacy-policy" className="hover:underline">Privacy</Link>

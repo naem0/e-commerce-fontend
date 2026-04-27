@@ -52,6 +52,10 @@ export default function SiteSettingsPage() {
       description: "",
       keywords: "",
     },
+    analytics: {
+      facebookPixelId: "",
+      googleAnalyticsId: "",
+    },
   })
   const [files, setFiles] = useState({
     logo: null,
@@ -94,6 +98,10 @@ export default function SiteSettingsPage() {
           title: settings.metaTags?.title || "",
           description: settings.metaTags?.description || "",
           keywords: settings.metaTags?.keywords || "",
+        },
+        analytics: {
+          facebookPixelId: settings.analytics?.facebookPixelId || "",
+          googleAnalyticsId: settings.analytics?.googleAnalyticsId || "",
         },
       })
     }
@@ -204,6 +212,7 @@ export default function SiteSettingsPage() {
             <TabsTrigger value="contact">Contact & Social</TabsTrigger>
             <TabsTrigger value="payment">Payment</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics & Marketing</TabsTrigger>
           </TabsList>
 
           <TabsContent value="general">
@@ -551,6 +560,39 @@ export default function SiteSettingsPage() {
                     placeholder="e-commerce, online store, products"
                     rows={3}
                   />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="analytics">
+            <Card>
+              <CardHeader>
+                <CardTitle>Analytics & Marketing</CardTitle>
+                <CardDescription>Configure tracking IDs for Facebook and Google</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="analytics.facebookPixelId">Facebook Pixel ID</Label>
+                  <Input
+                    id="analytics.facebookPixelId"
+                    name="analytics.facebookPixelId"
+                    value={formData.analytics.facebookPixelId}
+                    onChange={handleChange}
+                    placeholder="Enter your Pixel ID"
+                  />
+                  <p className="text-xs text-gray-500 italic">Example: 123456789012345</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="analytics.googleAnalyticsId">Google Analytics ID (G-ID)</Label>
+                  <Input
+                    id="analytics.googleAnalyticsId"
+                    name="analytics.googleAnalyticsId"
+                    value={formData.analytics.googleAnalyticsId}
+                    onChange={handleChange}
+                    placeholder="Enter your Google Analytics ID"
+                  />
+                  <p className="text-xs text-gray-500 italic">Example: G-XXXXXXXXXX</p>
                 </div>
               </CardContent>
             </Card>

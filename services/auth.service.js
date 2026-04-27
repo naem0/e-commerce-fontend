@@ -48,8 +48,16 @@ export const login = async (credentials) => {
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
+      let message = `HTTP ${response.status}`
+      try {
+        const errorData = await response.json()
+        message = errorData.message || message
+      } catch (e) {
+        // Fallback to text if JSON parse fails
+        const errorText = await response.text()
+        message = errorText || message
+      }
+      throw new Error(message)
     }
 
     const data = await response.json()
@@ -75,8 +83,15 @@ export const register = async (userData) => {
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
+      let message = `HTTP ${response.status}`
+      try {
+        const errorData = await response.json()
+        message = errorData.message || message
+      } catch (e) {
+        const errorText = await response.text()
+        message = errorText || message
+      }
+      throw new Error(message)
     }
 
     const data = await response.json()
@@ -102,8 +117,15 @@ export const forgotPassword = async (email) => {
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
+      let message = `HTTP ${response.status}`
+      try {
+        const errorData = await response.json()
+        message = errorData.message || message
+      } catch (e) {
+        const errorText = await response.text()
+        message = errorText || message
+      }
+      throw new Error(message)
     }
 
     const data = await response.json()
@@ -129,8 +151,15 @@ export const resetPassword = async (token, newPassword) => {
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`HTTP ${response.status}: ${errorText}`)
+      let message = `HTTP ${response.status}`
+      try {
+        const errorData = await response.json()
+        message = errorData.message || message
+      } catch (e) {
+        const errorText = await response.text()
+        message = errorText || message
+      }
+      throw new Error(message)
     }
 
     const data = await response.json()

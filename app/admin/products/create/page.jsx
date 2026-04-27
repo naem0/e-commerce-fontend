@@ -144,7 +144,7 @@ export default function CreateProductPage() {
   // Variant Handlers
   const addVariant = () => setVariants(prev => [...prev, {
     sku: "", price: formData.price, stock: formData.stock,
-    options: variationTypes.map(t => ({ type: t.name, value: t.options[0]?.value || "" })),
+    options: variationTypes.map(t => ({ type: t.name, value: t.options[0]?.value || t.options[0]?.name || "" })),
     images: [], imagesPreviews: [], isDefault: prev.length === 0, status: "active"
   }])
   const removeVariant = (idx) => setVariants(prev => prev.filter((_, i) => i !== idx))
@@ -193,10 +193,15 @@ export default function CreateProductPage() {
 
       if (data.hasVariations) {
         data.variationTypes = variationTypes
-        data.variants = variants.map(v => ({
-          ...v, price: Number(v.price), stock: Number(v.stock),
-          newImages: v.images // All images in create mode are new
-        }))
+        data.variants = variants.map(v => {
+          const { imagesPreviews, ...vRest } = v
+          return {
+            ...vRest,
+            price: Number(v.price),
+            stock: Number(v.stock),
+            newImages: v.images // All images in create mode are new
+          }
+        })
       }
 
       const res = await createProduct(data)

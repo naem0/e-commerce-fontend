@@ -122,7 +122,7 @@ export default function AdminInvoicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white shadow-sm border-b print:hidden">
         <div className="container mx-auto px-4 py-4">
@@ -146,11 +146,12 @@ export default function AdminInvoicePage() {
       </div>
 
       {/* Invoice */}
-      <div className="container mx-auto px-4 py-8 print:p-0">
+      <div className="container mx-auto px-4 py-8">
         <div ref={invoiceRef}>
           <Invoice order={order} siteSettings={siteSettings} />
         </div>
       </div>
     </div>
+
   )
 }

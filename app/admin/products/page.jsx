@@ -157,7 +157,7 @@ export default function ProductsPage() {
   // Handle status change
   const handleStatusChange = async (productId, newStatus) => {
     try {
-      await updateProduct(productId, newStatus)
+      await updateProduct(productId, { status: newStatus })
 
       // Update product in state
       setProducts((prevProducts) =>

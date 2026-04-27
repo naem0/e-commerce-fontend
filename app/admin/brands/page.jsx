@@ -50,6 +50,7 @@ export default function BrandsPage() {
         page: currentPage,
         limit: 10,
         status: statusFilter,
+        search: searchTerm,
       }
       const response = await getBrands(params)
       setBrands(response.brands)
@@ -64,7 +65,7 @@ export default function BrandsPage() {
 
   useEffect(() => {
     fetchBrands()
-  }, [currentPage, statusFilter])
+  }, [currentPage, statusFilter, searchTerm])
 
   const handleSearch = (e) => {
     e.preventDefault()

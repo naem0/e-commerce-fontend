@@ -170,7 +170,7 @@ export default function VariationSection({
                       >
                         <option value="" disabled className="bg-background">Select {type.name}</option>
                         {type.options.map((option) => (
-                          <option key={option.value} value={option.value} className="bg-background">
+                          <option key={option.value || option.name} value={option.value || option.name} className="bg-background">
                             {option.name}
                           </option>
                         ))}

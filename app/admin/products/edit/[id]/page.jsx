@@ -206,7 +206,7 @@ export default function EditProductPage({ params }) {
   // Variant Handlers
   const addVariant = () => setVariants(prev => [...prev, {
     sku: "", price: formData.price, stock: formData.stock,
-    options: variationTypes.map(t => ({ type: t.name, value: t.options[0]?.value || "" })),
+    options: variationTypes.map(t => ({ type: t.name, value: t.options[0]?.value || t.options[0]?.name || "" })),
     images: [], imagesPreviews: [], isDefault: prev.length === 0, status: "active"
   }])
   const removeVariant = (idx) => setVariants(prev => prev.filter((_, i) => i !== idx))
@@ -254,11 +254,16 @@ export default function EditProductPage({ params }) {
 
       if (data.hasVariations) {
         data.variationTypes = variationTypes
-        data.variants = variants.map(v => ({
-          ...v, price: Number(v.price), stock: Number(v.stock),
-          images: v.images.filter(img => typeof img === 'string'),
-          newImages: v.images.filter(img => typeof img !== 'string')
-        }))
+        data.variants = variants.map(v => {
+          const { imagesPreviews, ...vRest } = v
+          return {
+            ...vRest,
+            price: Number(v.price),
+            stock: Number(v.stock),
+            images: v.images.filter(img => typeof img === 'string'),
+            newImages: v.images.filter(img => typeof img !== 'string')
+          }
+        })
       }
 
       const res = await updateProduct(id, data)

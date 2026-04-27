@@ -78,7 +78,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">আমাদের বিশেষত্ব</h2>
-            <div className="w-20 h-1 bg-primary-color mx-auto" />
+            <div className="w-20 h-1 bg-primary-custom mx-auto" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             {[
@@ -100,12 +100,12 @@ export default function AboutPage() {
       </section>
 
       {/* Final Call */}
-      <section className="py-16 bg-primary-color text-white">
+      <section className="py-16 bg-primary-custom text-white">
         <div className="container mx-auto px-4 text-center">
           <p className="text-xl mb-6 opacity-90">আপনাদের ভালোবাসা এবং সমর্থনই আমাদের এগিয়ে যাওয়ার অনুপ্রেরণা।</p>
-          <h2 className="text-3xl font-bold mb-8">ধন্যবাদ Equal Fashion-এর সাথে থাকার জন্য।</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8">ধন্যবাদ Equal Fashion-এর সাথে থাকার জন্য।</h2>
           <div className="flex justify-center flex-wrap gap-4">
-            <div className="py-3 px-8 bg-white text-primary-color font-bold rounded-full hover:bg-gray-100 transition-colors cursor-pointer">
+            <div className="py-3 px-8 bg-white text-primary-custom font-bold rounded-full hover:bg-gray-100 transition-colors cursor-pointer">
               Shop Now
             </div>
           </div>

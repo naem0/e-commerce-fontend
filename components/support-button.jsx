@@ -8,7 +8,16 @@ import {
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 
+import { useSiteSettings } from "@/components/site-settings-provider"
+
 export default function SupportButton() {
+  const { settings } = useSiteSettings()
+  
+  const phone = settings?.contactInfo?.phone || "09658-405962"
+  const whatsapp = settings?.socialLinks?.whatsapp || ""
+  const messenger = settings?.socialLinks?.messenger || ""
+  const email = settings?.contactInfo?.email || "info.equalfashionltd@gmail.com"
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -19,7 +28,7 @@ export default function SupportButton() {
           <Headset className="w-10 h-10" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-48">
+      <PopoverContent className="w-56">
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Support</h4>
@@ -28,21 +37,42 @@ export default function SupportButton() {
             </p>
           </div>
           <div className="grid gap-2">
-            <a href="tel:+1234567890" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
-              <Phone className="w-5 h-5" />
-              <span>Call</span>
+            <a href={`tel:${phone}`} className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+              <Phone className="w-5 h-5 text-primary-custom" />
+              <div className="flex flex-col">
+                <span className="text-xs text-muted-foreground">Call Us</span>
+                <span className="text-sm font-medium">{phone}</span>
+              </div>
             </a>
-            <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
-              <MessageCircle className="w-5 h-5" />
-              <span>WhatsApp</span>
-            </a>
-            <a href="mailto:support@example.com" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
-              <Mail className="w-5 h-5" />
-              <span>Messenger</span>
-            </a>
+            {whatsapp && (
+              <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+                <MessageCircle className="w-5 h-5 text-green-500" />
+                <div className="flex flex-col">
+                  <span className="text-xs text-muted-foreground">WhatsApp</span>
+                  <span className="text-sm font-medium">{whatsapp}</span>
+                </div>
+              </a>
+            )}
+            {messenger ? (
+              <a href={messenger} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+                <MessageCircle className="w-5 h-5 text-blue-500" />
+                <div className="flex flex-col">
+                  <span className="text-xs text-muted-foreground">Messenger</span>
+                  <span className="text-sm font-medium">Chat with us</span>
+                </div>
+              </a>
+            ) : (
+              <a href={`mailto:${email}`} className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+                <Mail className="w-5 h-5 text-red-500" />
+                <div className="flex flex-col">
+                  <span className="text-xs text-muted-foreground">Email</span>
+                  <span className="text-sm font-medium truncate max-w-[140px]">{email}</span>
+                </div>
+              </a>
+            )}
           </div>
         </div>
       </PopoverContent>
     </Popover>
   )
-}
+}

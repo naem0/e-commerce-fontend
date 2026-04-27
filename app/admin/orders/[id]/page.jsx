@@ -55,6 +55,16 @@ export default function AdminOrderDetailsPage() {
     notes: "",
   })
   const [savingNotes, setSavingNotes] = useState(false)
+  const [shippingAddress, setShippingAddress] = useState({
+    name: "",
+    phone: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+  })
+  const [paymentStatus, setPaymentStatus] = useState("")
 
   useEffect(() => {
     if (session?.accessToken && id) {
@@ -71,6 +81,8 @@ export default function AdminOrderDetailsPage() {
         setOrder(response.order)
         setTrackingInfo(response.order.trackingInfo || "")
         setAdminNotes(response.order.adminNotes || "")
+        setShippingAddress(response.order.shippingAddress || {})
+        setPaymentStatus(response.order.paymentStatus || "")
 
         // Set default payment amount to due amount
         const dueAmount = calculateDueAmount(response.order)
@@ -203,7 +215,7 @@ export default function AdminOrderDetailsPage() {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ trackingInfo, adminNotes }),
+        body: JSON.stringify({ trackingInfo, adminNotes, shippingAddress, paymentStatus }),
       })
       const data = await res.json()
       if (data.success) {
@@ -341,10 +353,10 @@ export default function AdminOrderDetailsPage() {
                     <CreditCard className="h-3 w-3 mr-1" />
                     <span className="capitalize">{order.paymentStatus}</span>
                   </Badge>
-                  <div className="mt-2">
+                  <div className="mt-2 flex flex-col gap-2">
                     <Select value={order.status} onValueChange={handleStatusUpdate}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Order Status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="pending">Pending</SelectItem>
@@ -354,6 +366,21 @@ export default function AdminOrderDetailsPage() {
                         <SelectItem value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
                     </Select>
+                    <Select value={paymentStatus} onValueChange={(val) => setPaymentStatus(val)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Payment Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="failed">Failed</SelectItem>
+                        <SelectItem value="refunded">Refunded</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button size="sm" onClick={handleSaveTrackingAndNotes} disabled={savingNotes}>
+                      {savingNotes ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : null}
+                      Update Status
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -629,28 +656,83 @@ export default function AdminOrderDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <MapPin className="mr-2 h-5 w-5" />
-                Shipping Address
+                Edit Shipping Address
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-sm space-y-1">
-                <p className="font-medium">{order.shippingAddress.name}</p>
-                <p>{order.shippingAddress.street}</p>
-                <p>
-                  {order.shippingAddress.city}
-                  {order.shippingAddress.state && `, ${order.shippingAddress.state}`}
-                  {order.shippingAddress.zipCode && ` ${order.shippingAddress.zipCode}`}
-                </p>
-                <p>{order.shippingAddress.country}</p>
-                {order.shippingAddress.phone && (
-                  <p className="flex items-center mt-2">
-                    <Phone className="mr-1 h-3 w-3" />
-                    {order.shippingAddress.phone}
-                  </p>
-                )}
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <Label>Customer Name</Label>
+                    <Input
+                      value={shippingAddress.name || ""}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Phone Number</Label>
+                      <Input
+                        value={shippingAddress.phone || ""}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input
+                        value={shippingAddress.email || ""}
+                        onChange={(e) => setShippingAddress({ ...shippingAddress, email: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Street Address</Label>
+                  <Input
+                    value={shippingAddress.street || ""}
+                    onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>City</Label>
+                    <Input
+                      value={shippingAddress.city || ""}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>State / Province</Label>
+                    <Input
+                      value={shippingAddress.state || ""}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Zip Code</Label>
+                    <Input
+                      value={shippingAddress.zipCode || ""}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, zipCode: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Country</Label>
+                    <Input
+                      value={shippingAddress.country || ""}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, country: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <Button size="sm" className="w-full" onClick={handleSaveTrackingAndNotes} disabled={savingNotes}>
+                  {savingNotes ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : null}
+                  Save Updated Address
+                </Button>
               </div>
             </CardContent>
           </Card>
+
 
           {/* Payment Info */}
           <Card>

@@ -105,8 +105,25 @@ export function AdminLayout({ children }) {
   ]
 
 
+  const isInvoicePage = pathname.includes("/invoice")
+
+  if (isInvoicePage) {
+    return (
+      <div className="min-h-screen bg-white">
+        <style jsx global>{`
+          @media print {
+            .print\\:hidden { display: none !important; }
+            body { background: white !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          }
+        `}</style>
+        <main>{children}</main>
+      </div>
+    )
+  }
+
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden print:hidden">
       {/* Sidebar for mobile */}
       <div
         className={`fixed inset-0 z-50 bg-background/80 backdrop-blur-sm lg:hidden ${sidebarOpen ? "block" : "hidden"}`}
@@ -187,6 +204,7 @@ export function AdminLayout({ children }) {
         <main className="flex-1 overflow-y-auto p-4 bg-gray-100 dark:bg-gray-900">{children}</main>
       </div>
     </div>
+
   )
 }
 

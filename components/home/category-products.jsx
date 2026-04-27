@@ -7,7 +7,8 @@ import { ProductCard } from "@/components/product/product-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default async function CategoryProducts({ categoryId, title, limit = 8, design = "category-products-1" }) {
-  if (!categoryId) return null
+  const id = typeof categoryId === 'object' ? categoryId._id : categoryId;
+  if (!id || id === "[object Object]") return null;
 
   let category = null
   let products = []
@@ -15,8 +16,8 @@ export default async function CategoryProducts({ categoryId, title, limit = 8, d
 
   try {
     const [categoryResult, productsResult] = await Promise.all([
-      getCategory(categoryId),
-      getProducts({ category: categoryId?._id || categoryId, limit, status: "published" }),
+      getCategory(id),
+      getProducts({ category: id, limit, status: "published" }),
     ])
 
     if (categoryResult.success) {

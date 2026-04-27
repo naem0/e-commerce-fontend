@@ -54,26 +54,7 @@ export default function LoginPage() {
     }
   }
 
-  const testBackendConnection = async () => {
-    try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      })
-      return response.ok
-    } catch (error) {
-      console.error("Backend connection test failed:", error)
-      return false
-    }
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -84,11 +65,6 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const backendConnected = await testBackendConnection()
-      if (!backendConnected) {
-        throw new Error("Cannot connect to backend server. Please try again.")
-      }
-
       const result = await signIn("credentials", {
         redirect: false,
         email: formData.email,

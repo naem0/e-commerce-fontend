@@ -38,6 +38,12 @@ export function Header() {
   const cartItemCount = getCartItemCount()
   const wishlistCount = getWishlistCount()
 
+  const secondaryColor = settings?.secondaryColor || "#1E3A8A"
+   const footerStyle = {
+    backgroundColor: secondaryColor,
+    color: "#FFFFFF",
+  }
+
   const isActive = (path) => {
     return pathname === path
   }
@@ -52,20 +58,20 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="bg-primary text-primary-foreground py-2 overflow-hidden">
+      <div style={footerStyle} className={`bg-secodary text-primary-foreground py-2 overflow-hidden`}>
         <div className="container mx-auto px-3 flex flex-col md:flex-row items-center justify-between gap-2 text-[13px] md:text-sm font-medium">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 hidden md:flex">
             <PhoneIcon className="h-3 w-3 md:h-4 md:w-4" />
-            <span>09658-405962</span>
+            <span>{settings?.contactInfo?.phone || "09658-405962"}</span>
           </div>
           <div className="flex-1 w-full max-w-3xl overflow-hidden relative group">
             <div className="flex whitespace-nowrap animate-marquee hover:pause whitespace-nowrap">
-              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at Equal Fashion | Call: 09658-405962</span>
-              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at Equal Fashion | Call: 09658-405962</span>
+              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at {settings?.siteName || "Equal Fashion"} | Call: {settings?.contactInfo?.phone || "09658-405962"}</span>
+              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at {settings?.siteName || "Equal Fashion"} | Call: {settings?.contactInfo?.phone || "09658-405962"}</span>
             </div>
           </div>
           <div className="hidden md:block">
-            style for everyone
+            Style for everyone
           </div>
         </div>
       </div>
@@ -75,7 +81,7 @@ export function Header() {
           100% { transform: translateX(-50%); }
         }
         .animate-marquee {
-          animation: marquee 15s linear infinite;
+          animation: marquee 8s linear infinite;
         }
         .hover\:pause:hover {
           animation-play-state: paused;
@@ -84,7 +90,7 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between mx-auto px-3">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
-            {/* {settings?.logo ? ( */}
+            {settings?.logo ? ( 
               <Image
                 src={getImageUrl(settings.logo || "/logo.png")}
                 alt={settings.siteName}
@@ -92,33 +98,30 @@ export function Header() {
                 height={50}
                 className="h-12 w-auto object-contain"
               />
-            {/* ) : (
+            ) : (
               <span className="font-bold text-xl" style={{ color: settings?.primaryColor }}>
                 {settings?.siteName || "E-Shop"}
               </span>
-            )} */}
+            )}
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex gap-6">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/") ? "text-foreground" : "text-muted-foreground"
-                }`}
+              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/") ? "text-foreground" : "text-muted-foreground"}`}
             >
               Home
             </Link>
             <Link
               href="/products"
-              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/products") ? "text-foreground" : "text-muted-foreground"
-                }`}
+              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/products") ? "text-foreground" : "text-muted-foreground"}`}
             >
               Products
             </Link>
             <Link
               href="/categories"
-              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"
-                }`}
+              className={`text-sm font-medium transition-colors hover:text-primary-custom ${isActive("/categories") ? "text-foreground" : "text-muted-foreground"}`}
             >
               Categories
             </Link>

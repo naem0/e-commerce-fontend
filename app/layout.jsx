@@ -9,6 +9,8 @@ import { getSiteSettings } from "@/services/settings.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+import AnalyticsScripts from "@/components/AnalyticsScripts";
+
 const data = await getSiteSettings();
 const settings = data?.success ? data.settings : {};
 
@@ -44,6 +46,7 @@ export default async function RootLayout({ children }) {
         >
           <AuthProvider session={session}>
             <SiteSettingsProvider initialSettings={settings}>
+              <AnalyticsScripts />
               <CartProvider>
                 <WishlistProvider>
                   {children}

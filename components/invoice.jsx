@@ -1,6 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
 
 export default function Invoice({ order, siteSettings }) {
   if (!order) return null
@@ -49,18 +50,26 @@ export default function Invoice({ order, siteSettings }) {
     }
   }
 
+  const companyLogo = siteSettings?.logo || ""
   const companyName = siteSettings?.siteName || "Equal Fashion"
-  const companyAddress = siteSettings?.address || "Uttara, Dhaka, Bangladesh"
-  const companyPhone = siteSettings?.phone || "09658-405962"
-  const companyEmail = siteSettings?.email || "info@equalfashion.com"
+
+  const companyAddress = siteSettings?.contactInfo?.address || "Uttara, Dhaka, Bangladesh"
+  const companyPhone = siteSettings?.contactInfo?.phone || "09658-405962"
+  const companyEmail = siteSettings?.contactInfo?.email || "info@equalfashion.com"
 
   return (
-    <div className="max-w-4xl mx-auto bg-white text-slate-900 shadow-lg print:shadow-none p-6 md:p-8 print:p-0">
+    <div className="max-w-4xl mx-auto bg-white text-slate-900 shadow-lg print:shadow-none p-6 md:p-8 print:p-8">
       {/* Header */}
       <div className="border-b-2 border-slate-200 pb-6 mb-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">{companyName}</h1>
+            {
+              companyLogo ? (
+                <Image src={process.env.NEXT_PUBLIC_BASE_URL + companyLogo} alt={companyName} width={150} height={50} />
+              ) : (
+                <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">{companyName}</h1>
+              )
+            }
             <p className="text-slate-600 mt-1 text-sm font-medium">{companyAddress}</p>
             <p className="text-slate-600 text-sm">
               <span className="font-semibold text-slate-800">Phone:</span> {companyPhone} | <span className="font-semibold text-slate-800">Email:</span> {companyEmail}

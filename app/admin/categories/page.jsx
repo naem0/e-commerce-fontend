@@ -52,6 +52,7 @@ export default function CategoriesPage() {
         limit: 10,
         status: statusFilter,
         parent: parentFilter,
+        search: searchTerm,
       }
       const response = await getCategories(params)
       setCategories(response.categories)
@@ -76,7 +77,7 @@ export default function CategoriesPage() {
   useEffect(() => {
     fetchCategories()
     fetchParentCategories()
-  }, [currentPage, statusFilter, parentFilter])
+  }, [currentPage, statusFilter, parentFilter, searchTerm])
 
   const handleSearch = (e) => {
     e.preventDefault()

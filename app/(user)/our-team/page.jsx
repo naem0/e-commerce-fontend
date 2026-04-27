@@ -26,21 +26,21 @@ export default function TeamPage() {
         <div className="max-w-5xl mx-auto">
           <div className="bg-white dark:bg-gray-900 rounded-[3rem] shadow-2xl shadow-primary-custom/5 border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col md:flex-row p-8 md:p-12 items-center gap-12">
             <div className="md:w-1/2">
-              <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-[2.5rem] relative overflow-hidden group">
-                <div className="absolute inset-0 flex items-center justify-center text-gray-300">
-                   <span className="text-lg">Image Placeholder</span>
+              <div className="aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-[2.5rem] relative overflow-hidden group border border-gray-100 dark:border-gray-800">
+                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                   <Users size={64} strokeWidth={1} />
                 </div>
                 {/* Image tag will go here when available */}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/60 to-transparent p-6 text-white text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6 text-white text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                     মোঃ মোস্তাফিজুর রহমান
                 </div>
               </div>
             </div>
             <div className="md:w-1/2 space-y-6">
-              <div className="inline-block py-2 px-6 bg-primary-custom/10 text-primary-custom font-bold rounded-full text-sm uppercase tracking-widest">
+              <div className="inline-block py-2 px-6 bg-primary-custom/10 text-primary-custom font-bold rounded-full text-xs md:text-sm uppercase tracking-widest">
                 Founder & CEO
               </div>
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-white">মোঃ মোস্তাফিজুর রহমান </h2>
+              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">মোঃ মোস্তাফিজুর রহমান </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed italic">
                 প্রতিষ্ঠাতা হিসেবে তিনি ব্যবসার সার্বিক পরিকল্পনা, উন্নয়ন এবং ভবিষ্যৎ দিকনির্দেশনা নির্ধারণ করেন।
               </p>
@@ -53,10 +53,10 @@ export default function TeamPage() {
                   <span className="text-lg font-medium text-gray-700 dark:text-gray-300">০১৯৫০৮৫৭২৫৭</span>
                 </div>
                 <div className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 bg-primary-custom/5 rounded-full flex items-center justify-center group-hover:bg-primary-custom group-hover:text-white transition-all">
+                  <div className="w-10 h-10 bg-primary-custom/5 rounded-full flex items-center justify-center group-hover:bg-primary-custom group-hover:text-white transition-all shrink-0">
                     <Mail size={18} />
                   </div>
-                  <span className="text-lg font-medium text-gray-700 dark:text-gray-300">mrkmostafizurrahman1@gmail.com</span>
+                  <span className="text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 break-all">mrkmostafizurrahman1@gmail.com</span>
                 </div>
               </div>
             </div>

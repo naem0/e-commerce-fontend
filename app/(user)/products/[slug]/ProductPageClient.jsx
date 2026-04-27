@@ -43,9 +43,38 @@ export default function ProductPageClient({ product }) {
     const matchingVariant = product.variants.find((variant) => {
       return variant.options.every((option) => newOptions[option.type] === option.value)
     })
+    setSelectedVariant(matchingVariant || null)
     if (matchingVariant) {
-      setSelectedVariant(matchingVariant)
       setQuantity(1)
+    }
+  }
+
+  const [helpfulReviews, setHelpfulReviews] = useState([])
+
+  const handleMarkHelpful = async (reviewId) => {
+    if (helpfulReviews.includes(reviewId)) return
+
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+      const res = await fetch(`${API_URL}/api/reviews/${reviewId}/helpful`, {
+        method: "PATCH",
+      })
+      const data = await res.json()
+      if (data.success) {
+        setHelpfulReviews((prev) => [...prev, reviewId])
+        toast({
+          title: "Success",
+          description: "Review marked as helpful",
+        })
+        // Refresh product data to update helpful count in UI
+        router.refresh()
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to mark review as helpful",
+        variant: "destructive",
+      })
     }
   }
 
@@ -519,8 +548,16 @@ export default function ProductPageClient({ product }) {
                             </div>
                           )}
                           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                            <button className="flex items-center gap-1 hover:text-green-600 dark:hover:text-green-400 transition">
-                              👍 Helpful ({review.helpful})
+                            <button
+                              onClick={() => handleMarkHelpful(review._id)}
+                              disabled={helpfulReviews.includes(review._id)}
+                              className={`flex items-center gap-1 transition ${
+                                helpfulReviews.includes(review._id) 
+                                  ? "text-green-600 cursor-default" 
+                                  : "hover:text-green-600 dark:hover:text-green-400"
+                              }`}
+                            >
+                              👍 {helpfulReviews.includes(review._id) ? "Helpful" : "Helpful"} ({review.helpful + (helpfulReviews.includes(review._id) ? 1 : 0)})
                             </button>
                             <p className="text-xs">
                               Last updated {new Date(review.updatedAt).toLocaleDateString()}
