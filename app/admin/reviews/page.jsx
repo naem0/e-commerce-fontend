@@ -45,7 +45,7 @@ export default function AdminReviewsPage() {
     status: "all", // Updated default value to "all"
     search: "",
     page: 1,
-    limit: 10,
+    limit: 50,
   })
 
   const [pagination, setPagination] = useState({

@@ -31,6 +31,7 @@ export default function CategoriesPage() {
     }
 
     fetchCategories()
+    window.scrollTo(0, 0)
   }, [])
 
   if (error) {

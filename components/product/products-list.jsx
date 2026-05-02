@@ -38,6 +38,7 @@ export default function ProductsList({ initialCategories, initialBrands }) {
             sort: nextSearchParams.get("sort") || "newest",
         })
         setPagination(prev => ({ ...prev, page: 1 }))
+        window.scrollTo(0, 0)
     }, [nextSearchParams])
 
     useEffect(() => {

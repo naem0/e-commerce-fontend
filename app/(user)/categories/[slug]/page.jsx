@@ -53,6 +53,7 @@ export default function CategoryPage() {
 
     if (slug) {
       fetchCategory()
+      window.scrollTo(0, 0)
     }
   }, [slug, toast])
 
