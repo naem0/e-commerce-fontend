@@ -206,14 +206,6 @@ export default function AdminReviewsPage() {
     )
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-12 w-12 animate-spin" />
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -265,7 +257,11 @@ export default function AdminReviewsPage() {
 
       {/* Reviews List */}
       <div className="space-y-4">
-        {reviews.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          </div>
+        ) : reviews.length === 0 ? (
           <Card>
             <CardContent className="text-center py-8">
               <p className="text-gray-500">No reviews found</p>

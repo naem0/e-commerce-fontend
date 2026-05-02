@@ -59,6 +59,15 @@ export default function UsersPage() {
   })
   const [userToDelete, setUserToDelete] = useState(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [filters.search])
 
   // Fetch users
   const fetchUsers = async () => {
@@ -98,7 +107,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     fetchUsers()
-  }, [pagination.page, pagination.limit])
+  }, [pagination.page, pagination.limit, debouncedSearch, filters.role, filters.status])
 
   // Handle filter changes
   const handleFilterChange = (name, value) => {

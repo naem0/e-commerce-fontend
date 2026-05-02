@@ -68,7 +68,14 @@ export const createAPI = (endpoint) => {
 
   return {
     get: async (path = "", options = {}) => {
-      return apiRequest(`${baseURL}${path}`, {
+      let url = `${baseURL}${path}`
+      if (options.params) {
+        const queryString = new URLSearchParams(options.params).toString()
+        if (queryString) {
+          url += (url.includes("?") ? "&" : "?") + queryString
+        }
+      }
+      return apiRequest(url, {
         method: "GET",
         ...options,
       })

@@ -12,6 +12,7 @@ import { getProducts } from "@/services/product.service"
 import { createOrderByAdmin } from "@/services/order.service"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { Trash2 } from "lucide-react"
 
 export default function NewOrderPage() {
   const router = useRouter()
@@ -21,7 +22,7 @@ export default function NewOrderPage() {
   const [userType, setUserType] = useState("registered")
   const [selectedUser, setSelectedUser] = useState("")
   const [guestCustomer, setGuestCustomer] = useState({ name: "", email: "", phone: "" })
-  const [shippingAddress, setShippingAddress] = useState({ street: "", city: "", state: "", zipCode: "", country: "" })
+  const [shippingAddress, setShippingAddress] = useState({ street: "", city: "", state: "", zipCode: "", country: "", shippingArea: "inside_dhaka" })
   const [selectedProducts, setSelectedProducts] = useState([])
   const [status, setStatus] = useState("pending")
   const [paymentMethod, setPaymentMethod] = useState("cod")
@@ -51,6 +52,12 @@ export default function NewOrderPage() {
     setSelectedProducts([...selectedProducts, { productId: "", quantity: 1, price: 0 }])
   }
 
+  const handleRemoveProduct = (index) => {
+    const updatedProducts = selectedProducts.filter((_, i) => i !== index)
+    setSelectedProducts(updatedProducts)
+    calculateTotal(updatedProducts)
+  }
+
   const handleProductChange = (index, field, value) => {
     const updatedProducts = [...selectedProducts]
     if (field === "productId") {
@@ -62,9 +69,10 @@ export default function NewOrderPage() {
     calculateTotal(updatedProducts)
   }
 
-  const calculateTotal = (products) => {
-    const total = products.reduce((acc, product) => acc + product.price * product.quantity, 0)
-    setTotal(total)
+  const calculateTotal = (products, area = shippingAddress.shippingArea) => {
+    const subtotal = products.reduce((acc, product) => acc + product.price * product.quantity, 0)
+    const shipping = area === "outside_dhaka" ? 120 : 70
+    setTotal(subtotal + shipping)
   }
 
   const handleGuestChange = (e) => {
@@ -199,6 +207,25 @@ export default function NewOrderPage() {
               <Input placeholder="State" name="state" value={shippingAddress.state} onChange={handleAddressChange} />
               <Input placeholder="Zip Code" name="zipCode" value={shippingAddress.zipCode} onChange={handleAddressChange} />
               <Input placeholder="Country" name="country" value={shippingAddress.country} onChange={handleAddressChange} />
+              <div className="md:col-span-2">
+                <Label>Shipping Area</Label>
+                <Select
+                  value={shippingAddress.shippingArea}
+                  onValueChange={(value) => {
+                    const updatedAddress = { ...shippingAddress, shippingArea: value }
+                    setShippingAddress(updatedAddress)
+                    calculateTotal(selectedProducts, value)
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select shipping area" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="inside_dhaka">Inside Dhaka (৳70)</SelectItem>
+                    <SelectItem value="outside_dhaka">Outside Dhaka (৳120)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
 
@@ -229,6 +256,15 @@ export default function NewOrderPage() {
                     className="w-24"
                   />
                   <span>৳{(product.price * product.quantity)?.toFixed(2)}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemoveProduct(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               ))}
               <Button type="button" onClick={handleAddProduct} variant="outline">
@@ -269,9 +305,19 @@ export default function NewOrderPage() {
 
             <div className="text-2xl font-bold">Total: ৳{total?.toFixed(2)}</div>
 
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Order"}
-            </Button>
+            <div className="flex gap-4">
+              <Button type="submit" disabled={loading}>
+                {loading ? "Creating..." : "Create Order"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/admin/orders")}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

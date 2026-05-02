@@ -108,29 +108,6 @@ export default function BrandsPage() {
     setSearchTerm("")
   }
 
-  if (loading) {
-    return (
-      <div className="container mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Brands</h1>
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Brands</h1>
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <strong className="font-bold">Error!</strong>
-          <span className="block sm:inline"> {error}</span>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -139,6 +116,13 @@ export default function BrandsPage() {
           <PlusCircle className="mr-2 h-4 w-4" /> Add Brand
         </Button>
       </div>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+          <strong className="font-bold">Error!</strong>
+          <span className="block sm:inline"> {error}</span>
+        </div>
+      )}
 
       <div className="bg-card rounded-lg shadow-md p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -198,7 +182,16 @@ export default function BrandsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {brands.map((brand) => (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-10">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  brands.map((brand) => (
                   <TableRow key={brand._id}>
                     <TableCell>
                       {brand.logo ? (
@@ -276,7 +269,8 @@ export default function BrandsPage() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>

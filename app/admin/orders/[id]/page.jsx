@@ -713,6 +713,21 @@ export default function AdminOrderDetailsPage() {
                       onChange={(e) => setShippingAddress({ ...shippingAddress, country: e.target.value })}
                     />
                   </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Shipping Area</Label>
+                    <Select
+                      value={shippingAddress.shippingArea || "inside_dhaka"}
+                      onValueChange={(value) => setShippingAddress({ ...shippingAddress, shippingArea: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select shipping area" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="inside_dhaka">Inside Dhaka</SelectItem>
+                        <SelectItem value="outside_dhaka">Outside Dhaka</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <Button size="sm" className="w-full" onClick={handleSaveTrackingAndNotes} disabled={savingNotes}>
                   {savingNotes ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : null}
