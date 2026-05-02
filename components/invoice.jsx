@@ -65,7 +65,7 @@ export default function Invoice({ order, siteSettings }) {
           <div>
             {
               companyLogo ? (
-                <Image src={process.env.NEXT_PUBLIC_BASE_URL + companyLogo} alt={companyName} width={150} height={50} />
+                <Image src={process.env.NEXT_PUBLIC_API_URL + companyLogo} alt={companyName} width={150} height={50} />
               ) : (
                 <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">{companyName}</h1>
               )
@@ -186,7 +186,7 @@ export default function Invoice({ order, siteSettings }) {
           </div>
           <div className="text-right flex flex-col justify-end">
             <p className="font-bold text-slate-900 text-sm">Authorized Signature</p>
-            <div className="mt-4 border-t border-slate-400 w-32 ml-auto"></div>
+            <div className="mt-16 border-t border-slate-400 w-48 ml-auto"></div>
           </div>
         </div>
       </div>
