@@ -213,6 +213,26 @@ export const deleteReviewAdmin = async (reviewId) => {
   }
 }
 
+// Mark review as helpful
+export const markHelpful = async (reviewId) => {
+  try {
+    const headers = await getAuthHeaders()
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}/helpful`, {
+      method: "PATCH",
+      headers,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    return { success: false, message: error.message }
+  }
+}
+
 export const reviewService = {
   addProductReview,
   createReview,
@@ -223,4 +243,5 @@ export const reviewService = {
   updateReviewStatus,
   addAdminResponse,
   deleteReviewAdmin,
+  markHelpful,
 }

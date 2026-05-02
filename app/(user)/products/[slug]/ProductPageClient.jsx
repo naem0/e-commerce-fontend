@@ -15,6 +15,7 @@ import Link from "next/link"
 import RelatedProducts from "@/components/product/related-products"
 import { useWishlist } from "@/components/wishlist-provider"
 import { getImageUrl } from "@/lib/utils"
+import { reviewService } from "@/services/review.service"
 
 export default function ProductPageClient({ product }) {
   console.log("Product data in ProductPageClient:", product)
@@ -55,11 +56,7 @@ export default function ProductPageClient({ product }) {
     if (helpfulReviews.includes(reviewId)) return
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-      const res = await fetch(`${API_URL}/api/reviews/${reviewId}/helpful`, {
-        method: "PATCH",
-      })
-      const data = await res.json()
+      const data = await reviewService.markHelpful(reviewId)
       if (data.success) {
         setHelpfulReviews((prev) => [...prev, reviewId])
         toast({

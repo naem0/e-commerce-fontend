@@ -248,3 +248,25 @@ export const cancelOrder = async (orderId) => {
     }
   }
 }
+
+// Update order notes and tracking info
+export const updateOrderNotes = async (orderId, notesData) => {
+  try {
+    const headers = await getAuthHeaders()
+    const url = `${API_URL}/api/orders/${orderId}/notes`
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(notesData),
+    })
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    }
+  }
+}

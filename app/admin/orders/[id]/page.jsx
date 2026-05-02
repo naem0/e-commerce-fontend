@@ -32,7 +32,7 @@ import {
   X,
 } from "lucide-react"
 import { formatPrice, formatDate } from "@/services/utils"
-import { getOrderById, updateOrderStatus, addPartialPayment, confirmPayment } from "@/services/order.service"
+import { getOrderById, updateOrderStatus, addPartialPayment, confirmPayment, updateOrderNotes } from "@/services/order.service"
 
 export default function AdminOrderDetailsPage() {
   const { id } = useParams()
@@ -206,18 +206,7 @@ export default function AdminOrderDetailsPage() {
   const handleSaveTrackingAndNotes = async () => {
     try {
       setSavingNotes(true)
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-      const sessionData = await import("next-auth/react").then(m => m.getSession())
-      const token = sessionData?.accessToken
-      const res = await fetch(`${API_URL}/api/orders/${id}/notes`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ trackingInfo, adminNotes, shippingAddress, paymentStatus }),
-      })
-      const data = await res.json()
+      const data = await updateOrderNotes(id, { trackingInfo, adminNotes, shippingAddress, paymentStatus })
       if (data.success) {
         setOrder(data.order)
         toast({ title: "Saved", description: "Tracking info and notes saved" })

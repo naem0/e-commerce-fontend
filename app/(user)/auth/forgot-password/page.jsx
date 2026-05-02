@@ -51,20 +51,20 @@ export default function ForgotPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 mb-4">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <CardTitle className="text-2xl font-bold">Email Sent</CardTitle>
               <CardDescription>We’ve sent you an email with a link to reset your password.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-4">Please check your inbox and follow the instructions.</p>
-                <p className="text-xs text-gray-500">Didn’t receive the email?</p>
+                <p className="text-sm text-muted-foreground mb-4">Please check your inbox and follow the instructions.</p>
+                <p className="text-xs text-muted-foreground">Didn’t receive the email?</p>
               </div>
 
               <div className="space-y-3">
@@ -87,12 +87,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader className="text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-              <Mail className="h-6 w-6 text-blue-600" />
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4">
+              <Mail className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
             <CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
             <CardDescription>Enter your email and we’ll send you instructions to reset your password.</CardDescription>
@@ -120,14 +120,14 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-primary-custom hover:bg-primary-custom/90" disabled={isLoading}>
                 {isLoading ? "Sending..." : "Send Reset Email"}
               </Button>
 
               <div className="text-center">
                 <Link
                   href="/auth/login"
-                  className="text-sm text-blue-600 hover:text-blue-500 flex items-center justify-center"
+                  className="text-sm text-primary-custom hover:underline flex items-center justify-center"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Remember your password? Back to Login

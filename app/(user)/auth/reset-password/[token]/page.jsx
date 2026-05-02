@@ -103,13 +103,13 @@ export default function ResetPasswordPage() {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p>Verifying token...</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-custom mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Verifying token...</p>
               </div>
             </CardContent>
           </Card>
@@ -120,14 +120,14 @@ export default function ResetPasswordPage() {
 
   if (!isValidToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 mb-4">
-                <XCircle className="h-6 w-6 text-red-600" />
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
+                <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">Invalid or Expired Token</CardTitle>
+              <CardTitle className="text-2xl font-bold">Invalid or Expired Token</CardTitle>
               <CardDescription>The link may be expired or incorrect.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -136,13 +136,13 @@ export default function ResetPasswordPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <p className="text-sm text-center">You can request a new password reset link.</p>
+              <p className="text-sm text-center text-muted-foreground">You can request a new password reset link.</p>
               <div className="space-y-3">
                 <Link href="/auth/forgot-password">
-                  <Button className="w-full">Request New Link</Button>
+                  <Button className="w-full bg-primary-custom hover:bg-primary-custom/90">Request New Link</Button>
                 </Link>
                 <Link href="/auth/login">
-                  <Button variant="outline" className="w-full bg-transparent">
+                  <Button variant="outline" className="w-full">
                     Back to Login
                   </Button>
                 </Link>
@@ -156,23 +156,23 @@ export default function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <Card>
             <CardHeader className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 mb-4">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <CardTitle className="text-2xl font-bold">Password Reset Successful</CardTitle>
               <CardDescription>Your password has been updated successfully.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <p className="text-sm mb-4">Redirecting to login page...</p>
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="text-sm text-muted-foreground mb-4">Redirecting to login page...</p>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-custom mx-auto"></div>
               </div>
               <Link href="/auth/login">
-                <Button className="w-full">Go to Login</Button>
+                <Button className="w-full bg-primary-custom hover:bg-primary-custom/90">Go to Login</Button>
               </Link>
             </CardContent>
           </Card>
@@ -182,12 +182,12 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader className="text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 mb-4">
-              <Lock className="h-6 w-6 text-blue-600" />
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4">
+              <Lock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
             <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
             {userInfo && (
@@ -221,7 +221,7 @@ export default function ResetPasswordPage() {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </button>
                 </div>
               </div>
@@ -245,17 +245,17 @@ export default function ResetPasswordPage() {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </button>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-primary-custom hover:bg-primary-custom/90" disabled={isLoading}>
                 {isLoading ? "Resetting..." : "Reset Password"}
               </Button>
 
               <div className="text-center">
-                <Link href="/auth/login" className="text-sm text-blue-600 hover:text-blue-500">
+                <Link href="/auth/login" className="text-sm text-primary-custom hover:underline">
                   Back to Login
                 </Link>
               </div>
