@@ -39,7 +39,7 @@ export function Header() {
   const wishlistCount = getWishlistCount()
 
   const secondaryColor = settings?.secondaryColor || "#1E3A8A"
-   const footerStyle = {
+  const footerStyle = {
     backgroundColor: secondaryColor,
     color: "#FFFFFF",
   }
@@ -90,7 +90,7 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between mx-auto px-3">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
-            {settings?.logo ? ( 
+            {settings?.logo ? (
               <Image
                 src={getImageUrl(settings.logo || "/logo.png")}
                 alt={settings.siteName}
@@ -195,39 +195,39 @@ export function Header() {
 
           {/* User Account */}
           <span className="hidden md:block" >
-          {session ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
-                  <span className="sr-only">Account</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <Link href="/profile">
-                  <DropdownMenuItem>
-                    Profile
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/orders">
-                  <DropdownMenuItem>
-                    Orders
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/wishlist">
-                  <DropdownMenuItem>
-                    Wishlist
-                  </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/auth/login" })}>Logout</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Link href="/auth/login">
-              <Button variant="outline">Login</Button>
-            </Link>
-          )}
+            {session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                    <span className="sr-only">Account</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <Link href="/profile">
+                    <DropdownMenuItem>
+                      Profile
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/orders">
+                    <DropdownMenuItem>
+                      Orders
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/wishlist">
+                    <DropdownMenuItem>
+                      Wishlist
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/auth/login" })}>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/auth/login">
+                <Button variant="outline">Login</Button>
+              </Link>
+            )}
           </span>
         </div>
       </div>
