@@ -38,9 +38,9 @@ export function Header() {
   const cartItemCount = getCartItemCount()
   const wishlistCount = getWishlistCount()
 
-  const secondaryColor = settings?.secondaryColor || "#1E3A8A"
-  const footerStyle = {
-    backgroundColor: secondaryColor,
+  const primaryColor = settings?.primaryColor || "#000000"
+  const topNavStyle = {
+    backgroundColor: primaryColor,
     color: "#FFFFFF",
   }
 
@@ -58,19 +58,19 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div style={footerStyle} className={`bg-secodary text-primary-foreground py-2 overflow-hidden`}>
-        <div className="container mx-auto px-3 flex flex-col md:flex-row items-center justify-between gap-2 text-[13px] md:text-sm font-medium">
-          <div className="flex items-center gap-2 hidden md:flex">
+      <div style={topNavStyle} className={`text-primary-foreground py-2 overflow-hidden`}>
+        <div className="container mx-auto px-3 flex items-center justify-between gap-4 text-[13px] md:text-sm font-medium">
+          <div className="flex items-center gap-2 hidden lg:flex shrink-0">
             <PhoneIcon className="h-3 w-3 md:h-4 md:w-4" />
             <span>{settings?.contactInfo?.phone || "09658-405962"}</span>
           </div>
-          <div className="flex-1 w-full max-w-3xl overflow-hidden relative group">
-            <div className="flex whitespace-nowrap animate-marquee hover:pause whitespace-nowrap">
-              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at {settings?.siteName || "Equal Fashion"} | Call: {settings?.contactInfo?.phone || "09658-405962"}</span>
-              <span className="px-4">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at {settings?.siteName || "Equal Fashion"} | Call: {settings?.contactInfo?.phone || "09658-405962"}</span>
+          <div className="flex-1 overflow-hidden relative group">
+            <div className="flex whitespace-nowrap animate-marquee hover:pause">
+              <span className="px-10">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at {settings?.siteName || "Equal Fashion"} | Call: {settings?.contactInfo?.phone || "09658-405962"}</span>
+              <span className="px-10">🚚 Free Delivery on Selected Products | Cash on Delivery Available | Easy Return within 7 Days | Shop Now at {settings?.siteName || "Equal Fashion"} | Call: {settings?.contactInfo?.phone || "09658-405962"}</span>
             </div>
           </div>
-          <div className="hidden md:block">
+          <div className="hidden md:block shrink-0 italic opacity-90">
             Style for everyone
           </div>
         </div>
@@ -81,7 +81,9 @@ export function Header() {
           100% { transform: translateX(-50%); }
         }
         .animate-marquee {
-          animation: marquee 8s linear infinite;
+          display: flex;
+          width: fit-content;
+          animation: marquee 15s linear infinite;
         }
         .hover\:pause:hover {
           animation-play-state: paused;

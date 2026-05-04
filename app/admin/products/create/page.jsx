@@ -185,6 +185,7 @@ export default function CreateProductPage() {
     e.preventDefault()
     setSubmitting(true)
     setError("")
+    window.scrollTo({ top: 0, behavior: "smooth" })
     
     try {
       const data = { ...formData, newImages: newImages }
@@ -192,7 +193,16 @@ export default function CreateProductPage() {
       if (data.seo.keywords && typeof data.seo.keywords === 'string') data.seo.keywords = data.seo.keywords.split(",").map(t => t.trim())
 
       if (data.hasVariations) {
-        data.variationTypes = variationTypes
+        // Ensure every variation option has a value (default to name if empty)
+        const sanitizedVariationTypes = variationTypes.map(vt => ({
+          ...vt,
+          options: vt.options.map(opt => ({
+            ...opt,
+            value: opt.value || opt.name
+          }))
+        }))
+        
+        data.variationTypes = sanitizedVariationTypes
         data.variants = variants.map(v => {
           const { imagesPreviews, ...vRest } = v
           return {
@@ -209,12 +219,14 @@ export default function CreateProductPage() {
         toast({ title: "Success", description: "Product created successfully" })
         router.push("/admin/products")
       } else {
-        setError(res.message || "Failed to create product.")
-        toast({ title: "Error", description: res.message || "Failed to create product.", variant: "destructive" })
+        const errorMessage = res.error || res.message || "Failed to create product."
+        setError(errorMessage)
+        toast({ title: "Error", description: errorMessage, variant: "destructive" })
       }
     } catch (err) {
-      setError(err.message || "Failed to create product.")
-      toast({ title: "Error", description: err.message || "Failed to create product.", variant: "destructive" })
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || err.message || "Failed to create product."
+      setError(errorMessage)
+      toast({ title: "Error", description: errorMessage, variant: "destructive" })
     } finally {
       setSubmitting(false)
     }

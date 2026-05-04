@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import MagnifierImage from "@/components/ui/MagnifierImage"
 import Image from "next/image"
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
-import { Heart, Loader2, Minus, Plus, ShoppingCart, Star, Package } from "lucide-react"
+import { Check, Heart, Loader2, Minus, Plus, ShoppingCart, Star, Package } from "lucide-react"
 import { formatPrice, getErrorMessage } from "@/services/utils"
 import Link from "next/link"
 import RelatedProducts from "@/components/product/related-products"
@@ -17,40 +17,89 @@ import { useWishlist } from "@/components/wishlist-provider"
 import { getImageUrl } from "@/lib/utils"
 import { reviewService } from "@/services/review.service"
 
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null;
+  let videoId = null;
+  if (url.includes("youtube.com/watch")) {
+    const urlParams = new URLSearchParams(new URL(url).search);
+    videoId = urlParams.get("v");
+  } else if (url.includes("youtu.be")) {
+    videoId = url.split("/").pop().split("?")[0];
+  }
+
+  if (videoId) {
+    return {
+      embedUrl: `https://www.youtube.com/embed/${videoId}`,
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/0.jpg`,
+    };
+  }
+  return null;
+};
+
 export default function ProductPageClient({ product }) {
-  console.log("Product data in ProductPageClient:", product)
-  const { slug } = useParams()
   const { addToCart } = useCart()
   const { addToWishlist, isInWishlist } = useWishlist()
   const { toast } = useToast()
   const router = useRouter()
+
   const [quantity, setQuantity] = useState(1)
-  const [activeImage, setActiveImage] = useState(0)
   const [addingToCart, setAddingToCart] = useState(false)
   const [selectedVariant, setSelectedVariant] = useState(null)
   const [selectedOptions, setSelectedOptions] = useState({})
+  const [helpfulReviews, setHelpfulReviews] = useState([])
 
-  const handleQuantityChange = (amount) => {
+  const videoInfo = useMemo(() => getYouTubeEmbedUrl(product?.videoUrl), [product?.videoUrl]);
+  const media = useMemo(() => {
+    const items = [];
+    if (videoInfo) {
+      items.push({ type: 'video', url: videoInfo.embedUrl, thumbnailUrl: videoInfo.thumbnailUrl });
+    }
+    if (product?.images) {
+      items.push(...product.images.map(img => ({ type: 'image', url: img })));
+    }
+    return items;
+  }, [product?.images, videoInfo]);
+
+  const [activeMedia, setActiveMedia] = useState({ type: media[0]?.type || 'image', index: 0 });
+
+  const handleQuantityChange = useCallback((amount) => {
     const maxStock = selectedVariant ? selectedVariant.stock : product?.stock || 0
     const newQuantity = quantity + amount
     if (newQuantity >= 1 && newQuantity <= maxStock) {
       setQuantity(newQuantity)
     }
-  }
+  }, [quantity, selectedVariant, product?.stock]);
 
-  const handleVariantOptionChange = (type, value) => {
-    const newOptions = { ...selectedOptions, [type]: value }
-    setSelectedOptions(newOptions)
-    const matchingVariant = product.variants.find((variant) => {
-      return variant.options.every((option) => newOptions[option.type] === option.value)
+  const handleVariantOptionChange = useCallback((type, value) => {
+    setSelectedOptions(prev => {
+      const newOptions = { ...prev, [type]: value }
+      
+      if (product?.variants) {
+        const matchingVariant = product.variants.find((variant) => {
+          return variant.options.every((option) => newOptions[option.type] === option.value)
+        })
+        
+        // Update variant and quantity only if they change
+        setSelectedVariant(prevVariant => {
+          if (prevVariant?._id === matchingVariant?._id) return prevVariant;
+          
+          if (matchingVariant) {
+            setQuantity(1)
+            // If variant has an image, switch to it in the media gallery
+            if (matchingVariant.image) {
+              const variantImageIndex = media.findIndex(m => m.url === matchingVariant.image);
+              if (variantImageIndex !== -1) {
+                setActiveMedia({ type: 'image', index: variantImageIndex });
+              }
+            }
+          }
+          return matchingVariant || null;
+        })
+      }
+      
+      return newOptions;
     })
-    setSelectedVariant(matchingVariant || null)
-    if (matchingVariant) {
-      setQuantity(1)
-    }
-  }
-
-  const [helpfulReviews, setHelpfulReviews] = useState([])
+  }, [product?.variants, media]);
 
   const handleMarkHelpful = async (reviewId) => {
     if (helpfulReviews.includes(reviewId)) return
@@ -63,7 +112,6 @@ export default function ProductPageClient({ product }) {
           title: "Success",
           description: "Review marked as helpful",
         })
-        // Refresh product data to update helpful count in UI
         router.refresh()
       }
     } catch (err) {
@@ -77,20 +125,16 @@ export default function ProductPageClient({ product }) {
 
   const getCurrentPrice = () => {
     if (selectedVariant) {
-      return selectedVariant.comparePrice && selectedVariant.comparePrice > selectedVariant.price
-        ? selectedVariant.price
-        : selectedVariant.price
+      return selectedVariant.price
     }
-    return product?.comparePrice && product.comparePrice > product.price ? product.price : product.price
+    return product?.price || 0
   }
 
   const getComparePrice = () => {
     if (selectedVariant) {
-      return selectedVariant.comparePrice && selectedVariant.comparePrice > selectedVariant.price
-        ? selectedVariant.comparePrice
-        : null
+      return selectedVariant.comparePrice || null
     }
-    return product?.comparePrice && product.comparePrice > product.price ? product.comparePrice : null
+    return product?.comparePrice || null
   }
 
   const getCurrentStock = () => {
@@ -106,7 +150,7 @@ export default function ProductPageClient({ product }) {
       await addToCart(productId, quantity, variantId)
       toast({
         title: "Added to Cart",
-        description: `${product.name} (${quantity}) has been added to your cart`,
+        description: `${product.name} has been added to your cart`,
       })
     } catch (err) {
       toast({
@@ -159,35 +203,6 @@ export default function ProductPageClient({ product }) {
       </div>
     )
   }
-
-  const getYouTubeEmbedUrl = (url) => {
-    if (!url) return null;
-    let videoId = null;
-    if (url.includes("youtube.com/watch")) {
-      const urlParams = new URLSearchParams(new URL(url).search);
-      videoId = urlParams.get("v");
-    } else if (url.includes("youtu.be")) {
-      videoId = url.split("/").pop().split("?")[0];
-    }
-
-    if (videoId) {
-      return {
-        embedUrl: `https://www.youtube.com/embed/${videoId}`,
-        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/0.jpg`,
-      };
-    }
-    return null;
-  };
-
-  const videoInfo = getYouTubeEmbedUrl(product.videoUrl);
-  const media = [];
-
-  if (videoInfo) {
-    media.push({ type: 'video', url: videoInfo.embedUrl, thumbnailUrl: videoInfo.thumbnailUrl });
-  }
-  media.push(...(product.images?.map(img => ({ type: 'image', url: img })) || []));
-
-  const [activeMedia, setActiveMedia] = useState({ type: media[0]?.type || 'image', index: 0 });
 
   const currentPrice = getCurrentPrice()
   const comparePrice = getComparePrice()
@@ -320,18 +335,31 @@ export default function ProductPageClient({ product }) {
                 <div key={variationType.name}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{variationType.name}</label>
                   <div className="flex flex-wrap gap-2">
-                    {variationType.options.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => handleVariantOptionChange(variationType.name, option.value)}
-                        className={`px-3 py-2 border rounded-md text-sm ${selectedOptions[variationType.name] === option.value
-                          ? "border-primary bg-primary-custom text-white"
-                          : "border-gray-300 hover:border-gray-400"
+                    {variationType.options.map((option) => {
+                      const isColor = variationType.name.toLowerCase().includes('color') || variationType.name.toLowerCase().includes('colour');
+                      const isActive = selectedOptions[variationType.name] === option.value;
+                      
+                      return (
+                        <button
+                          key={option.value}
+                          onClick={() => handleVariantOptionChange(variationType.name, option.value)}
+                          className={`relative flex items-center justify-center transition-all duration-200 ${
+                            isColor 
+                              ? `w-10 h-10 rounded-full border-2 ${isActive ? "border-primary-custom ring-2 ring-primary/20 scale-110" : "border-gray-200 hover:border-gray-400"}`
+                              : `px-4 py-2 border rounded-lg text-sm font-medium ${isActive ? "border-primary bg-primary-custom text-white" : "border-gray-200 hover:border-gray-400 hover:bg-gray-50"}`
                           }`}
-                      >
-                        {option.name}
-                      </button>
-                    ))}
+                          style={isColor ? { backgroundColor: option.value } : {}}
+                          title={option.name}
+                        >
+                          {!isColor && option.name}
+                          {isColor && isActive && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full">
+                              <Check className="h-5 w-5 text-white drop-shadow-md" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}

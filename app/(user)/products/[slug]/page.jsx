@@ -43,11 +43,13 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ProductPage({ params }) {
+  const { slug } = await params;
   try {
-    const response = await getProductBySlug(params?.slug);
+    const response = await getProductBySlug(slug);
     const product = response.product;
+    if (!product) return <div className="p-4 text-center">Product not found.</div>;
 
-    return <ProductPageClient product={product} />;
+    return <ProductPageClient key={product._id} product={product} />;
   } catch (error) {
     return <div className="p-4 text-red-500">Product not found or failed to load.</div>;
   }

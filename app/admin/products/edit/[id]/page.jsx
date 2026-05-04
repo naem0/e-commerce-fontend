@@ -246,14 +246,25 @@ export default function EditProductPage({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
+    setError("")
+    window.scrollTo({ top: 0, behavior: "smooth" })
     try {
       const data = { ...formData, images: existingImages.map(img => img.path) }
       if (newImages.length > 0) data.newImages = newImages
       if (data.tags) data.tags = data.tags.split(",").map(t => t.trim())
-      if (data.seo.keywords) data.seo.keywords = data.seo.keywords.split(",").map(t => t.trim())
+      if (data.seo.keywords && typeof data.seo.keywords === 'string') data.seo.keywords = data.seo.keywords.split(",").map(t => t.trim())
 
       if (data.hasVariations) {
-        data.variationTypes = variationTypes
+        // Ensure every variation option has a value (default to name if empty)
+        const sanitizedVariationTypes = variationTypes.map(vt => ({
+          ...vt,
+          options: vt.options.map(opt => ({
+            ...opt,
+            value: opt.value || opt.name
+          }))
+        }))
+
+        data.variationTypes = sanitizedVariationTypes
         data.variants = variants.map(v => {
           const { imagesPreviews, ...vRest } = v
           return {
@@ -271,12 +282,14 @@ export default function EditProductPage({ params }) {
         toast({ title: "Success", description: "Product updated successfully" })
         router.push("/admin/products")
       } else {
-        setError(res.message || "Failed to update product.")
-        toast({ title: "Error", description: res.message || "Failed to update product.", variant: "destructive" })
+        const errorMessage = res.error || res.message || "Failed to update product."
+        setError(errorMessage)
+        toast({ title: "Error", description: errorMessage, variant: "destructive" })
       }
     } catch (err) {
-      setError(err.message || "Failed to update product.")
-      toast({ title: "Error", description: err.message || "Failed to update product.", variant: "destructive" })
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || err.message || "Failed to update product."
+      setError(errorMessage)
+      toast({ title: "Error", description: errorMessage, variant: "destructive" })
     } finally {
       setSubmitting(false)
     }
