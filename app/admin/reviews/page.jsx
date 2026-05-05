@@ -56,7 +56,8 @@ export default function AdminReviewsPage() {
 
   useEffect(() => {
     if (status === "loading") return
-    if (!session?.user?.role || session.user.role !== "admin") {
+    const isAuthorized = session?.user?.role === "admin" || session?.user?.role === "manager"
+    if (!session?.user?.role || !isAuthorized) {
       router.push("/auth/login")
       return
     }

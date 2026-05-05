@@ -40,9 +40,10 @@ export default function AnalyticsPage() {
   const [groupBy, setGroupBy] = useState("day")
 
   useEffect(() => {
+    const isAuthorized = session?.user?.role === "admin" || session?.user?.role === "manager"
     if (status === "unauthenticated") {
       router.push("/auth/login?callbackUrl=/admin/analytics")
-    } else if (status === "authenticated" && session.user.role !== "admin") {
+    } else if (status === "authenticated" && !isAuthorized) {
       router.push("/")
     }
   }, [status, session, router])
@@ -69,7 +70,8 @@ export default function AnalyticsPage() {
       }
     }
 
-    if (status === "authenticated" && session.user.role === "admin") {
+    const isAuthorized = session?.user?.role === "admin" || session?.user?.role === "manager"
+    if (status === "authenticated" && isAuthorized) {
       fetchData()
     }
   }, [status, session, groupBy])
@@ -125,7 +127,8 @@ export default function AnalyticsPage() {
     )
   }
 
-  if (status === "authenticated" && session.user.role !== "admin") {
+  const isAuthorized = session?.user?.role === "admin" || session?.user?.role === "manager"
+  if (status === "authenticated" && !isAuthorized) {
     return null
   }
 

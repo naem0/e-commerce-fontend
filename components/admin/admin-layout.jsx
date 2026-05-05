@@ -34,7 +34,7 @@ export function AdminLayout({ children }) {
     return () => clearInterval(interval)
   }, [])
 
-  const navigation = [
+  const allNavigation = [
     {
       name: "Dashboard",
       href: "/admin/dashboard",
@@ -103,6 +103,24 @@ export function AdminLayout({ children }) {
       current: isActive("/admin/site-settings"),
     },
   ]
+
+  console.log(session)
+
+  const navigation = allNavigation.filter(item => {
+    if (session?.user?.role === "manager") {
+      const allowedPaths = [
+        "/admin/dashboard",
+        "/admin/products",
+        "/admin/categories",
+        "/admin/brands",
+        "/admin/orders",
+        "/admin/reviews",
+        "/admin/analytics"
+      ]
+      return allowedPaths.includes(item.href)
+    }
+    return true // Admins see everything
+  })
 
 
   const isInvoicePage = pathname.includes("/invoice")

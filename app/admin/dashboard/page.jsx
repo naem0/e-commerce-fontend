@@ -23,13 +23,14 @@ export default function AdminDashboard() {
   const [period, setPeriod] = useState("30")
 
   useEffect(() => {
-    // Redirect if not admin
+    // Redirect if not authorized
+    const isAuthorized = session?.user?.role === "admin" || session?.user?.role === "manager"
     if (status === "unauthenticated") {
       router.push("/auth/login?callbackUrl=/admin/dashboard")
-    } else if (status === "authenticated" && session.user.role !== "admin") {
+    } else if (status === "authenticated" && !isAuthorized) {
       router.push("/")
     }
-  }, [status, router])
+  }, [status, router, session])
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -50,10 +51,11 @@ export default function AdminDashboard() {
       }
     }
 
-    if (status === "authenticated" && session.user.role === "admin") {
+    const isAuthorized = session?.user?.role === "admin" || session?.user?.role === "manager"
+    if (status === "authenticated" && isAuthorized) {
       fetchAnalytics()
     }
-  }, [status, period])
+  }, [status, period, session])
 
   if (status === "loading") {
     return (
@@ -63,7 +65,8 @@ export default function AdminDashboard() {
     )
   }
 
-  if (status === "authenticated" && session.user.role !== "admin") {
+  const isAuthorized = session?.user?.role === "admin" || session?.user?.role === "manager"
+  if (status === "authenticated" && !isAuthorized) {
     return null // Will redirect in useEffect
   }
 

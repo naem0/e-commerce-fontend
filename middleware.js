@@ -5,7 +5,7 @@ export async function middleware(request) {
   const token = await getToken({ req: request })
 
   const isAuthenticated = !!token
-  const isAdmin = token?.role === "admin"
+  const isAuthorized = token?.role === "admin" || token?.role === "manager"
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin")
   const isAuthRoute = request.nextUrl.pathname.startsWith("/auth")
 
@@ -21,8 +21,8 @@ export async function middleware(request) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect non-admin users trying to access admin routes
-  if (isAuthenticated && isAdminRoute && !isAdmin) {
+  // Redirect non-authorized users trying to access admin routes
+  if (isAuthenticated && isAdminRoute && !isAuthorized) {
     return NextResponse.redirect(new URL("/", request.url))
   }
 
